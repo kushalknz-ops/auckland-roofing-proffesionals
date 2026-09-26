@@ -1,0 +1,9 @@
+/*
+ * Tailwind v4 — theme + utilities only.
+ * Preflight is intentionally NOT imported: the site ships its own design
+ * system (src/arp.css) that relies on the browser stylesheet baseline, so a
+ * global reset would cause subtle regressions. Tailwind utilities are used
+ * for shadcn-style components (components/ui/*) only.
+ */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
