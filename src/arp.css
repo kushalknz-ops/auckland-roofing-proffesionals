@@ -1242,7 +1242,7 @@ body{background:var(--bg);color:var(--body-c)}
     font-size:9.5px;letter-spacing:1.2px;transition:.25s;
   }
   .site-header .header-cta:hover{background:#EDF1FB;border-color:#EDF1FB;color:#0C1D4E}
-  .site-header .menu-btn{display:block;padding:10px 8px;margin-left:0}
+  .site-header .menu-btn{display:block;padding:10px 8px;margin-left:auto}
   .site-header .menu-btn span,
   .site-header.scrolled .menu-btn span{background:#fff}
 
@@ -1303,6 +1303,14 @@ body{background:var(--bg);color:var(--body-c)}
 .site-header .desktop-nav,
 .site-header .header-cta,
 .site-header .menu-btn{position:relative;z-index:1}
+
+/* Keep the mobile menu control pinned to the header's right edge. */
+@media (max-width:900px){
+  .site-header .menu-btn{
+    position:absolute;right:8px;top:50%;margin:0;
+    transform:translateY(-50%);z-index:2;
+  }
+}
 
 /* ============================================================
    CONSISTENT CORNERS — subtle, modern radius for interactive
