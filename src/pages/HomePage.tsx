@@ -353,13 +353,33 @@ function InlineQuoteForm() {
    ============================================================ */
 export default function HomePage() {
   const { openQuote } = useQuote()
+  const heroVideoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (heroVideoRef.current) {
+      heroVideoRef.current.defaultMuted = true
+      heroVideoRef.current.muted = true
+      heroVideoRef.current.play().catch(() => {})
+    }
+  }, [])
 
   return (
     <main id="top">
       {/* ============ HERO ============ */}
       <section className="hero">
-        <div className="hero-media" role="img" aria-label="Aerial view over Auckland rooftops at dusk" />
-        <div className="hero-shade" />
+        <div className="hero-media" aria-hidden="true">
+          <video
+            ref={heroVideoRef}
+            className="hero-video"
+            src="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+          />
+        </div>
+        <div className="hero-shade" aria-hidden="true" />
         <div className="hero-copy">
           <p className="eyebrow">Commercial &amp; Residential Roofing</p>
           <h1 className="hero-title">
