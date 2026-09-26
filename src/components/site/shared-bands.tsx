@@ -20,17 +20,26 @@ export function CtaBand({ heading, text }: { heading: string; text: string }) {
 export function MapBand() {
   return (
     <section className="section map-band">
-      <div className="map-grid" aria-hidden="true">
-        <div className="map-pin">
-          <svg viewBox="0 0 24 24"><path d="M12 22s7-6.1 7-12a7 7 0 10-14 0c0 5.9 7 12 7 12z" /><circle cx="12" cy="10" r="2.6" /></svg>
-          <span className="map-pin-pulse" />
-        </div>
+      <div className="map-frame-wrap">
+        <iframe
+          className="map-iframe"
+          title="Auckland Roof Professionals Workshop Location"
+          src="https://maps.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          aria-label="Google Maps showing workshop at 59 Porana Road, Glenfield, Auckland"
+        />
       </div>
       <div className="map-copy reveal">
         <p className="eyebrow">Service area</p>
         <h2>All of Auckland.<br />One team.</h2>
         <p>From the North Shore to Manukau, West Auckland to Howick — our crews cover the entire Tāmaki Makaurau region.</p>
-        <a className="outline-btn" href="https://www.google.com/maps/search/Penrose,+Auckland" target="_blank" rel="noopener">
+        <a
+          className="outline-btn"
+          href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Open in Google Maps <span>↗</span>
         </a>
       </div>
