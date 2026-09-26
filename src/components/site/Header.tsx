@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom'
 import { useQuote } from './quote-context'
 
 const NAV = [
+  { label: 'Home', hash: '' },
   { label: 'Services', hash: '#services' },
   { label: 'Projects', hash: '#projects' },
   { label: 'Process', hash: '#process' },
   { label: 'About', hash: '#about' },
   { label: 'FAQ', hash: '#faq' },
+  { label: 'Contact Us', hash: '#footer-contact' },
 ]
 
 /**
@@ -90,9 +92,8 @@ export function Header() {
       <div className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
         <nav>
           {NAV.map((n) => (
-            <Link key={n.hash} to={link(n.hash)}>{n.label}</Link>
+            <Link key={n.label} to={link(n.hash)} onClick={() => setMenuOpen(false)}>{n.label}</Link>
           ))}
-          <Link to="/#contact">Contact</Link>
         </nav>
         <button className="outline-btn" type="button" onClick={() => { setMenuOpen(false); openQuote() }}>
           Get a free quote <span>→</span>

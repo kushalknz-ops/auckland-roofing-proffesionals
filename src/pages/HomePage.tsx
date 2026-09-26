@@ -3,15 +3,11 @@ import {
   useEffect,
   useRef,
   useState,
-  type FormEvent,
 } from 'react'
 import { Link } from 'react-router-dom'
 import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
-import {
-  SERVICE_OPTION_GROUPS,
-  OTHER_OPTION,
-} from '../data/service-options'
+import { RoofingEnquiryForm } from '../components/site/RoofingEnquiryForm'
 
 /* ============================================================
    STATS BAND — count-up on first view (port of index.js)
@@ -349,67 +345,7 @@ function FaqSection() {
    INLINE QUOTE FORM (contact section)
    ============================================================ */
 function InlineQuoteForm() {
-  const [sent, setSent] = useState(false)
-  const [errors, setErrors] = useState<{ name?: boolean; email?: boolean }>({})
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const f = e.currentTarget
-    const name = (f.elements.namedItem('name') as HTMLInputElement).value.trim()
-    const email = (f.elements.namedItem('email') as HTMLInputElement).value
-    const errs = { name: !name, email: !/^\S+@\S+\.\S+$/.test(email) }
-    setErrors(errs)
-    if (errs.name || errs.email) return
-    setSent(true)
-  }
-
-  if (sent) {
-    return (
-      <p className="inline-form-success" style={{ display: 'block' }}>
-        Thanks — your request has been received. Our team will be in touch within one business day.
-      </p>
-    )
-  }
-
-  return (
-    <>
-      <p className="eyebrow eyebrow-dark">Free quote</p>
-      <h3>Tell us about your roof.</h3>
-      <form className="inline-quote-form" onSubmit={onSubmit} noValidate>
-        <label>
-          Name
-          <input type="text" name="name" required autoComplete="name" placeholder="Your name"
-            style={errors.name ? { borderColor: '#c0392b' } : undefined} />
-        </label>
-        <label>
-          Email
-          <input type="email" name="email" required autoComplete="email" placeholder="you@example.co.nz"
-            style={errors.email ? { borderColor: '#c0392b' } : undefined} />
-        </label>
-        <label>
-          Phone
-          <input type="tel" name="phone" autoComplete="tel" placeholder="021 000 000" />
-        </label>
-        <label>
-          Service
-          <select name="service" defaultValue="">
-            <option value="">Select a service…</option>
-            {SERVICE_OPTION_GROUPS.map((g) => (
-              <optgroup key={g.label} label={g.label}>
-                {g.options.map((o) => <option key={o} value={o}>{o}</option>)}
-              </optgroup>
-            ))}
-            <option value={OTHER_OPTION}>{OTHER_OPTION}</option>
-          </select>
-        </label>
-        <label className="full">
-          Project details
-          <textarea name="details" rows={4} placeholder="Tell us about your property, roof type and what you need…" />
-        </label>
-        <button className="inline-submit full" type="submit">Request my quote <span>→</span></button>
-      </form>
-    </>
-  )
+  return <RoofingEnquiryForm />
 }
 
 /* ============================================================

@@ -726,11 +726,23 @@ h1,h2,h3{font-family:var(--font-display)}
 .footer-contact address{font-style:normal;display:flex;flex-direction:column}
 .footer-contact address>span{text-transform:uppercase;color:#6E7BAC;font-size:11px;margin-bottom:8px;letter-spacing:1.5px}
 .footer-contact address>p{font-size:15px;line-height:1.5;margin:0 0 22px;color:#B3BDE1}
+.footer-contact{scroll-margin-top:100px}
 .footer-contact .contact-strong{
   font-size:15px;line-height:1.45;color:#F5F7FB;text-decoration:none;font-weight:700;
   margin-bottom:22px;overflow-wrap:anywhere;
 }
-.footer-contact .contact-strong:hover{color:var(--copper)}
+.footer-contact .contact-action{
+  display:flex;align-items:center;gap:11px;width:fit-content;max-width:100%;
+  transition:color .2s ease;
+}
+.footer-contact .contact-action svg{
+  width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--copper);
+}
+.footer-contact .contact-action span{min-width:0;overflow-wrap:anywhere}
+.footer-contact .contact-strong:hover,
+.footer-contact .contact-strong:focus-visible{color:var(--copper)}
+.footer-contact .contact-action:focus-visible{outline:2px solid var(--copper);outline-offset:5px;border-radius:2px}
 .footer-bottom{
   grid-column:1/-1;padding-top:24px;border-top:1px solid #1E2952;display:flex;
   justify-content:space-between;gap:20px;flex-wrap:wrap;color:#64719E;font-size:11px;letter-spacing:.5px;
@@ -1291,3 +1303,35 @@ body{background:var(--bg);color:var(--body-c)}
 .site-header .desktop-nav,
 .site-header .header-cta,
 .site-header .menu-btn{position:relative;z-index:1}
+
+/* ============================================================
+   CONSISTENT CORNERS — subtle, modern radius for interactive
+   controls and card surfaces across every page.
+   ============================================================ */
+:root{--radius-ui:6px}
+
+/* Buttons */
+button,
+.outline-btn,
+.header-cta,
+.inline-submit,
+.submit-btn,
+.cta-band-btn,
+.slider-controls button,
+.mobile-nav .outline-btn{
+  border-radius:var(--radius-ui);
+}
+
+/* Cards and raised content surfaces */
+.image-card,
+.audience-card,
+.projects-grid article,
+.process-steps article,
+.story-panel,
+.inline-quote-panel,
+.modal-card,
+.sd-facts,
+.sd-other{
+  border-radius:var(--radius-ui);
+  overflow:hidden;
+}

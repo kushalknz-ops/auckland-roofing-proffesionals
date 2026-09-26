@@ -53,15 +53,26 @@ export function Footer() {
         </nav>
       </div>
 
-      <div className="footer-column footer-contact">
+      <div className="footer-column footer-contact" id="footer-contact">
         <h3>Contact</h3>
         <address>
           <span>Office</span>
           <p>Unit 4, 120 Hugo Johnston Drive,<br />Penrose, Auckland 1061</p>
           <span>Phone</span>
-          <a className="contact-strong" href="tel:+64800555766">0800 555 766</a>
+          <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call Auckland Roof Professionals on 0800 555 766">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7.1 3.5 9.4 8 7.7 9.7a15.2 15.2 0 0 0 6.6 6.6l1.7-1.7 4.5 2.3-1 3.1c-.3.8-1 1.3-1.8 1.3A15 15 0 0 1 2.7 6.3c0-.8.5-1.5 1.3-1.8l3.1-1Z" />
+            </svg>
+            <span>0800 555 766</span>
+          </a>
           <span>Email</span>
-          <a className="contact-strong" href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a>
+          <a className="contact-strong contact-action" href="mailto:info@aucklandroofprofessionals.nz" aria-label="Email Auckland Roof Professionals">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 5.5h18v13H3z" />
+              <path d="m4 7 8 6 8-6" />
+            </svg>
+            <span>info@aucklandroofprofessionals.nz</span>
+          </a>
         </address>
       </div>
 
