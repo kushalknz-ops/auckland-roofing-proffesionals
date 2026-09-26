@@ -15,6 +15,7 @@ import { useReveal } from './hooks/useReveal'
 import HomePage from './pages/HomePage'
 import CategoryPage from './pages/CategoryPage'
 import ServicePage from './pages/ServicePage'
+import ContactPage from './pages/ContactPage'
 
 /**
  * Scroll manager — emulates native anchor navigation for routed links:
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="/commercial" element={<CategoryPage kind="commercial" />} />
           <Route path="/residential" element={<CategoryPage kind="residential" />} />
           <Route path="/service" element={<ServicePage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Footer />

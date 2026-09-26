@@ -3,13 +3,13 @@ import { Link, useLocation } from 'react-router-dom'
 import { useQuote } from './quote-context'
 
 const NAV = [
-  { label: 'Home', hash: '' },
-  { label: 'Services', hash: '#services' },
-  { label: 'Projects', hash: '#projects' },
-  { label: 'Process', hash: '#process' },
-  { label: 'About', hash: '#about' },
-  { label: 'FAQ', hash: '#faq' },
-  { label: 'Contact Us', hash: '#footer-contact' },
+  { label: 'Home', path: '/' },
+  { label: 'Services', path: '/#services' },
+  { label: 'Projects', path: '/#projects' },
+  { label: 'Process', path: '/#process' },
+  { label: 'About', path: '/#about' },
+  { label: 'FAQ', path: '/#faq' },
+  { label: 'Contact Us', path: '/contact' },
 ]
 
 /**
@@ -51,8 +51,6 @@ export function Header() {
     }
   }, [menuOpen])
 
-  const link = (hash: string) => (pathname === '/' ? `/${hash}` : `/${hash}`)
-
   return (
     <>
       <header className={`site-header${scrolled ? ' scrolled' : ''}`} id="siteHeader">
@@ -70,7 +68,7 @@ export function Header() {
 
         <nav className="desktop-nav" aria-label="Primary">
           {NAV.map((n) => (
-            <Link key={n.hash} to={link(n.hash)}>{n.label}</Link>
+            <Link key={n.label} to={n.path}>{n.label}</Link>
           ))}
         </nav>
 
@@ -92,7 +90,7 @@ export function Header() {
       <div className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
         <nav>
           {NAV.map((n) => (
-            <Link key={n.label} to={link(n.hash)} onClick={() => setMenuOpen(false)}>{n.label}</Link>
+            <Link key={n.label} to={n.path} onClick={() => setMenuOpen(false)}>{n.label}</Link>
           ))}
         </nav>
         <button className="outline-btn" type="button" onClick={() => { setMenuOpen(false); openQuote() }}>
