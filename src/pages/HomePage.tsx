@@ -349,6 +349,218 @@ function InlineQuoteForm() {
 }
 
 /* ============================================================
+   PROJECTS SECTION — continuous smooth auto-scrolling carousel
+   with hover-pause, touch swiping, and manual nav controls
+   ============================================================ */
+const PROJECTS = [
+  {
+    num: '01',
+    cat: 'Commercial',
+    loc: 'Albany • Retail',
+    title: 'Albany Commercial Centre',
+    desc: '2,400m² standing seam metal roof and wall cladding upgrade, staged for zero downtime to trading tenants.',
+    scope: 'Metal Roof + Cladding',
+    duration: '6 Weeks',
+    img: '/assets/img/project-albany.jpg',
+    alt: 'Albany commercial centre with new standing seam metal roof',
+  },
+  {
+    num: '02',
+    cat: 'Residential',
+    loc: 'Remuera • Re-roof',
+    title: 'Remuera Villa Re-Roof',
+    desc: 'Premium architectural asphalt shingle re-roof on a heritage-style family home, colour-matched to its original profile.',
+    scope: 'Asphalt Shingles',
+    duration: '2 Weeks',
+    img: '/assets/img/project-remuera.jpg',
+    alt: 'Remuera villa with new architectural asphalt shingle roof',
+  },
+  {
+    num: '03',
+    cat: 'Industrial',
+    loc: 'East Tāmaki • Logistics',
+    title: 'East Tāmaki Warehouse',
+    desc: 'Engineered warm roof system with high-performance PIR insulation for a temperature-sensitive distribution centre.',
+    scope: 'Warm Roof + PIR',
+    duration: '4 Weeks',
+    img: '/assets/img/project-warehouse.jpg',
+    alt: 'East Tāmaki distribution warehouse with warm roof system',
+  },
+  {
+    num: '04',
+    cat: 'Commercial',
+    loc: 'Takapuna • Healthcare',
+    title: 'Takapuna Medical Centre',
+    desc: 'Complete architectural standing seam roofing with enhanced acoustic insulation and custom perimeter flashings.',
+    scope: 'Standing Seam Metal',
+    duration: '5 Weeks',
+    img: '/assets/img/svc-metal-commercial.jpg',
+    alt: 'Takapuna medical facility with standing seam metal roofing',
+  },
+  {
+    num: '05',
+    cat: 'Residential',
+    loc: 'Devonport • Coastal',
+    title: 'Devonport Coastal Villa',
+    desc: 'Marine-grade Colorsteel replacement engineered for high wind zones and salt-spray resistance with traditional profile lines.',
+    scope: 'Colorsteel Maxx',
+    duration: '3 Weeks',
+    img: '/assets/img/svc-metal-res.jpg',
+    alt: 'Devonport heritage home with marine-grade Colorsteel roof',
+  },
+]
+
+function ProjectsSection() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const isPausedRef = useRef(false)
+  const resumeTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) return
+
+    let rafId: number
+    let lastTime = performance.now()
+    const speed = 40 // px per second
+
+    const setupInitialPosition = () => {
+      if (!track) return
+      const singleSetWidth = track.scrollWidth / 3
+      if (singleSetWidth > 0 && track.scrollLeft === 0) {
+        track.scrollLeft = singleSetWidth
+      }
+    }
+
+    const timer = window.setTimeout(setupInitialPosition, 60)
+
+    const tick = (now: number) => {
+      const delta = (now - lastTime) / 1000
+      lastTime = now
+
+      if (!isPausedRef.current && track) {
+        const singleSetWidth = track.scrollWidth / 3
+        if (singleSetWidth > 0) {
+          track.scrollLeft += speed * delta
+
+          if (track.scrollLeft >= singleSetWidth * 2) {
+            track.scrollLeft -= singleSetWidth
+          } else if (track.scrollLeft <= 5) {
+            track.scrollLeft += singleSetWidth
+          }
+        }
+      }
+
+      rafId = requestAnimationFrame(tick)
+    }
+
+    rafId = requestAnimationFrame(tick)
+
+    return () => {
+      window.clearTimeout(timer)
+      if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
+
+  const handleNav = (dir: -1 | 1) => {
+    const track = trackRef.current
+    if (!track) return
+
+    isPausedRef.current = true
+    const firstCard = track.children[0] as HTMLElement | undefined
+    const step = firstCard ? firstCard.offsetWidth + 20 : 400
+
+    track.scrollBy({ left: dir * step, behavior: 'smooth' })
+
+    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = window.setTimeout(() => {
+      isPausedRef.current = false
+    }, 2500)
+  }
+
+  // 3 duplicate sets of 5 projects for a seamless, continuous infinite wrap
+  const allProjects = [...PROJECTS, ...PROJECTS, ...PROJECTS]
+
+  return (
+    <section className="section projects" id="projects">
+      <div className="projects-top">
+        <div className="reveal">
+          <p className="eyebrow">Our work</p>
+          <h2>Real projects.<br />Lasting results.</h2>
+        </div>
+        <div className="projects-top-right reveal">
+          <p>From industrial facilities to family homes across Tāmaki Makaurau, our work speaks for itself.</p>
+          <div className="projects-nav-controls" aria-label="Project carousel controls">
+            <button
+              type="button"
+              className="projects-nav-btn prev"
+              onClick={() => handleNav(-1)}
+              aria-label="Previous projects"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="projects-nav-btn next"
+              onClick={() => handleNav(1)}
+              aria-label="Next projects"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="projects-carousel-wrap reveal"
+        onMouseEnter={() => { isPausedRef.current = true }}
+        onMouseLeave={() => { isPausedRef.current = false }}
+        onTouchStart={() => { isPausedRef.current = true }}
+        onTouchEnd={() => {
+          if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
+          resumeTimerRef.current = window.setTimeout(() => {
+            isPausedRef.current = false
+          }, 2000)
+        }}
+      >
+        <div className="projects-track" ref={trackRef}>
+          {allProjects.map((p, idx) => (
+            <article key={`${p.num}-${idx}`}>
+              <img src={p.img} alt={p.alt} loading="lazy" />
+              <div className="project-content">
+                <div className="project-label">
+                  <small>{p.num} · {p.cat}</small>
+                  <span>{p.loc}</span>
+                </div>
+                <h3>{p.title}</h3>
+                <p>{p.desc}</p>
+                <dl>
+                  <div>
+                    <dt>Scope</dt>
+                    <dd>{p.scope}</dd>
+                  </div>
+                  <div>
+                    <dt>Duration</dt>
+                    <dd>{p.duration}</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ============================================================
    HOME PAGE
    ============================================================ */
 export default function HomePage() {
@@ -371,13 +583,18 @@ export default function HomePage() {
           <video
             ref={heroVideoRef}
             className="hero-video"
-            src="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4"
+            poster="/assets/landing-video-poster.jpg"
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
-          />
+          >
+            <source
+              src="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4"
+              type="video/mp4"
+            />
+          </video>
         </div>
         <div className="hero-shade" aria-hidden="true" />
         <div className="hero-copy">
@@ -483,53 +700,7 @@ export default function HomePage() {
       </section>
 
       {/* ============ PROJECTS ============ */}
-      <section className="section projects" id="projects">
-        <div className="projects-top">
-          <div className="reveal">
-            <p className="eyebrow">Our work</p>
-            <h2>Real projects.<br />Lasting results.</h2>
-          </div>
-          <p className="reveal">From industrial facilities to family homes across Tāmaki Makaurau, our work speaks for itself.</p>
-        </div>
-        <div className="projects-grid">
-          <article className="reveal">
-            <img src="/assets/img/project-albany.jpg" alt="Albany commercial centre with new standing seam metal roof" />
-            <div className="project-content">
-              <div className="project-label"><small>01 · Commercial</small><span>Albany • Retail</span></div>
-              <h3>Albany Commercial Centre</h3>
-              <p>2,400m² standing seam metal roof and wall cladding upgrade, staged for zero downtime to trading tenants.</p>
-              <dl>
-                <div><dt>Scope</dt><dd>Metal Roof + Cladding</dd></div>
-                <div><dt>Duration</dt><dd>6 Weeks</dd></div>
-              </dl>
-            </div>
-          </article>
-          <article className="reveal">
-            <img src="/assets/img/project-remuera.jpg" alt="Remuera villa with new architectural asphalt shingle roof" />
-            <div className="project-content">
-              <div className="project-label"><small>02 · Residential</small><span>Remuera • Re-roof</span></div>
-              <h3>Remuera Villa Re-Roof</h3>
-              <p>Premium architectural asphalt shingle re-roof on a heritage-style family home, colour-matched to its original profile.</p>
-              <dl>
-                <div><dt>Scope</dt><dd>Asphalt Shingles</dd></div>
-                <div><dt>Duration</dt><dd>2 Weeks</dd></div>
-              </dl>
-            </div>
-          </article>
-          <article className="reveal">
-            <img src="/assets/img/project-warehouse.jpg" alt="East Tāmaki distribution warehouse with warm roof system" />
-            <div className="project-content">
-              <div className="project-label"><small>03 · Industrial</small><span>East Tāmaki • Logistics</span></div>
-              <h3>East Tāmaki Warehouse</h3>
-              <p>Engineered warm roof system with high-performance PIR insulation for a temperature-sensitive distribution centre.</p>
-              <dl>
-                <div><dt>Scope</dt><dd>Warm Roof + PIR</dd></div>
-                <div><dt>Duration</dt><dd>4 Weeks</dd></div>
-              </dl>
-            </div>
-          </article>
-        </div>
-      </section>
+      <ProjectsSection />
 
       {/* ============ ABOUT / STORY ============ */}
       <section className="section company-story" id="about">
@@ -538,9 +709,6 @@ export default function HomePage() {
           <h2 className="reveal">Auckland's roofs.<br />Protected by professionals.</h2>
           <p className="story-lead reveal">Auckland Roof Professionals is an Auckland-based team delivering dependable roofing for commercial, industrial and residential properties.</p>
           <p className="reveal">We combine practical experience, licensed expertise and clear communication at every stage — from the first site inspection and detailed planning through to installation, clean-up and ongoing care.</p>
-          <button className="outline-btn reveal" type="button" onClick={() => openQuote()}>
-            Talk to our team <span>→</span>
-          </button>
         </div>
         <div className="story-panel reveal">
           <img src="/assets/logo-navy.png" alt="Auckland Roof Professionals logo" />
@@ -559,6 +727,119 @@ export default function HomePage() {
               <div><strong>Accountable service</strong><span>Honest advice, reliable timelines and lasting workmanship.</span></div>
             </article>
           </div>
+        </div>
+
+        {/* ============ WORKSHOP CONTACT & BRANCH LOCATION ============ */}
+        <div className="about-workshop-grid reveal">
+          {/* Card 1: Workshop Contact Details */}
+          <div className="about-contact-card">
+            <div className="about-contact-header">
+              <span className="eyebrow">Direct Contact</span>
+              <h3>Workshop &amp; Headquarters</h3>
+            </div>
+            <div className="about-contact-list">
+              <div className="about-contact-item">
+                <span className="about-contact-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                </span>
+                <div>
+                  <span className="about-contact-label">Phone</span>
+                  <span className="about-contact-value">
+                    <a href="tel:0800555766">0800 555 766</a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="about-contact-item">
+                <span className="about-contact-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </span>
+                <div>
+                  <span className="about-contact-label">Email</span>
+                  <span className="about-contact-value">
+                    <a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="about-contact-item">
+                <span className="about-contact-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </span>
+                <div>
+                  <span className="about-contact-label">Workshop Address</span>
+                  <span className="about-contact-value">
+                    59 Porana Road, Glenfield, Auckland 0627
+                  </span>
+                </div>
+              </div>
+
+              <div className="about-contact-item">
+                <span className="about-contact-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </span>
+                <div>
+                  <span className="about-contact-label">Operating Hours</span>
+                  <span className="about-contact-value">
+                    Mon–Fri · 7:30am–5:00pm
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Branch / Location Block (Matching Reference Image) */}
+          <div className="about-branch-card">
+            <div className="branch-header">
+              <svg className="branch-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.4 11.85 7.4 11.85.34.3.86.3 1.2 0C12.6 21.85 20 15.25 20 10c0-4.42-3.58-8-8-8z" />
+                <circle cx="12" cy="10" r="2.6" />
+              </svg>
+              <h3>Visit our Branch</h3>
+            </div>
+            <p className="branch-address">59 Porana Road, Glenfield, Auckland 0627, New Zealand</p>
+            <div className="branch-actions">
+              <a
+                href="https://www.google.com/maps/dir/?api=1&destination=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="branch-btn-primary"
+              >
+                <span>Get directions</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+              <a
+                href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="branch-btn-secondary"
+              >
+                View branch on Google Maps
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ TALK TO OUR TEAM CTA ============ */}
+        <div className="about-cta-wrap reveal">
+          <button className="outline-btn" type="button" onClick={() => openQuote()}>
+            Talk to our team <span>→</span>
+          </button>
         </div>
       </section>
 

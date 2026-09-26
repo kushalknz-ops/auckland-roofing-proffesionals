@@ -6,12 +6,19 @@
   <title>Auckland Roof Professionals | Commercial &amp; Residential Roofing</title>
   <meta name="description" content="Auckland Roof Professionals — commercial and residential roofing specialists. Metal roofs & cladding, membrane roofing, warm roof systems, asphalt shingles, roof safety and asset maintenance." />
   <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="/assets/landing-video-poster.jpg" fetchpriority="high" />
+  <link rel="preload" as="video" href="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4" type="video/mp4" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <div style="position:fixed;inset:0;background:url('/assets/landing-video-poster.jpg') center/cover no-repeat;pointer-events:none;">
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,17,45,.92) 0%,rgba(7,17,45,.72) 38%,rgba(7,17,45,.22) 70%,rgba(7,17,45,.12)),linear-gradient(0deg,rgba(7,17,45,.55),transparent 40%);"></div>
+    </div>
+  </div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
