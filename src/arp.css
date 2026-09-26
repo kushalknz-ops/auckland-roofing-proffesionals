@@ -1236,12 +1236,7 @@ body{background:var(--bg);color:var(--body-c)}
   .site-header .brand-logo--navy,
   .site-header.scrolled .brand-logo--navy{display:none}
   .site-header .desktop-nav{display:none}
-  .site-header .header-cta{
-    background:#fff;border:1px solid #fff;color:#081334;border-radius:999px;
-    padding:12px 18px;margin-left:auto;margin-right:8px;
-    font-size:9.5px;letter-spacing:1.2px;transition:.25s;
-  }
-  .site-header .header-cta:hover{background:#EDF1FB;border-color:#EDF1FB;color:#0C1D4E}
+  .site-header .header-cta{display:none}
   .site-header .menu-btn{display:block;padding:10px 8px;margin-left:auto}
   .site-header .menu-btn span,
   .site-header.scrolled .menu-btn span{background:#fff}
@@ -1279,10 +1274,6 @@ body{background:var(--bg);color:var(--body-c)}
   .mobile-nav .outline-btn:hover{background:#EDF1FB;border-color:#EDF1FB;color:#0C1D4E}
 }
 
-/* very small phones: tighten the CTA inside the pill */
-@media (max-width:420px){
-  .site-header .header-cta{padding:10px 14px;font-size:9px;margin-right:2px}
-}
 
 /* fallback: no backdrop-filter → solid navy surfaces stay legible */
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
