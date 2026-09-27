@@ -870,7 +870,7 @@ export default function HomePage() {
           <ul className="contact-facts reveal">
             <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
             <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
-            <li><span>Office</span>Unit 4, 120 Hugo Johnston Drive,<br />Penrose, Auckland 1061</li>
+            <li><span>Office</span>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</li>
             <li><span>Hours</span>Mon–Fri · 7:30am–5:00pm</li>
           </ul>
         </div>

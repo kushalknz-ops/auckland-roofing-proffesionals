@@ -57,7 +57,7 @@ export function Footer() {
         <h3>Contact</h3>
         <address>
           <span>Office</span>
-          <p>Unit 4, 120 Hugo Johnston Drive,<br />Penrose, Auckland 1061</p>
+          <p>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</p>
           <span>Phone</span>
           <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call Auckland Roof Professionals on 0800 555 766">
             <svg viewBox="0 0 24 24" aria-hidden="true">
