@@ -75,7 +75,7 @@ export default function ContactPage() {
       <section className="contact-hero">
         <div className="contact-hero-media" aria-hidden="true" />
         <div className="contact-hero-shade" aria-hidden="true" />
-        <div className="contact-hero-inner">
+        <div className="container contact-hero-inner">
           <nav className="contact-crumbs reveal" aria-label="Breadcrumb">
             <Link to="/">Home</Link>
             <span>/</span>
@@ -87,7 +87,7 @@ export default function ContactPage() {
 
       {/* ============ 2. MAIN CONTACT SECTION ============ */}
       <section className="contact-main-section">
-        <div className="contact-main-grid">
+        <div className="container contact-main-grid">
           {/* LEFT: SEND US A MESSAGE FORM */}
           <div className="contact-form-card reveal">
             <div className="contact-form-header">
@@ -318,7 +318,7 @@ export default function ContactPage() {
 
       {/* ============ 4. EMERGENCY CTA SECTION ============ */}
       <section className="emergency-cta-band">
-        <div className="emergency-cta-inner reveal">
+        <div className="container emergency-cta-inner reveal">
           <div className="emergency-cta-copy">
             <h2>Roof Emergency? Call Us Now</h2>
             <p>Leak or urgent roof damage? Contact our team for rapid assistance.</p>

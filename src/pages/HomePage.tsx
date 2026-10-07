@@ -52,16 +52,18 @@ function StatsBand() {
 
   return (
     <section className="stats-band">
-      <div className="stats" ref={wrapRef}>
-        {STATS.map((s, i) => (
-          <div className="reveal" key={s.label}>
-            <strong data-count={s.count} data-suffix={s.suffix}>
-              {values[i]}
-              <em>{s.suffix}</em>
-            </strong>
-            <span>{s.label}</span>
-          </div>
-        ))}
+      <div className="container">
+        <div className="stats" ref={wrapRef}>
+          {STATS.map((s, i) => (
+            <div className="reveal" key={s.label}>
+              <strong data-count={s.count} data-suffix={s.suffix}>
+                {values[i]}
+                <em>{s.suffix}</em>
+              </strong>
+              <span>{s.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -247,26 +249,28 @@ function TestimonialsSection() {
 
   return (
     <section className="section testimonials" id="testimonials">
-      <p className="eyebrow reveal">Trusted partners</p>
-      {TESTIMONIALS.map((t, i) => (
-        <div key={t.name} className={`testimonial${i === current ? ' active' : ''}`}>
-          <p>{t.quote}</p>
-          <strong>{t.name}</strong>
-          <span>{t.role}</span>
+      <div className="container">
+        <p className="eyebrow reveal">Trusted partners</p>
+        {TESTIMONIALS.map((t, i) => (
+          <div key={t.name} className={`testimonial${i === current ? ' active' : ''}`}>
+            <p>{t.quote}</p>
+            <strong>{t.name}</strong>
+            <span>{t.role}</span>
+          </div>
+        ))}
+        <div className="slider-controls">
+          <button type="button" aria-label="Previous testimonial" onClick={() => show(current - 1)}>←</button>
+          <div className="dots">
+            {TESTIMONIALS.map((_, n) => (
+              <i
+                key={n}
+                className={n === current ? 'active' : ''}
+                onClick={() => show(n)}
+              />
+            ))}
+          </div>
+          <button type="button" aria-label="Next testimonial" onClick={() => show(current + 1)}>→</button>
         </div>
-      ))}
-      <div className="slider-controls">
-        <button type="button" aria-label="Previous testimonial" onClick={() => show(current - 1)}>←</button>
-        <div className="dots">
-          {TESTIMONIALS.map((_, n) => (
-            <i
-              key={n}
-              className={n === current ? 'active' : ''}
-              onClick={() => show(n)}
-            />
-          ))}
-        </div>
-        <button type="button" aria-label="Next testimonial" onClick={() => show(current + 1)}>→</button>
       </div>
     </section>
   )
@@ -308,34 +312,36 @@ function FaqSection() {
 
   return (
     <section className="section faq" id="faq">
-      <div className="faq-head reveal">
-        <p className="eyebrow">Answers</p>
-        <h2>Questions,<br />answered.</h2>
-        <p>Still got a question? <a href="#contact" className="text-link">Talk to our team →</a></p>
-      </div>
-      <div className="faq-list reveal">
-        {FAQS.map((f, i) => (
-          <div key={f.q} className={`faq-item${open === i ? ' open' : ''}`}>
-            <button
-              type="button"
-              className="faq-q"
-              onClick={() => setOpen(open === i ? -1 : i)}
-            >
-              {f.q}<span className="faq-icon" />
-            </button>
-            <div
-              className="faq-a"
-              ref={(el) => { aRefs.current[i] = el }}
-              style={
-                open === i
-                  ? { maxHeight: `${aRefs.current[i]?.scrollHeight ?? 500}px` }
-                  : undefined
-              }
-            >
-              <p>{f.a}</p>
+      <div className="container faq-inner">
+        <div className="faq-head reveal">
+          <p className="eyebrow">Answers</p>
+          <h2>Questions,<br />answered.</h2>
+          <p>Still got a question? <a href="#contact" className="text-link">Talk to our team →</a></p>
+        </div>
+        <div className="faq-list reveal">
+          {FAQS.map((f, i) => (
+            <div key={f.q} className={`faq-item${open === i ? ' open' : ''}`}>
+              <button
+                type="button"
+                className="faq-q"
+                onClick={() => setOpen(open === i ? -1 : i)}
+              >
+                {f.q}<span className="faq-icon" />
+              </button>
+              <div
+                className="faq-a"
+                ref={(el) => { aRefs.current[i] = el }}
+                style={
+                  open === i
+                    ? { maxHeight: `${aRefs.current[i]?.scrollHeight ?? 500}px` }
+                    : undefined
+                }
+              >
+                <p>{f.a}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -486,34 +492,36 @@ function ProjectsSection() {
 
   return (
     <section className="section projects" id="projects">
-      <div className="projects-top">
-        <div className="reveal">
-          <p className="eyebrow">Our work</p>
-          <h2>Real projects.<br />Lasting results.</h2>
-        </div>
-        <div className="projects-top-right reveal">
-          <p>From industrial facilities to family homes across Tāmaki Makaurau, our work speaks for itself.</p>
-          <div className="projects-nav-controls" aria-label="Project carousel controls">
-            <button
-              type="button"
-              className="projects-nav-btn prev"
-              onClick={() => handleNav(-1)}
-              aria-label="Previous projects"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="projects-nav-btn next"
-              onClick={() => handleNav(1)}
-              aria-label="Next projects"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
+      <div className="container">
+        <div className="projects-top">
+          <div className="reveal">
+            <p className="eyebrow">Our work</p>
+            <h2>Real projects.<br />Lasting results.</h2>
+          </div>
+          <div className="projects-top-right reveal">
+            <p>From industrial facilities to family homes across Tāmaki Makaurau, our work speaks for itself.</p>
+            <div className="projects-nav-controls" aria-label="Project carousel controls">
+              <button
+                type="button"
+                className="projects-nav-btn prev"
+                onClick={() => handleNav(-1)}
+                aria-label="Previous projects"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="projects-nav-btn next"
+                onClick={() => handleNav(1)}
+                aria-label="Next projects"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -597,24 +605,26 @@ export default function HomePage() {
           </video>
         </div>
         <div className="hero-shade" aria-hidden="true" />
-        <div className="hero-copy">
-          <p className="eyebrow">Commercial &amp; Residential Roofing</p>
-          <h1 className="hero-title">
-            <span>Strong roofs.</span>
-            <span className="dim">Higher standards.</span>
-          </h1>
-          <p className="hero-sub">Reliable. Durable. Built for Auckland.</p>
-          <div className="hero-benefits">
-            <span><i>◆</i>Quality workmanship</span>
-            <span><i>◆</i>Commercial &amp; residential</span>
-            <span><i>◆</i>On time, on budget</span>
-            <span><i>◆</i>10-year workmanship warranty</span>
+        <div className="container hero-inner">
+          <div className="hero-copy">
+            <p className="eyebrow">Commercial &amp; Residential Roofing</p>
+            <h1 className="hero-title">
+              <span>Strong roofs.</span>
+              <span className="dim">Higher standards.</span>
+            </h1>
+            <p className="hero-sub">Reliable. Durable. Built for Auckland.</p>
+            <div className="hero-benefits">
+              <span><i>◆</i>Quality workmanship</span>
+              <span><i>◆</i>Commercial &amp; residential</span>
+              <span><i>◆</i>On time, on budget</span>
+              <span><i>◆</i>10-year workmanship warranty</span>
+            </div>
+            <button className="outline-btn" type="button" onClick={() => openQuote()}>
+              Get a free quote <span>→</span>
+            </button>
           </div>
-          <button className="outline-btn" type="button" onClick={() => openQuote()}>
-            Get a free quote <span>→</span>
-          </button>
+          <p className="hero-tag">Roofing solutions<br />for Auckland's harshest weather</p>
         </div>
-        <p className="hero-tag">Roofing solutions<br />for Auckland's harshest weather</p>
         <a className="scroll-hint" href="#services">Scroll <span>↓</span></a>
       </section>
 
@@ -624,15 +634,16 @@ export default function HomePage() {
       <section className="section services" id="services">
         <div className="section-image services-bg" />
         <div className="section-overlay" />
-        <div className="section-inner">
-          <p className="eyebrow reveal">Our services</p>
-          <div className="section-heading reveal">
-            <h2>Complete roofing<br />solutions.</h2>
-            <p>Start with your property — then explore the systems we design and build for it. Choose your path below.</p>
-            <a className="outline-btn" href="#service-grid">Explore our services <span>→</span></a>
-          </div>
+        <div className="container">
+          <div className="section-inner">
+            <p className="eyebrow reveal">Our services</p>
+            <div className="section-heading reveal">
+              <h2>Complete roofing<br />solutions.</h2>
+              <p>Start with your property — then explore the systems we design and build for it. Choose your path below.</p>
+              <a className="outline-btn" href="#service-grid">Explore our services <span>→</span></a>
+            </div>
 
-          <div className="audience-grid reveal" id="service-grid">
+            <div className="audience-grid reveal" id="service-grid">
             <Link className="audience-card" to="/residential"
               style={{ '--bg': "url('/assets/img/audience-home.jpg')" } as React.CSSProperties}>
               <span className="audience-shade" />
@@ -661,7 +672,8 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       <ProcessSection />
 
@@ -704,154 +716,158 @@ export default function HomePage() {
 
       {/* ============ ABOUT / STORY ============ */}
       <section className="section company-story" id="about">
-        <div className="story-intro">
-          <p className="eyebrow reveal">About us</p>
-          <h2 className="reveal">Auckland's roofs.<br />Protected by professionals.</h2>
-          <p className="story-lead reveal">Auckland Roof Professionals is an Auckland-based team delivering dependable roofing for commercial, industrial and residential properties.</p>
-          <p className="reveal">We combine practical experience, licensed expertise and clear communication at every stage — from the first site inspection and detailed planning through to installation, clean-up and ongoing care.</p>
-        </div>
-        <div className="story-panel reveal">
-          <img src="/assets/logo-navy.png" alt="Auckland Roof Professionals logo" />
-          <p className="story-statement">"Our work is measured by what lasts: strong roofs, safe sites and relationships built on trust."</p>
-          <div className="story-pillars">
-            <article>
-              <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
-              <div><strong>Qualified team</strong><span>Licensed Building Practitioners with safety-led delivery.</span></div>
-            </article>
-            <article>
-              <svg viewBox="0 0 24 24"><path d="M3 17l6-10 4 6 3-4 5 8H3z" /><path d="M3 21h18" /></svg>
-              <div><strong>Complete capability</strong><span>Metal, membrane, warm-roof and maintenance expertise.</span></div>
-            </article>
-            <article>
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" /></svg>
-              <div><strong>Accountable service</strong><span>Honest advice, reliable timelines and lasting workmanship.</span></div>
-            </article>
+        <div className="container company-story-inner">
+          <div className="story-intro">
+            <p className="eyebrow reveal">About us</p>
+            <h2 className="reveal">Auckland's roofs.<br />Protected by professionals.</h2>
+            <p className="story-lead reveal">Auckland Roof Professionals is an Auckland-based team delivering dependable roofing for commercial, industrial and residential properties.</p>
+            <p className="reveal">We combine practical experience, licensed expertise and clear communication at every stage — from the first site inspection and detailed planning through to installation, clean-up and ongoing care.</p>
           </div>
-        </div>
-
-        {/* ============ WORKSHOP CONTACT & BRANCH LOCATION ============ */}
-        <div className="about-workshop-grid reveal">
-          {/* Card 1: Workshop Contact Details */}
-          <div className="about-contact-card">
-            <div className="about-contact-header">
-              <span className="eyebrow">Direct Contact</span>
-              <h3>Workshop &amp; Headquarters</h3>
-            </div>
-            <div className="about-contact-list">
-              <div className="about-contact-item">
-                <span className="about-contact-icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                </span>
-                <div>
-                  <span className="about-contact-label">Phone</span>
-                  <span className="about-contact-value">
-                    <a href="tel:0800555766">0800 555 766</a>
-                  </span>
-                </div>
-              </div>
-
-              <div className="about-contact-item">
-                <span className="about-contact-icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </span>
-                <div>
-                  <span className="about-contact-label">Email</span>
-                  <span className="about-contact-value">
-                    <a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a>
-                  </span>
-                </div>
-              </div>
-
-              <div className="about-contact-item">
-                <span className="about-contact-icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                </span>
-                <div>
-                  <span className="about-contact-label">Workshop Address</span>
-                  <span className="about-contact-value">
-                    59 Porana Road, Glenfield, Auckland 0627
-                  </span>
-                </div>
-              </div>
-
-              <div className="about-contact-item">
-                <span className="about-contact-icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </span>
-                <div>
-                  <span className="about-contact-label">Operating Hours</span>
-                  <span className="about-contact-value">
-                    Mon–Fri · 7:30am–5:00pm
-                  </span>
-                </div>
-              </div>
+          <div className="story-panel reveal">
+            <img src="/assets/logo-navy.png" alt="Auckland Roof Professionals logo" />
+            <p className="story-statement">"Our work is measured by what lasts: strong roofs, safe sites and relationships built on trust."</p>
+            <div className="story-pillars">
+              <article>
+                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
+                <div><strong>Qualified team</strong><span>Licensed Building Practitioners with safety-led delivery.</span></div>
+              </article>
+              <article>
+                <svg viewBox="0 0 24 24"><path d="M3 17l6-10 4 6 3-4 5 8H3z" /><path d="M3 21h18" /></svg>
+                <div><strong>Complete capability</strong><span>Metal, membrane, warm-roof and maintenance expertise.</span></div>
+              </article>
+              <article>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" /></svg>
+                <div><strong>Accountable service</strong><span>Honest advice, reliable timelines and lasting workmanship.</span></div>
+              </article>
             </div>
           </div>
 
-          {/* Card 2: Branch / Location Block (Matching Reference Image) */}
-          <div className="about-branch-card">
-            <div className="branch-header">
-              <svg className="branch-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.4 11.85 7.4 11.85.34.3.86.3 1.2 0C12.6 21.85 20 15.25 20 10c0-4.42-3.58-8-8-8z" />
-                <circle cx="12" cy="10" r="2.6" />
-              </svg>
-              <h3>Visit our Branch</h3>
+          {/* ============ WORKSHOP CONTACT & BRANCH LOCATION ============ */}
+          <div className="about-workshop-grid reveal">
+            {/* Card 1: Workshop Contact Details */}
+            <div className="about-contact-card">
+              <div className="about-contact-header">
+                <span className="eyebrow">Direct Contact</span>
+                <h3>Workshop &amp; Headquarters</h3>
+              </div>
+              <div className="about-contact-list">
+                <div className="about-contact-item">
+                  <span className="about-contact-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <span className="about-contact-label">Phone</span>
+                    <span className="about-contact-value">
+                      <a href="tel:0800555766">0800 555 766</a>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="about-contact-item">
+                  <span className="about-contact-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="20" height="16" x="2" y="4" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </span>
+                  <div>
+                    <span className="about-contact-label">Email</span>
+                    <span className="about-contact-value">
+                      <a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a>
+                    </span>
+                  </div>
+                </div>
+
+                <div className="about-contact-item">
+                  <span className="about-contact-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </span>
+                  <div>
+                    <span className="about-contact-label">Workshop Address</span>
+                    <span className="about-contact-value">
+                      59 Porana Road, Glenfield, Auckland 0627
+                    </span>
+                  </div>
+                </div>
+
+                <div className="about-contact-item">
+                  <span className="about-contact-icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </span>
+                  <div>
+                    <span className="about-contact-label">Operating Hours</span>
+                    <span className="about-contact-value">
+                      Mon–Fri · 7:30am–5:00pm
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="branch-address">59 Porana Road, Glenfield, Auckland 0627, New Zealand</p>
-            <div className="branch-actions">
-              <a
-                href="https://www.google.com/maps/dir/?api=1&destination=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="branch-btn-primary"
-              >
-                <span>Get directions</span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
+
+            {/* Card 2: Branch / Location Block (Matching Reference Image) */}
+            <div className="about-branch-card">
+              <div className="branch-header">
+                <svg className="branch-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.4 11.85 7.4 11.85.34.3.86.3 1.2 0C12.6 21.85 20 15.25 20 10c0-4.42-3.58-8-8-8z" />
+                  <circle cx="12" cy="10" r="2.6" />
                 </svg>
-              </a>
-              <a
-                href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="branch-btn-secondary"
-              >
-                View branch on Google Maps
-              </a>
+                <h3>Visit our Branch</h3>
+              </div>
+              <p className="branch-address">59 Porana Road, Glenfield, Auckland 0627, New Zealand</p>
+              <div className="branch-actions">
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="branch-btn-primary"
+                >
+                  <span>Get directions</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                </a>
+                <a
+                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="branch-btn-secondary"
+                >
+                  View branch on Google Maps
+                </a>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ============ TALK TO OUR TEAM CTA ============ */}
-        <div className="about-cta-wrap reveal">
-          <button className="outline-btn" type="button" onClick={() => openQuote()}>
-            Talk to our team <span>→</span>
-          </button>
+          {/* ============ TALK TO OUR TEAM CTA ============ */}
+          <div className="about-cta-wrap reveal">
+            <button className="outline-btn" type="button" onClick={() => openQuote()}>
+              Talk to our team <span>→</span>
+            </button>
+          </div>
         </div>
       </section>
 
       {/* ============ TRUST BAND ============ */}
       <section className="section trust-band">
         <div className="trust-shade" />
-        <div className="trust-image-heading reveal">
-          <div>
-            <p className="eyebrow">Skilled &amp; trusted</p>
-            <h2>Expert hands.<br />Proven results.</h2>
+        <div className="container">
+          <div className="trust-image-heading reveal">
+            <div>
+              <p className="eyebrow">Skilled &amp; trusted</p>
+              <h2>Expert hands.<br />Proven results.</h2>
+            </div>
+            <p>Auckland businesses and homeowners trust our licensed specialists for safe delivery, precise workmanship and dependable long-term protection.</p>
           </div>
-          <p>Auckland businesses and homeowners trust our licensed specialists for safe delivery, precise workmanship and dependable long-term protection.</p>
         </div>
       </section>
 
@@ -863,19 +879,21 @@ export default function HomePage() {
 
       {/* ============ CONTACT ============ */}
       <section className="section contact" id="contact">
-        <div className="contact-intro">
-          <p className="eyebrow eyebrow-dark reveal">Get in touch</p>
-          <h2 className="reveal">Let's talk about<br />your roof.</h2>
-          <p className="reveal">Planning a new build, re-roof or maintenance programme? Tell us what you need and our team will be in touch within one business day.</p>
-          <ul className="contact-facts reveal">
-            <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
-            <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
-            <li><span>Office</span>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</li>
-            <li><span>Hours</span>Mon–Fri · 7:30am–5:00pm</li>
-          </ul>
-        </div>
-        <div className="inline-quote-panel reveal">
-          <InlineQuoteForm />
+        <div className="container contact-grid-wrap">
+          <div className="contact-intro">
+            <p className="eyebrow eyebrow-dark reveal">Get in touch</p>
+            <h2 className="reveal">Let's talk about<br />your roof.</h2>
+            <p className="reveal">Planning a new build, re-roof or maintenance programme? Tell us what you need and our team will be in touch within one business day.</p>
+            <ul className="contact-facts reveal">
+              <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
+              <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
+              <li><span>Office</span>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</li>
+              <li><span>Hours</span>Mon–Fri · 7:30am–5:00pm</li>
+            </ul>
+          </div>
+          <div className="inline-quote-panel reveal">
+            <InlineQuoteForm />
+          </div>
         </div>
       </section>
 

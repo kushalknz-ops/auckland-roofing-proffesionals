@@ -87,35 +87,41 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
       <section className="page-hero">
         <div className="page-hero-media" style={{ '--bg': `url('${c.heroImg}')` } as React.CSSProperties} />
         <div className="page-hero-shade" />
-        <div className="page-hero-copy">
-          <p className="eyebrow reveal">{c.eyebrow}</p>
-          <h1 className="reveal">{c.title}</h1>
-          <p className="reveal">{c.lead}</p>
-          <a className="outline-btn reveal" href="#svcList">{c.btn} <span>↓</span></a>
-          <nav className="crumbs reveal" aria-label="Breadcrumb">
-            <Link to="/">Home</Link><span>/</span><Link to="/#services">Services</Link><span>/</span><b>{c.crumb}</b>
-          </nav>
+        <div className="container">
+          <div className="page-hero-copy">
+            <p className="eyebrow reveal">{c.eyebrow}</p>
+            <h1 className="reveal">{c.title}</h1>
+            <p className="reveal">{c.lead}</p>
+            <a className="outline-btn reveal" href="#svcList">{c.btn} <span>↓</span></a>
+            <nav className="crumbs reveal" aria-label="Breadcrumb">
+              <Link to="/">Home</Link><span>/</span><Link to="/#services">Services</Link><span>/</span><b>{c.crumb}</b>
+            </nav>
+          </div>
         </div>
       </section>
 
       {/* ============ SERVICE CARDS ============ */}
       <section className="section svc-page" id="svcList">
-        <p className="service-group-label reveal">{c.label}</p>
-        <div className="card-grid">
-          {list.map((s) => <ServiceCard key={s.id} s={s} />)}
+        <div className="container">
+          <p className="service-group-label reveal">{c.label}</p>
+          <div className="card-grid">
+            {list.map((s) => <ServiceCard key={s.id} s={s} />)}
+          </div>
+          <p className="svc-note reveal">
+            {c.note}{' '}
+            <a className="text-link" href="#" onClick={(e) => { e.preventDefault(); openQuote() }}>
+              {c.noteLink}
+            </a>
+          </p>
         </div>
-        <p className="svc-note reveal">
-          {c.note}{' '}
-          <a className="text-link" href="#" onClick={(e) => { e.preventDefault(); openQuote() }}>
-            {c.noteLink}
-          </a>
-        </p>
       </section>
 
       {/* ============ SWITCH BAND ============ */}
       <section className="switch-band">
-        <p className="reveal">{c.switchText}</p>
-        <Link className="outline-btn reveal" to={c.switchTo}>{c.switchBtn} <span>→</span></Link>
+        <div className="container switch-band-inner">
+          <p className="reveal">{c.switchText}</p>
+          <Link className="outline-btn reveal" to={c.switchTo}>{c.switchBtn} <span>→</span></Link>
+        </div>
       </section>
 
       <CtaBand heading={c.ctaHeading} text={c.ctaText} />

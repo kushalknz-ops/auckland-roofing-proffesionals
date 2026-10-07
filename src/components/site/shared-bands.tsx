@@ -5,13 +5,15 @@ export function CtaBand({ heading, text }: { heading: string; text: string }) {
   const { openQuote } = useQuote()
   return (
     <section className="cta-band">
-      <div className="reveal">
-        <h2>{heading}</h2>
-        <p>{text}</p>
+      <div className="container cta-band-inner">
+        <div className="reveal">
+          <h2>{heading}</h2>
+          <p>{text}</p>
+        </div>
+        <button className="cta-band-btn reveal" type="button" onClick={() => openQuote()}>
+          Get a free quote <span>→</span>
+        </button>
       </div>
-      <button className="cta-band-btn reveal" type="button" onClick={() => openQuote()}>
-        Get a free quote <span>→</span>
-      </button>
     </section>
   )
 }

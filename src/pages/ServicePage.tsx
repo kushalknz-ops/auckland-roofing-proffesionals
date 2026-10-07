@@ -28,26 +28,29 @@ export default function ServicePage() {
       <section className="page-hero">
         <div className="page-hero-media" style={{ '--bg': `url('${s.img}')` } as React.CSSProperties} />
         <div className="page-hero-shade" />
-        <div className="page-hero-copy">
-          <p className="eyebrow reveal visible">Service {s.num} — {s.badge}</p>
-          <h1 className="reveal visible">{s.title}<span className="dim">.</span></h1>
-          <p className="reveal visible">{s.short}</p>
-          <button className="outline-btn reveal visible" type="button" onClick={() => openQuote(s.title)}>
-            Request a quote <span>→</span>
-          </button>
-          <nav className="crumbs reveal visible" aria-label="Breadcrumb">
-            <Link to="/">Home</Link><span>/</span>
-            <Link to="/#services">Services</Link><span>/</span>
-            <Link to={categoryPath}>{category}</Link><span>/</span>
-            <b>{s.title}</b>
-          </nav>
+        <div className="container">
+          <div className="page-hero-copy">
+            <p className="eyebrow reveal visible">Service {s.num} — {s.badge}</p>
+            <h1 className="reveal visible">{s.title}<span className="dim">.</span></h1>
+            <p className="reveal visible">{s.short}</p>
+            <button className="outline-btn reveal visible" type="button" onClick={() => openQuote(s.title)}>
+              Request a quote <span>→</span>
+            </button>
+            <nav className="crumbs reveal visible" aria-label="Breadcrumb">
+              <Link to="/">Home</Link><span>/</span>
+              <Link to="/#services">Services</Link><span>/</span>
+              <Link to={categoryPath}>{category}</Link><span>/</span>
+              <b>{s.title}</b>
+            </nav>
+          </div>
         </div>
       </section>
 
       {/* ============ DETAILS ============ */}
       <section className="service-detail">
-        <div className="sd-grid">
-          <div className="sd-main">
+        <div className="container">
+          <div className="sd-grid">
+            <div className="sd-main">
             <p className="eyebrow eyebrow-dark">Details</p>
             <h2>{s.title} in Auckland.</h2>
             <p className="sd-lead">{s.desc}</p>
@@ -88,7 +91,8 @@ export default function ServicePage() {
             </nav>
           </aside>
         </div>
-      </section>
+      </div>
+    </section>
 
       <MapBand />
 
