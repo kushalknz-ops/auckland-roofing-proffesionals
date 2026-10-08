@@ -65,6 +65,31 @@ function StatsBand() {
           ))}
         </div>
       </div>
+      <div className="certifications-bar">
+        <div className="container">
+          <div className="certifications-inner">
+            <div className="cert-col cert-col-label">
+              <span className="certifications-label">OUR CERTIFICATIONS</span>
+            </div>
+            <div className="cert-col cert-col-sitesafe">
+              <img
+                src="/assets/img/cert-sitesafe.webp"
+                alt="Site Safe Member - Te Kaitiaki o Haumaru"
+                className="cert-logo cert-logo-sitesafe"
+                loading="lazy"
+              />
+            </div>
+            <div className="cert-col cert-col-lbp">
+              <img
+                src="/assets/img/cert-lbp.webp"
+                alt="Licensed Building Practitioners"
+                className="cert-logo cert-logo-lbp"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
@@ -93,114 +118,93 @@ const STEPS = [
 ]
 
 function ProcessSection() {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const stepsRef = useRef<HTMLDivElement>(null)
-  const fillRef = useRef<HTMLSpanElement>(null)
+  const [activeStep, setActiveStep] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const [isInView, setIsInView] = useState(false)
 
+  // Observe when section is in viewport to only cycle while visible
   useEffect(() => {
-    const track = trackRef.current
-    const stepsWrap = stepsRef.current
-    const fill = fillRef.current
-    if (!track || !stepsWrap || !fill) return
-    /* CSS shows a static readable version when motion is reduced */
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const cards = Array.from(stepsWrap.querySelectorAll('.process-step')) as HTMLElement[]
-    const LAST = cards.length - 1
-    const clamp = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b)
-
-    let target = 0
-    let current = -1
-    let running = false
-    let lastT = 0
-    let raf = 0
-    const TAU = 0.14 // seconds — lower = snappier, higher = floatier
-
-    const render = (v: number) => {
-      const active = clamp(Math.round(v), 0, LAST)
-      cards.forEach((el, i) => el.classList.toggle('is-active', i === active))
-      // rail runs circle-centre → circle-centre, so fill completes at the last step
-      fill.style.setProperty('--pf', `${(v / LAST) * 100}%`)
-    }
-
-    const tick = (now: number) => {
-      const dt = Math.min((now - lastT) / 1000, 0.05)
-      lastT = now
-      current += (target - current) * (1 - Math.exp(-dt / TAU))
-      render(current)
-      if (Math.abs(target - current) > 0.0008) {
-        raf = requestAnimationFrame(tick)
-      } else {
-        current = target // settle exactly to avoid sub-pixel drift
-        render(current)
-        running = false
-      }
-    }
-
-    const computeStepFloat = () => {
-      if (window.innerWidth > 900) {
-        // Desktop: pinned — scroll through the tall track maps 0→LAST
-        const r = track.getBoundingClientRect()
-        const total = Math.max(r.height - window.innerHeight, 1)
-        return clamp(-r.top / total, 0, 1) * LAST
-      }
-      // Mobile: in-flow vertical timeline — viewport centre maps across card centres
-      const c = window.innerHeight * 0.55
-      const centers = cards.map((a) => {
-        const r = a.getBoundingClientRect()
-        return r.top + r.height / 2
-      })
-      if (c <= centers[0]) return 0
-      if (c >= centers[LAST]) return LAST
-      for (let i = 0; i < LAST; i++) {
-        if (c >= centers[i] && c <= centers[i + 1]) {
-          return i + (c - centers[i]) / Math.max(centers[i + 1] - centers[i], 1)
-        }
-      }
-      return 0
-    }
-
-    const wake = () => {
-      target = clamp(computeStepFloat(), 0, LAST)
-      if (current < 0) { current = target; render(current) } // snap on first paint
-      if (!running) { running = true; lastT = performance.now(); raf = requestAnimationFrame(tick) }
-    }
-    const onResize = () => { current = -1; wake() }
-
-    window.addEventListener('scroll', wake, { passive: true })
-    window.addEventListener('resize', onResize)
-    wake()
-
-    return () => {
-      window.removeEventListener('scroll', wake)
-      window.removeEventListener('resize', onResize)
-      cancelAnimationFrame(raf)
-    }
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        setIsInView(entries[0]?.isIntersecting ?? false)
+      },
+      { threshold: 0.2 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
+  // Smooth auto-advancing step timeline
+  useEffect(() => {
+    if (!isInView || isHovered) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % STEPS.length)
+    }, 3000)
+
+    return () => clearInterval(timer)
+  }, [isInView, isHovered])
+
+  const progressPercent = (activeStep / (STEPS.length - 1)) * 100
+
   return (
-    <section className="section process" id="process">
-      <div className="process-track" ref={trackRef}>
-        <div className="process-pin">
-          <div className="process-inner">
-            <p className="eyebrow reveal">Our process</p>
-            <div className="section-heading reveal">
-              <h2>A clear process.<br />A stronger outcome.</h2>
-              <p>Scroll to walk through each step — from initial consultation to project completion.</p>
-            </div>
-            <div className="process-steps" ref={stepsRef}>
-              <div className="process-progress" aria-hidden="true">
-                <span className="process-progress-fill" ref={fillRef} />
-              </div>
-              {STEPS.map((s, i) => (
-                <article className={`process-step${i === 0 ? ' is-active' : ''}`} key={s.n}>
-                  <i className="step-dot"><em>Step</em><b>{s.n}</b></i>
-                  <h3>{s.title}</h3>
-                  <p>{s.text}</p>
-                </article>
-              ))}
-            </div>
+    <section
+      className="section process"
+      id="process"
+      ref={sectionRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="container">
+        <div className="process-header">
+          <div className="process-header-title">
+            <p className="eyebrow">Our process</p>
+            <h2>A clear process.<br />A stronger outcome.</h2>
           </div>
+          <p className="process-subtitle">
+            Walk through each step — from initial consultation to project completion.
+          </p>
+        </div>
+
+        <div className="process-steps">
+          <div className="process-progress" aria-hidden="true">
+            <span
+              className="process-progress-fill"
+              style={{
+                '--pf': `${progressPercent}%`,
+                width: `${progressPercent}%`,
+              } as React.CSSProperties}
+            />
+          </div>
+
+          {STEPS.map((s, i) => (
+            <article
+              className={`process-step${i === activeStep ? ' is-active' : ''}`}
+              key={s.n}
+              onClick={() => setActiveStep(i)}
+              onMouseEnter={() => setActiveStep(i)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setActiveStep(i)
+                }
+              }}
+              aria-label={`Step ${s.n}: ${s.title}`}
+            >
+              <i className="step-dot">
+                <em>Step</em>
+                <b>{s.n}</b>
+              </i>
+              <h3>{s.title}</h3>
+              <p>{s.text}</p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
