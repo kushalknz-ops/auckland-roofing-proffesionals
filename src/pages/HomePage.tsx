@@ -695,22 +695,26 @@ export default function HomePage() {
           <p className="reveal">We partner with businesses, builders, body corporates and homeowners to deliver roofing that is reliable, durable and built to perform in Auckland conditions — from the first site inspection to long after the last screw is driven.</p>
           <a className="outline-btn reveal" href="#about">About ARP <span>→</span></a>
         </div>
-        <div className="why-values reveal">
-          <div className="trust-value">
-            <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /></svg>
-            <div><strong>Licensed experts</strong><small>Qualified LBP professionals</small></div>
-          </div>
-          <div className="trust-value">
-            <svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" /></svg>
-            <div><strong>Quality assured</strong><small>Workmanship built to last</small></div>
-          </div>
-          <div className="trust-value">
-            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z" /><path d="M12 8v5M12 16h.01" /></svg>
-            <div><strong>Safety first</strong><small>Site Safe certified crews</small></div>
-          </div>
-          <div className="trust-value">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
-            <div><strong>Proven reliability</strong><small>On time and on budget</small></div>
+        <div className="why-values-bar">
+          <div className="container">
+            <div className="why-values reveal">
+              <div className="trust-value">
+                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /></svg>
+                <div><strong>Licensed experts</strong><small>Qualified LBP professionals</small></div>
+              </div>
+              <div className="trust-value">
+                <svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" /></svg>
+                <div><strong>Quality assured</strong><small>Workmanship built to last</small></div>
+              </div>
+              <div className="trust-value">
+                <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z" /><path d="M12 8v5M12 16h.01" /></svg>
+                <div><strong>Safety first</strong><small>Site Safe certified crews</small></div>
+              </div>
+              <div className="trust-value">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                <div><strong>Proven reliability</strong><small>On time and on budget</small></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
