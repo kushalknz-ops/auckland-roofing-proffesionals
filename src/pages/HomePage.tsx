@@ -1,5 +1,4 @@
 import {
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -8,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { RoofingEnquiryForm } from '../components/site/RoofingEnquiryForm'
+import { GoogleReviewsCarousel } from '../components/site/GoogleReviewsCarousel'
 
 /* ============================================================
    STATS BAND — count-up on first view (port of index.js)
@@ -212,72 +212,10 @@ function ProcessSection() {
 }
 
 /* ============================================================
-   TESTIMONIALS — auto slider, 6.5s (port of index.js)
+   GOOGLE REVIEWS CAROUSEL — authentic Auckland Reliable Roofing reviews
    ============================================================ */
-const TESTIMONIALS = [
-  {
-    quote: '"Professional, reliable and easy to work with. The team delivered our commercial re-roof on time, and the quality of work was outstanding."',
-    name: 'James T.', role: 'Property Manager · Auckland CBD',
-  },
-  {
-    quote: '"Their attention to detail and communication throughout our villa re-roof made the whole process completely seamless."',
-    name: 'Sarah L.', role: 'Homeowner · Remuera',
-  },
-  {
-    quote: '"A trusted partner for all our roofing maintenance. Proactive, thorough and honest — we wouldn\'t hesitate to recommend them."',
-    name: 'Michael R.', role: 'Facilities Manager · East Tāmaki',
-  },
-]
-
 function TestimonialsSection() {
-  const [current, setCurrent] = useState(0)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  const auto = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current)
-    timerRef.current = setInterval(
-      () => setCurrent((c) => (c + 1) % TESTIMONIALS.length),
-      6500,
-    )
-  }, [])
-
-  useEffect(() => {
-    auto()
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [auto])
-
-  const show = (i: number) => {
-    setCurrent((i + TESTIMONIALS.length) % TESTIMONIALS.length)
-    auto()
-  }
-
-  return (
-    <section className="section testimonials" id="testimonials">
-      <div className="container">
-        <p className="eyebrow reveal">Trusted partners</p>
-        {TESTIMONIALS.map((t, i) => (
-          <div key={t.name} className={`testimonial${i === current ? ' active' : ''}`}>
-            <p>{t.quote}</p>
-            <strong>{t.name}</strong>
-            <span>{t.role}</span>
-          </div>
-        ))}
-        <div className="slider-controls">
-          <button type="button" aria-label="Previous testimonial" onClick={() => show(current - 1)}>←</button>
-          <div className="dots">
-            {TESTIMONIALS.map((_, n) => (
-              <i
-                key={n}
-                className={n === current ? 'active' : ''}
-                onClick={() => show(n)}
-              />
-            ))}
-          </div>
-          <button type="button" aria-label="Next testimonial" onClick={() => show(current + 1)}>→</button>
-        </div>
-      </div>
-    </section>
-  )
+  return <GoogleReviewsCarousel />
 }
 
 /* ============================================================
@@ -765,7 +703,7 @@ export default function HomePage() {
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </span>
-                  <div>
+                  <div className="about-contact-content">
                     <span className="about-contact-label">Phone</span>
                     <span className="about-contact-value">
                       <a href="tel:0800555766">0800 555 766</a>
@@ -780,7 +718,7 @@ export default function HomePage() {
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
                   </span>
-                  <div>
+                  <div className="about-contact-content">
                     <span className="about-contact-label">Email</span>
                     <span className="about-contact-value">
                       <a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a>
@@ -795,7 +733,7 @@ export default function HomePage() {
                       <circle cx="12" cy="10" r="3" />
                     </svg>
                   </span>
-                  <div>
+                  <div className="about-contact-content">
                     <span className="about-contact-label">Workshop Address</span>
                     <span className="about-contact-value">
                       59 Porana Road, Glenfield, Auckland 0627
@@ -810,7 +748,7 @@ export default function HomePage() {
                       <polyline points="12 6 12 12 16 14" />
                     </svg>
                   </span>
-                  <div>
+                  <div className="about-contact-content">
                     <span className="about-contact-label">Operating Hours</span>
                     <span className="about-contact-value">
                       Mon–Fri · 7:30am–5:00pm
