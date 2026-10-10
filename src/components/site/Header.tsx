@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useQuote } from './quote-context'
 import { SERVICES, isCommercialService } from '../../data/services'
 
@@ -15,6 +15,7 @@ const NAV = [
 
 export function Header() {
   const { pathname, search } = useLocation()
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
@@ -97,6 +98,41 @@ export function Header() {
     setMenuOpen(false)
   }
 
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    closeAllMenus()
+    if (pathname === '/') {
+      if (window.location.hash) {
+        navigate('/', { replace: true })
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    } else {
+      navigate('/')
+      document.documentElement.style.scrollBehavior = 'auto'
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      document.documentElement.style.scrollBehavior = ''
+    }
+  }
+
+  const handleNavClick = (path: string) => (e: React.MouseEvent) => {
+    closeAllMenus()
+    if (path === '/') {
+      handleHomeClick(e)
+      return
+    }
+    if (path.startsWith('/#') && pathname === '/') {
+      const targetId = path.slice(2)
+      const el = document.getElementById(targetId)
+      if (el) {
+        e.preventDefault()
+        navigate(path)
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
     <>
       <header
@@ -115,7 +151,7 @@ export function Header() {
           className="brand"
           to="/"
           aria-label="Auckland Roof Professionals — home"
-          onClick={closeAllMenus}
+          onClick={handleHomeClick}
         >
           <img src="/assets/logo-full.png" alt="Auckland Roof Professionals" className="brand-logo brand-logo--light" />
           <img src="/assets/logo-navy.png" alt="" className="brand-logo brand-logo--navy" aria-hidden="true" />
@@ -156,7 +192,11 @@ export function Header() {
               )
             }
             return (
-              <Link key={n.label} to={n.path} onClick={() => setServicesOpen(false)}>
+              <Link
+                key={n.label}
+                to={n.path}
+                onClick={n.path === '/' ? handleHomeClick : handleNavClick(n.path)}
+              >
                 {n.label}
               </Link>
             )
@@ -293,7 +333,7 @@ export function Header() {
       <div className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
         <div className="mobile-nav-scroll">
           <nav aria-label="Mobile Navigation">
-            <Link to="/" onClick={closeAllMenus}>Home</Link>
+            <Link to="/" onClick={handleHomeClick}>Home</Link>
 
             {/* Mobile Services Collapsible / Categorized Section */}
             <div className="mobile-services-section">
@@ -366,10 +406,10 @@ export function Header() {
               )}
             </div>
 
-            <Link to="/#projects" onClick={closeAllMenus}>Projects</Link>
-            <Link to="/#process" onClick={closeAllMenus}>Process</Link>
-            <Link to="/#about" onClick={closeAllMenus}>About</Link>
-            <Link to="/#faq" onClick={closeAllMenus}>FAQ</Link>
+            <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
+            <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
+            <Link to="/#about" onClick={handleNavClick('/#about')}>About</Link>
+            <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
             <Link to="/contact" onClick={closeAllMenus}>Contact Us</Link>
           </nav>
 

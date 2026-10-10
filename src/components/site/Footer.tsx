@@ -1,15 +1,47 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SERVICES } from '../../data/services'
 
 const commercial = SERVICES.filter((s) => s.badge.startsWith('Commercial'))
 const residential = SERVICES.filter((s) => !s.badge.startsWith('Commercial'))
 
 export function Footer() {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (pathname === '/') {
+      if (window.location.hash) {
+        navigate('/', { replace: true })
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    } else {
+      navigate('/')
+      document.documentElement.style.scrollBehavior = 'auto'
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      document.documentElement.style.scrollBehavior = ''
+    }
+  }
+
+  const handleNavClick = (path: string) => (e: React.MouseEvent) => {
+    if (path.startsWith('/#') && pathname === '/') {
+      const targetId = path.slice(2)
+      const el = document.getElementById(targetId)
+      if (el) {
+        e.preventDefault()
+        navigate(path)
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-company">
-          <Link to="/">
+          <Link to="/" onClick={handleHomeClick} aria-label="Auckland Roof Professionals — home">
             <img src="/assets/logo-full.png" alt="Auckland Roof Professionals" className="footer-logo" />
           </Link>
           <p>Commercial and residential roofing specialists, delivering reliable, durable roofing systems across Tāmaki Makaurau — Auckland.</p>
@@ -50,10 +82,10 @@ export function Footer() {
         <div className="footer-column">
           <h3>Company</h3>
           <nav>
-            <Link to="/#about">About us</Link>
-            <Link to="/#projects">Projects</Link>
-            <Link to="/#process">Process</Link>
-            <Link to="/#faq">FAQ</Link>
+            <Link to="/#about" onClick={handleNavClick('/#about')}>About us</Link>
+            <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
+            <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
+            <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
           </nav>
         </div>
 

@@ -24,16 +24,35 @@ import ContactPage from './pages/ContactPage'
 function ScrollManager() {
   const { pathname, hash, search } = useLocation()
   useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+
     if (hash) {
       // wait a frame so the target is painted before scrolling
       const t = requestAnimationFrame(() => {
         const el = document.getElementById(hash.slice(1))
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-        else window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+        } else {
+          document.documentElement.style.scrollBehavior = 'auto'
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+          document.documentElement.scrollTop = 0
+          document.body.scrollTop = 0
+          document.documentElement.style.scrollBehavior = ''
+        }
       })
       return () => cancelAnimationFrame(t)
     }
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+
+    const t = requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = 'auto'
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      document.documentElement.style.scrollBehavior = ''
+    })
+    return () => cancelAnimationFrame(t)
   }, [pathname, hash, search])
   return null
 }
