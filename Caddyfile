@@ -1,0 +1,34 @@
+# Auckland Roof Professionals - Caddy Server Configuration
+# Note: Caddy automatically provisions Let's Encrypt / ZeroSSL TLS certificates
+# and automatically redirects HTTP (port 80) to HTTPS (port 443) out of the box.
+
+{
+    # Optional global options
+    email info@aucklandroofprofessionals.co.nz
+}
+
+example.com, www.example.com {
+    # Path to Vite production build
+    root * /var/www/dist
+
+    # Enable compression
+    encode gzip zstd
+
+    # Serve static files
+    file_server
+
+    # SPA client-side routing fallback
+    try_files {path} /index.html
+
+    # Security & HSTS Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Cache hashed assets in /assets/
+    @staticAssets path /assets/*
+    header @staticAssets Cache-Control "public, max-age=31536000, immutable"
+}

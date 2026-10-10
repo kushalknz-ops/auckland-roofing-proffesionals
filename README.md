@@ -43,7 +43,21 @@ The `GlassFilter` SVG (id `glass-distortion`) is mounted once in `App.tsx`.
 
 ## Dev
 ```bash
-npm run dev      # http://localhost:5174
+npm run dev      # https://localhost:5174 (HTTP traffic on port 5173 automatically redirects to HTTPS)
 npm run build    # tsc -b && vite build
+npm run preview  # https://localhost:5174 (with port 5173 -> 5174 HTTP redirect)
+npm run serve    # Production Node.js server with HTTP-to-HTTPS redirect & SPA fallback
 ```
 Assets live in `public/assets/**` (images, logos, favicon).
+
+## HTTPS & HTTP-to-HTTPS Redirection
+- **Local Dev Server**: Configured via `@vitejs/plugin-basic-ssl` and an automatic HTTP listener on port 5173 that redirects to HTTPS on port 5174.
+- **Client-Side**: `index.html` includes CSP `upgrade-insecure-requests` and a protocol upgrade script for production domains.
+- **Production Server Configurations**:
+  - `nginx.conf`: Nginx port 80 redirect (`return 301 https://$host$request_uri;`), TLS 1.2/1.3, HSTS headers, SPA fallback.
+  - `public/.htaccess`: Apache mod_rewrite HTTP-to-HTTPS redirect rule and HSTS headers (copied to `dist/.htaccess` during build).
+  - `public/_redirects` & `netlify.toml`: Netlify / Cloudflare Pages HTTPS enforcement and SPA rules.
+  - `vercel.json`: Vercel SPA routing and HSTS headers.
+  - `Caddyfile`: Zero-config automatic TLS & HTTP redirect.
+  - `server.js`: Standalone Node.js production server with HTTP redirect and reverse-proxy (`x-forwarded-proto`) support.
+

@@ -1,0 +1,3 @@
+# Cloudflare Pages / SPA Redirects
+# Single Page Application routing fallback:
+/*    /index.html   200

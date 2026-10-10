@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+  <script>
+    // Enforce HTTPS redirection for production traffic
+    if (window.location.protocol === 'http:' && !['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname)) {
+      window.location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+    }
+  </script>
   <title>Auckland Roof Professionals | Commercial &amp; Residential Roofing</title>
   <meta name="description" content="Auckland Roof Professionals — commercial and residential roofing specialists. Metal roofs & cladding, membrane roofing, warm roof systems, asphalt shingles, roof safety and asset maintenance." />
   <link rel="icon" type="image/png" href="/assets/favicon.png" />

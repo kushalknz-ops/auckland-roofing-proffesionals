@@ -1,0 +1,12 @@
+# Cloudflare Pages Headers
+# Enforce HTTPS, HSTS, and Security Headers
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: upgrade-insecure-requests
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
