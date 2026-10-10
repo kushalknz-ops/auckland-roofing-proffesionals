@@ -26,7 +26,9 @@ export function MapBand() {
         <iframe
           className="map-iframe"
           title="Auckland Roof Professionals Workshop Location"
-          src="https://maps.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+          src="https://www.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+          style={{ border: 0 }}
+          allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           aria-label="Google Maps showing workshop at 59 Porana Road, Glenfield, Auckland"

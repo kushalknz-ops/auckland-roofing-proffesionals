@@ -4,6 +4,7 @@ import { SERVICES, isCommercialService, type Service } from '../data/services'
 import { CtaBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { useSEO } from '../hooks/useSEO'
+import { EmptyState } from '../components/ui/EmptyState'
 
 const COPY: Record<
   'commercial' | 'residential',
@@ -119,14 +120,34 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
       <section className="section svc-page" id="svcList">
         <div className="container">
           <p className="service-group-label reveal">{c.label}</p>
-          <div className="card-grid">
-            {list.map((s) => <ServiceCard key={s.id} s={s} />)}
-          </div>
+          {list.length === 0 ? (
+            <EmptyState
+              title={`No ${commercial ? 'Commercial' : 'Residential'} Services Listed`}
+              description={`We are currently updating our ${commercial ? 'commercial' : 'residential'} service offerings. Explore our other services or request a custom site assessment.`}
+              action={{
+                label: commercial ? 'See Residential Services' : 'See Commercial Services',
+                href: c.switchTo,
+              }}
+              secondaryAction={{
+                label: 'Request Free Assessment',
+                onClick: openQuote,
+              }}
+            />
+          ) : (
+            <div className="card-grid">
+              {list.map((s) => <ServiceCard key={s.id} s={s} />)}
+            </div>
+          )}
           <p className="svc-note reveal">
             {c.note}{' '}
-            <a className="text-link" href="#" onClick={(e) => { e.preventDefault(); openQuote() }}>
+            <button
+              type="button"
+              className="text-link"
+              onClick={() => openQuote()}
+              style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', display: 'inline' }}
+            >
               {c.noteLink}
-            </a>
+            </button>
           </p>
         </div>
       </section>

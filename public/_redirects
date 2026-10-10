@@ -1,3 +1,6 @@
-# Cloudflare Pages / SPA Redirects
+# Canonical domain redirects (www to non-www)
+https://www.aucklandroofprofessionals.nz/* https://aucklandroofprofessionals.nz/:splat 301!
+http://www.aucklandroofprofessionals.nz/*  https://aucklandroofprofessionals.nz/:splat 301!
+
 # Single Page Application routing fallback:
 /*    /index.html   200

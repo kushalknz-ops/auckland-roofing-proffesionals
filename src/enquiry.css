@@ -46,8 +46,17 @@
 .enquiry-actions.right{justify-content:flex-end}.enquiry-primary,.enquiry-submit{min-width:138px;min-height:48px;padding:0 18px;display:inline-flex;align-items:center;justify-content:space-between;gap:22px;border:1px solid var(--charcoal);border-radius:var(--radius-ui);background:var(--charcoal);color:#F8FAF7;font:700 11px var(--font-body);cursor:pointer;transition:background .2s,border-color .2s,transform .2s;text-transform:none;letter-spacing:0}
 .enquiry-submit{min-width:220px;background:var(--charcoal);border-color:var(--charcoal);text-transform:uppercase;letter-spacing:1.3px}
 .enquiry-primary:hover,.enquiry-submit:hover{background:var(--sage);border-color:var(--sage);color:var(--charcoal);transform:translateY(-1px)}
+.enquiry-primary:disabled,.enquiry-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none!important}
+.enquiry-spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#F8FAF7;border-radius:50%;animation:enquirySpin 0.7s linear infinite;display:inline-block}
+@keyframes enquirySpin{to{transform:rotate(360deg)}}
+.enquiry-alert{grid-column:1/-1;background:#FDF2F2;border:1px solid #F5C6C6;border-left:4px solid #C54E4E;color:#942C2C;padding:12px 14px;font-size:12px;line-height:1.45;margin-bottom:16px;border-radius:2px}
+.upload-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.upload-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;background:var(--surface-2);border:1px solid var(--line-l2);font-size:11px;color:var(--headline);border-radius:3px}
+.upload-chip-remove{background:transparent;border:none;color:#C54E4E;cursor:pointer;font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
+.upload-chip-remove:hover{color:#942C2C}
 .enquiry-back{padding:12px 2px;border:0;background:transparent;color:var(--muted-l);font-size:11px;cursor:pointer}
 .enquiry-back:hover{color:var(--charcoal)}
+.enquiry-back:disabled{opacity:0.5;cursor:not-allowed}
 .enquiry-emergency{margin:15px 0 0;color:var(--muted2-l);font-size:9.5px}
 .enquiry-success{padding:70px 20px;text-align:center}.enquiry-success>span{width:42px;height:42px;margin:0 auto 24px;display:grid;place-items:center;border-radius:50%;background:var(--sage);color:var(--charcoal)}.enquiry-success .eyebrow{justify-content:center;color:var(--sage)}.enquiry-success h2{margin:22px 0 12px!important;text-transform:none!important;font-size:34px!important;letter-spacing:-1px!important;color:var(--headline)}.enquiry-success>p:last-child{color:var(--muted-l)}
 /* Modal */

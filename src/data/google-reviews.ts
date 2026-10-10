@@ -120,21 +120,3 @@ export const AUTHENTIC_GOOGLE_REVIEWS: GoogleReview[] = [
   },
 ]
 
-/**
- * Service function to retrieve reviews. In production this connects to an authenticated
- * Google Places API endpoint or cached reviews store.
- */
-export async function fetchGoogleReviews(): Promise<{
-  profile: GoogleBusinessProfile
-  reviews: GoogleReview[]
-}> {
-  return new Promise((resolve) => {
-    // Return verified Google review data
-    setTimeout(() => {
-      resolve({
-        profile: GOOGLE_BUSINESS_PROFILE,
-        reviews: AUTHENTIC_GOOGLE_REVIEWS,
-      })
-    }, 150)
-  })
-}

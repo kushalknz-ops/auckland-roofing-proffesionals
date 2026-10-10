@@ -223,15 +223,37 @@
   font-family:var(--font-display);
   transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
 }
-.contact-submit-btn:hover{
-  background:var(--sage);
-  border-color:var(--sage);
-  color:var(--charcoal);
-  transform:translateY(-1px);
-  box-shadow:0 8px 20px rgba(165,184,172,.3);
+.contact-submit-btn:disabled{
+  opacity:0.65;
+  cursor:not-allowed;
+  transform:none !important;
+  box-shadow:none !important;
 }
-.contact-submit-btn:active{
-  transform:translateY(0);
+.contact-spinner{
+  width:15px;
+  height:15px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#F8FAF7;
+  border-radius:50%;
+  animation:contactSpin 0.7s linear infinite;
+  display:inline-block;
+}
+@keyframes contactSpin{
+  to{transform:rotate(360deg)}
+}
+.contact-form-alert{
+  background:#FDF2F2;
+  border:1px solid #F5C6C6;
+  border-left:4px solid #C54E4E;
+  color:#942C2C;
+  padding:12px 16px;
+  border-radius:4px;
+  font-size:13.5px;
+  line-height:1.45;
+  margin-bottom:20px;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
 }
 
 /* Success state */

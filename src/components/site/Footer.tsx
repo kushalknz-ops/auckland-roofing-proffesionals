@@ -52,15 +52,15 @@ export function Footer() {
           <div className="footer-socials">
             <span>Follow us</span>
             <div>
-              <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.2 0-4 1.8-4 4v2H7v4h3v6h4v-6h3l1-4h-4V8z" /></svg></a>
-              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3.5" /><circle className="social-dot" cx="17.2" cy="6.8" r="1" /></svg></a>
-              <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6 9v11H3V9h3zM4.5 4a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6zM10 9h3v1.7c.6-1 1.8-2 3.6-2 2.8 0 4.4 1.7 4.4 5V20h-3.3v-5.6c0-1.6-.6-2.6-2-2.6-1.5 0-2.4 1-2.4 2.9V20H10V9z" /></svg></a>
+              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.2 0-4 1.8-4 4v2H7v4h3v6h4v-6h3l1-4h-4V8z" /></svg></a>
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3.5" /><circle className="social-dot" cx="17.2" cy="6.8" r="1" /></svg></a>
+              <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6 9v11H3V9h3zM4.5 4a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6zM10 9h3v1.7c.6-1 1.8-2 3.6-2 2.8 0 4.4 1.7 4.4 5V20h-3.3v-5.6c0-1.6-.6-2.6-2-2.6-1.5 0-2.4 1-2.4 2.9V20H10V9z" /></svg></a>
             </div>
           </div>
         </div>
 
         <div className="footer-column">
-          <h3>Commercial</h3>
+          <h3><Link to="/commercial">Commercial</Link></h3>
           <nav>
             {commercial.map((s) => (
               <Link key={s.id} to={`/service?id=${s.id}`}>{s.title}</Link>
@@ -69,7 +69,7 @@ export function Footer() {
         </div>
 
         <div className="footer-column">
-          <h3>Residential</h3>
+          <h3><Link to="/residential">Residential</Link></h3>
           <nav>
             {residential.map((s) => (
               <Link key={s.id} to={`/service?id=${s.id}`}>
@@ -86,6 +86,7 @@ export function Footer() {
             <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
             <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
             <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
+            <Link to="/contact">Contact</Link>
           </nav>
         </div>
 

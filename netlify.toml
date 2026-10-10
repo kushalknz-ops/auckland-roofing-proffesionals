@@ -4,10 +4,23 @@
   publish = "dist"
   command = "npm run build"
 
+# Canonical redirects: www to apex domain
+[[redirects]]
+  from = "https://www.aucklandroofprofessionals.nz/*"
+  to = "https://aucklandroofprofessionals.nz/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.aucklandroofprofessionals.nz/*"
+  to = "https://aucklandroofprofessionals.nz/:splat"
+  status = 301
+  force = true
+
 # Redirect HTTP to HTTPS
 [[redirects]]
   from = "http://*"
-  to = "https://:splat"
+  to = "https://aucklandroofprofessionals.nz/:splat"
   status = 301
   force = true
 
@@ -25,9 +38,17 @@
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "SAMEORIGIN"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    X-XSS-Protection = "0"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), interest-cohort=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://aucklandroofprofessionals.nz https://res.cloudinary.com; media-src 'self' https://res.cloudinary.com blob:; connect-src 'self' https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self' https://www.google.com https://maps.google.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
 
-# Immutable caching for built assets
+# Immutable caching & CORS for built assets
 [[headers]]
   for = "/assets/*"
   [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, HEAD, OPTIONS"
+    Access-Control-Allow-Headers = "Origin, Content-Type, Accept"
+    Cross-Origin-Resource-Policy = "cross-origin"
     Cache-Control = "public, max-age=31536000, immutable"

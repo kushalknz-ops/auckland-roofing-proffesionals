@@ -1,6 +1,80 @@
+# ==============================================================================
 # Robots.txt for Auckland Roof Professionals
+# Website: https://aucklandroofprofessionals.nz/
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Default Policy for All Web Crawlers
+# ------------------------------------------------------------------------------
 User-agent: *
 Allow: /
 
-# Sitemap
+# Explicitly permit indexing of static assets and client-side rendering files
+Allow: /assets/
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.webp$
+Allow: /*.svg$
+Allow: /*.ico$
+Allow: /*.woff2$
+
+# ------------------------------------------------------------------------------
+# Major Search Engine Crawlers (Full Crawling & Indexing)
+# ------------------------------------------------------------------------------
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# ------------------------------------------------------------------------------
+# AI Search & Conversational Assistants (Permit citations & direct search)
+# ------------------------------------------------------------------------------
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# ------------------------------------------------------------------------------
+# Bulk Scrapers & Aggressive Harvesters (Prevent server strain)
+# ------------------------------------------------------------------------------
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+# ------------------------------------------------------------------------------
+# Sitemap & Host Directives
+# ------------------------------------------------------------------------------
 Sitemap: https://aucklandroofprofessionals.nz/sitemap.xml
+Host: https://aucklandroofprofessionals.nz

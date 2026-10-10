@@ -17,7 +17,7 @@ src/
 ├── arp.css                 full site design system (light theme, blue/copper palette) + glass header CSS
 ├── components/
 │   ├── ui/
-│   │   └── liquid-glass.tsx   GlassEffect / GlassDock / GlassButton / GlassFilter (+ demo Component)
+│   │   └── liquid-glass.tsx   GlassEffect / GlassDock / GlassButton / GlassFilter
 │   └── site/
 │       ├── Header.tsx         glass navbar (desktop-only, engages when scrolled)
 │       ├── Footer.tsx
@@ -49,11 +49,24 @@ npm run preview  # http://localhost:5174
 ```
 Assets live in `public/assets/**` (images, logos, favicon).
 
-## HTTPS & Production on Cloudflare
-- **Local Dev Server**: Runs on standard HTTP (`http://localhost:5174`) so you avoid untrusted self-signed certificate warnings in the browser.
-- **Production (Cloudflare)**:
-  - `public/_headers` (copied to `dist/_headers`) applies `Strict-Transport-Security` (HSTS) and CSP `upgrade-insecure-requests`.
-  - `public/_redirects` provides SPA routing fallback.
-  - `index.html` redirects non-localhost traffic to HTTPS automatically.
-  - In the Cloudflare Dashboard (**SSL/TLS ➔ Edge Certificates**), toggle **Always Use HTTPS** to ON.
+## Security Headers & CORS Configuration
+The site implements production-grade security headers and CORS policies across all deployment targets:
+
+- **Security Headers Enforced**:
+  - `Strict-Transport-Security`: `max-age=31536000; includeSubDomains; preload` (HSTS)
+  - `Content-Security-Policy`: strict resource controls for scripts, styles, fonts, images (Cloudinary), media, and `upgrade-insecure-requests`
+  - `X-Content-Type-Options`: `nosniff`
+  - `X-Frame-Options`: `SAMEORIGIN` (clickjacking defense)
+  - `Referrer-Policy`: `strict-origin-when-cross-origin`
+  - `Permissions-Policy`: restricts unused camera, microphone, geolocation, payments, usb, and vr features
+  - `Cross-Origin-Opener-Policy`: `same-origin`
+  - `Cross-Origin-Resource-Policy`: `same-origin` (routes) / `cross-origin` (static assets)
+  - `X-XSS-Protection`: `0` (OWASP/MDN modern standard)
+
+- **CORS Policies**:
+  - **Static Assets (`/assets/*`)**: Configured with `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods: GET, HEAD, OPTIONS`, and `Cross-Origin-Resource-Policy: cross-origin` for asset delivery across CDNs and subdomains.
+  - **Node.js (`server.js`)**: Configurable allowed origins via `ALLOWED_ORIGINS` env var (defaults to `aucklandroofprofessionals.nz` and localhost in development) with preflight `OPTIONS` (204) handling.
+  - **Vite Dev & Preview (`vite.config.ts`)**: CORS enabled with security headers.
+  - **Static Hosts & Reverse Proxies**: Configurations synchronized in `public/_headers` (Cloudflare Pages), `vercel.json` (Vercel), `netlify.toml` (Netlify), `nginx.conf` (Nginx), `Caddyfile` (Caddy), and `public/.htaccess` (Apache).
+
 

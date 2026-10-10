@@ -5,16 +5,27 @@
   RewriteEngine On
   RewriteBase /
 
-  # Redirect all HTTP traffic to HTTPS (301 Permanent Redirect)
+  # 1. Canonical Host: Redirect www to apex domain (301 Permanent Redirect)
+  RewriteCond %{HTTP_HOST} ^www\.aucklandroofprofessionals\.nz$ [NC]
+  RewriteRule ^(.*)$ https://aucklandroofprofessionals.nz/$1 [L,R=301]
+
+  # 2. Canonical Protocol: Redirect HTTP to HTTPS (301 Permanent Redirect)
   RewriteCond %{HTTPS} off
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
-  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  RewriteRule ^(.*)$ https://aucklandroofprofessionals.nz%{REQUEST_URI} [L,R=301]
 
-  # React SPA Routing: send all requests that are not existing files/directories to index.html
+  # 3. Canonical Paths: Strip trailing slashes on sub-paths
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+  # 4. React SPA Routing: send all requests that are not existing files/directories to index.html
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
 </IfModule>
+
+# Custom 404 error handler
+ErrorDocument 404 /index.html
 
 # Security and HSTS Headers
 <IfModule mod_headers.c>
@@ -23,6 +34,18 @@
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-XSS-Protection "0"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://aucklandroofprofessionals.nz https://res.cloudinary.com; media-src 'self' https://res.cloudinary.com blob:; connect-src 'self' https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self' https://www.google.com https://maps.google.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
+
+  # CORS for static assets (fonts, images, stylesheets, scripts, media)
+  <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js|png|jpe?g|gif|svg|webp|ico|mp4)$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+    Header set Access-Control-Allow-Headers "Origin, Content-Type, Accept"
+    Header set Cross-Origin-Resource-Policy "cross-origin"
+  </FilesMatch>
 </IfModule>
 
 # Caching for immutable static assets

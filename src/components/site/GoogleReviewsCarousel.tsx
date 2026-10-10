@@ -207,9 +207,10 @@ export function GoogleReviewsCarousel({
 
         {/* Loading State */}
         {isLoading && (
-          <div className="gr-loading-grid" aria-busy="true" aria-label="Loading reviews">
+          <div className="gr-loading-grid" role="status" aria-busy="true" aria-label="Loading customer reviews">
+            <span className="sr-only">Loading verified Google reviews...</span>
             {[1, 2, 3, 4].map((n) => (
-              <div key={n} className="gr-card-skeleton">
+              <div key={n} className="gr-card-skeleton" aria-hidden="true">
                 <div className="gr-skel-header">
                   <div className="gr-skel-avatar" />
                   <div className="gr-skel-meta">
@@ -228,20 +229,58 @@ export function GoogleReviewsCarousel({
 
         {/* Error State */}
         {!isLoading && error && (
-          <div className="gr-error-box" role="alert">
-            <p className="gr-error-text">Unable to load reviews: {error}</p>
-            {onRetry && (
-              <button type="button" className="outline-btn" onClick={onRetry}>
-                Try again
-              </button>
-            )}
+          <div className="gr-error-box" role="alert" aria-live="assertive">
+            <div className="gr-error-icon" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C54E4E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '8px 0', color: 'var(--headline)' }}>
+              Unable to Load Customer Reviews
+            </h3>
+            <p className="gr-error-text" style={{ maxWidth: '480px', margin: '0 auto 16px' }}>
+              {error}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {onRetry && (
+                <button type="button" className="outline-btn" onClick={onRetry}>
+                  Try again
+                </button>
+              )}
+              <a
+                href={profile.reviewsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="outline-btn"
+              >
+                Read reviews on Google ↗
+              </a>
+            </div>
           </div>
         )}
 
         {/* Empty State */}
         {!isLoading && !error && reviews.length === 0 && (
-          <div className="gr-empty-box">
-            <p>No customer reviews currently available.</p>
+          <div className="gr-empty-box" role="status">
+            <div className="gr-empty-icon" aria-hidden="true" style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+              <GoogleGIcon />
+            </div>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 8px', color: 'var(--headline)' }}>
+              No Reviews Currently Displayed
+            </h3>
+            <p style={{ color: 'var(--muted-l)', maxWidth: '460px', margin: '0 auto 16px', fontSize: '14px' }}>
+              We're currently updating our customer testimonials. You can view all authentic feedback directly on our verified Google profile.
+            </p>
+            <a
+              href={profile.reviewsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="outline-btn"
+            >
+              View Google Business Reviews ↗
+            </a>
           </div>
         )}
 

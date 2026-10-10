@@ -3,22 +3,128 @@ import { SERVICES, isCommercialService } from '../data/services'
 import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { useSEO } from '../hooks/useSEO'
+import { EmptyState } from '../components/ui/EmptyState'
 
 export default function ServicePage() {
   const [params] = useSearchParams()
-  const s = SERVICES.find((x) => x.id === params.get('id')) ?? SERVICES[0]
+  const rawId = params.get('id')
+  const { openQuote } = useQuote()
+
+  const s = rawId
+    ? SERVICES.find((x) => x.id.toLowerCase() === rawId.toLowerCase())
+    : SERVICES[0]
+
+  useSEO({
+    title: s
+      ? s.seoTitle || `${s.title} | Auckland Roof Professionals`
+      : 'Service Not Found | Auckland Roof Professionals',
+    description: s
+      ? s.seoDescription || `${s.short} — Auckland Roof Professionals, Auckland-wide.`
+      : 'The requested roofing service was not found in our catalog. Explore all residential and commercial services.',
+    canonical: s ? `/service?id=${s.id}` : '/service',
+    ogImage: s?.img || '/assets/img/about.jpg',
+    keywords: s
+      ? `${s.title}, Auckland roofing, ${s.chips.join(', ')}`
+      : 'Auckland roofing services, commercial roofing, residential roofing',
+  })
+
+  // Empty / Not-Found State: user passed an ID that doesn't exist
+  if (rawId && !s) {
+    return (
+      <main>
+        <section className="page-hero">
+          <div className="page-hero-media" style={{ '--bg': `url('/assets/img/about.jpg')` } as React.CSSProperties} />
+          <div className="page-hero-shade" />
+          <div className="container">
+            <div className="page-hero-copy">
+              <p className="eyebrow reveal visible">Services Directory</p>
+              <h1 className="reveal visible">Service Not Found<span className="dim">.</span></h1>
+              <p className="reveal visible">We could not locate a roofing service matching "{rawId}".</p>
+              <nav className="crumbs reveal visible" aria-label="Breadcrumb">
+                <Link to="/">Home</Link><span>/</span>
+                <Link to="/#services">Services</Link><span>/</span>
+                <b>Not Found</b>
+              </nav>
+            </div>
+          </div>
+        </section>
+
+        <section className="section" style={{ background: '#F8FAF7', padding: '60px 0' }}>
+          <div className="container">
+            <EmptyState
+              title="Requested Service Unavailable"
+              description={`The roofing service "${rawId}" does not exist in our directory or may have been updated.`}
+              action={{
+                label: 'View Commercial Services',
+                href: '/commercial',
+              }}
+              secondaryAction={{
+                label: 'View Residential Services',
+                href: '/residential',
+              }}
+            >
+              <div style={{ marginTop: '24px', textAlign: 'left' }}>
+                <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#2C3533', marginBottom: '12px' }}>
+                  Available Auckland Roofing Services:
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+                  {SERVICES.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/service?id=${item.id}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 14px',
+                        background: '#FFFFFF',
+                        border: '1px solid #D1DDD6',
+                        borderRadius: '6px',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#2C3533',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <span>{item.title}</span>
+                      <span style={{ fontSize: '11px', color: '#73827F' }}>{item.badge} →</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </EmptyState>
+          </div>
+        </section>
+
+        <CtaBand
+          heading="Need guidance on your roof project?"
+          text="Speak directly with our Auckland roofing specialists for honest recommendations."
+        />
+      </main>
+    )
+  }
+
+  // Safe fallback if SERVICES is empty
+  if (!s) {
+    return (
+      <main>
+        <section className="section" style={{ background: '#F8FAF7', padding: '100px 0' }}>
+          <div className="container">
+            <EmptyState
+              title="No Services Currently Listed"
+              description="Our services catalog is temporarily updating. Please contact our team directly."
+              action={{ label: 'Return to Homepage', href: '/' }}
+              secondaryAction={{ label: 'Contact Us', href: '/contact' }}
+            />
+          </div>
+        </section>
+      </main>
+    )
+  }
+
   const commercial = isCommercialService(s)
   const category = commercial ? 'Commercial' : 'Residential'
   const categoryPath = commercial ? '/commercial' : '/residential'
-  const { openQuote } = useQuote()
-
-  useSEO({
-    title: s.seoTitle || `${s.title} | Auckland Roof Professionals`,
-    description: s.seoDescription || `${s.short} — Auckland Roof Professionals, Auckland-wide.`,
-    canonical: `/service?id=${s.id}`,
-    ogImage: s.img,
-    keywords: `${s.title}, Auckland roofing, ${s.chips.join(', ')}, ${category.toLowerCase()} roofing NZ`,
-  })
 
   const others = SERVICES.filter(
     (x) => x.id !== s.id && isCommercialService(x) === commercial,

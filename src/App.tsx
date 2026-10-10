@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import {
   BrowserRouter,
-  Navigate,
   Route,
   Routes,
   useLocation,
@@ -11,11 +10,14 @@ import { Header } from './components/site/Header'
 import { Footer } from './components/site/Footer'
 import { QuoteModal } from './components/site/QuoteModal'
 import { GlassFilter } from './components/ui/liquid-glass'
+import { ErrorBoundary } from './components/ui/ErrorBoundary'
+import { LoadingState } from './components/ui/LoadingState'
 import { useReveal } from './hooks/useReveal'
 import HomePage from './pages/HomePage'
 import CategoryPage from './pages/CategoryPage'
 import ServicePage from './pages/ServicePage'
 import ContactPage from './pages/ContactPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 /**
  * Scroll manager — emulates native anchor navigation for routed links:
@@ -29,11 +31,18 @@ function ScrollManager() {
     }
 
     if (hash) {
-      // wait a frame so the target is painted before scrolling
-      const t = requestAnimationFrame(() => {
-        const el = document.getElementById(hash.slice(1))
+      const targetId = hash.slice(1)
+      let rafId: number
+      let attempts = 0
+      const maxAttempts = 25
+
+      const tryScroll = () => {
+        const el = document.getElementById(targetId)
         if (el) {
           el.scrollIntoView({ behavior: 'smooth' })
+        } else if (attempts < maxAttempts) {
+          attempts++
+          rafId = requestAnimationFrame(tryScroll)
         } else {
           document.documentElement.style.scrollBehavior = 'auto'
           window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
@@ -41,8 +50,10 @@ function ScrollManager() {
           document.body.scrollTop = 0
           document.documentElement.style.scrollBehavior = ''
         }
-      })
-      return () => cancelAnimationFrame(t)
+      }
+
+      rafId = requestAnimationFrame(tryScroll)
+      return () => cancelAnimationFrame(rafId)
     }
 
     const t = requestAnimationFrame(() => {
@@ -73,14 +84,19 @@ export default function App() {
         <ScrollManager />
         <RevealManager />
         <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/commercial" element={<CategoryPage kind="commercial" />} />
-          <Route path="/residential" element={<CategoryPage kind="residential" />} />
-          <Route path="/service" element={<ServicePage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <ErrorBoundary>
+          <Suspense fallback={<LoadingState fullPage message="Loading page..." />}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/commercial" element={<CategoryPage kind="commercial" />} />
+              <Route path="/residential" element={<CategoryPage kind="residential" />} />
+              <Route path="/service" element={<ServicePage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/404" element={<NotFoundPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
         <Footer />
         <QuoteModal />
       </QuoteProvider>

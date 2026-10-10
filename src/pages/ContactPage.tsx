@@ -1,18 +1,18 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useRef, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { SERVICE_OPTION_GROUPS, OTHER_OPTION } from '../data/service-options'
+import {
+  validateContactForm,
+  validateName,
+  validateEmail,
+  validatePhone,
+  validateService,
+  validateDetails,
+  type ContactFormData,
+  type ContactFormErrors,
+} from '../lib/validation'
 import { useSEO } from '../hooks/useSEO'
 import '../contact.css'
-
-interface ContactFormData {
-  fullName: string
-  email: string
-  phone: string
-  service: string
-  message: string
-}
-
-type Errors = Partial<Record<keyof ContactFormData, string>>
 
 export default function ContactPage() {
   useSEO({
@@ -29,41 +29,121 @@ export default function ContactPage() {
     phone: '',
     service: '',
     message: '',
+    _hp: '',
   })
-  const [errors, setErrors] = useState<Errors>({})
+  const [errors, setErrors] = useState<ContactFormErrors>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
+
+  // Refs for accessible focus management
+  const fullNameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const serviceRef = useRef<HTMLSelectElement>(null)
+  const messageRef = useRef<HTMLTextAreaElement>(null)
+
+  const validateField = (field: keyof ContactFormData, value: string): string | null => {
+    switch (field) {
+      case 'fullName':
+        return validateName(value, 'Full name')
+      case 'email':
+        return validateEmail(value)
+      case 'phone':
+        return validatePhone(value, false)
+      case 'service':
+        return validateService(value)
+      case 'message':
+        return validateDetails(value, 10, 2000, 'Your message')
+      default:
+        return null
+    }
+  }
+
+  const handleBlur = (field: keyof ContactFormData) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    const fieldError = validateField(field, data[field] || '')
+    setErrors((prev) => ({ ...prev, [field]: fieldError || undefined }))
+  }
 
   const handleChange = (field: keyof ContactFormData, value: string) => {
     setData((prev) => ({ ...prev, [field]: value }))
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }))
+    if (serverError) setServerError(null)
+
+    // If already touched or has error, re-validate immediately for smooth UX
+    if (touched[field] || errors[field]) {
+      const fieldError = validateField(field, value)
+      setErrors((prev) => ({ ...prev, [field]: fieldError || undefined }))
     }
   }
 
-  const validate = (): boolean => {
-    const nextErrors: Errors = {}
-    if (!data.fullName.trim()) {
-      nextErrors.fullName = 'Please enter your full name.'
+  const focusFirstError = (validationErrors: ContactFormErrors) => {
+    if (validationErrors.fullName) {
+      fullNameRef.current?.focus()
+    } else if (validationErrors.email) {
+      emailRef.current?.focus()
+    } else if (validationErrors.phone) {
+      phoneRef.current?.focus()
+    } else if (validationErrors.service) {
+      serviceRef.current?.focus()
+    } else if (validationErrors.message) {
+      messageRef.current?.focus()
     }
-    if (!data.email.trim()) {
-      nextErrors.email = 'Please enter your email address.'
-    } else if (!/^\S+@\S+\.\S+$/.test(data.email)) {
-      nextErrors.email = 'Please enter a valid email address.'
-    }
-    if (!data.service) {
-      nextErrors.service = 'Please select a service.'
-    }
-    if (!data.message.trim()) {
-      nextErrors.message = 'Please enter your message.'
-    }
-    setErrors(nextErrors)
-    return Object.keys(nextErrors).length === 0
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
-    if (!validate()) return
-    setSubmitted(true)
+    setServerError(null)
+
+    // 1. Client-side validation
+    const { isValid, errors: clientErrors } = validateContactForm(data)
+    setTouched({
+      fullName: true,
+      email: true,
+      phone: true,
+      service: true,
+      message: true,
+    })
+
+    if (!isValid) {
+      setErrors(clientErrors)
+      focusFirstError(clientErrors)
+      return
+    }
+
+    // 2. Server-side submission & validation
+    setIsSubmitting(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await res.json().catch(() => null)
+
+      if (res.ok && result?.success) {
+        setSubmitted(true)
+        setErrors({})
+      } else if (res.status === 400 && result?.errors) {
+        // Server validation failed
+        setErrors(result.errors)
+        setServerError(result.message || 'Please fix the highlighted errors below.')
+        focusFirstError(result.errors)
+      } else if (res.status === 429) {
+        setServerError('Too many submissions. Please wait a few moments or call us directly at 0800 555 766.')
+      } else {
+        setServerError(result?.message || 'Something went wrong submitting your message. Please try again or call 0800 555 766.')
+      }
+    } catch {
+      setServerError('Unable to connect to the server. Please check your connection or call us at 0800 555 766.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleReset = () => {
@@ -73,8 +153,11 @@ export default function ContactPage() {
       phone: '',
       service: '',
       message: '',
+      _hp: '',
     })
     setErrors({})
+    setTouched({})
+    setServerError(null)
     setSubmitted(false)
   }
 
@@ -118,25 +201,98 @@ export default function ContactPage() {
                 </button>
               </div>
             ) : (
-              <form className="contact-form-fields" onSubmit={handleSubmit} noValidate>
+              <form className="contact-form-fields" onSubmit={handleSubmit} noValidate aria-busy={isSubmitting}>
+                {/* Server Error Alert Banner */}
+                {serverError && (
+                  <div className="contact-form-alert" role="alert" aria-live="assertive">
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', flex: 1 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, marginTop: '2px' }}>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                      </svg>
+                      <div style={{ flex: 1 }}>
+                        <strong style={{ display: 'block', marginBottom: '4px' }}>Submission Issue</strong>
+                        <span>{serverError}</span>
+                        <div style={{ marginTop: '8px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={(e) => handleSubmit(e as unknown as FormEvent)}
+                            disabled={isSubmitting}
+                            style={{
+                              padding: '4px 10px',
+                              background: '#C54E4E',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                            }}
+                          >
+                            {isSubmitting ? 'Retrying...' : 'Retry Sending'}
+                          </button>
+                          <a
+                            href="tel:0800555766"
+                            style={{ color: '#942C2C', fontSize: '11px', fontWeight: 600, textDecoration: 'underline' }}
+                          >
+                            Or Call 0800 555 766
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setServerError(null)}
+                      aria-label="Dismiss error"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#942C2C',
+                        cursor: 'pointer',
+                        fontSize: '18px',
+                        lineHeight: 1,
+                        padding: '0 4px',
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+
+                {/* Honeypot anti-spam field */}
+                <div style={{ display: 'none' }} aria-hidden="true">
+                  <input
+                    type="text"
+                    name="_hp"
+                    value={data._hp || ''}
+                    onChange={(e) => handleChange('_hp', e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="contact-form-row">
                   <div className="contact-field-group">
                     <label htmlFor="fullName">
                       Full Name <span className="req">*</span>
                     </label>
                     <input
+                      ref={fullNameRef}
                       id="fullName"
                       type="text"
                       autoComplete="name"
                       placeholder="e.g. John Doe"
                       value={data.fullName}
                       onChange={(e) => handleChange('fullName', e.target.value)}
+                      onBlur={() => handleBlur('fullName')}
                       className={errors.fullName ? 'has-error' : ''}
                       aria-invalid={!!errors.fullName}
                       aria-describedby={errors.fullName ? 'fullName-error' : undefined}
+                      disabled={isSubmitting}
                     />
                     {errors.fullName && (
-                      <span id="fullName-error" className="contact-field-error">
+                      <span id="fullName-error" className="contact-field-error" role="alert">
                         {errors.fullName}
                       </span>
                     )}
@@ -147,18 +303,21 @@ export default function ContactPage() {
                       Email Address <span className="req">*</span>
                     </label>
                     <input
+                      ref={emailRef}
                       id="email"
                       type="email"
                       autoComplete="email"
                       placeholder="e.g. john@example.co.nz"
                       value={data.email}
                       onChange={(e) => handleChange('email', e.target.value)}
+                      onBlur={() => handleBlur('email')}
                       className={errors.email ? 'has-error' : ''}
                       aria-invalid={!!errors.email}
                       aria-describedby={errors.email ? 'email-error' : undefined}
+                      disabled={isSubmitting}
                     />
                     {errors.email && (
-                      <span id="email-error" className="contact-field-error">
+                      <span id="email-error" className="contact-field-error" role="alert">
                         {errors.email}
                       </span>
                     )}
@@ -169,13 +328,24 @@ export default function ContactPage() {
                   <div className="contact-field-group">
                     <label htmlFor="phone">Phone Number</label>
                     <input
+                      ref={phoneRef}
                       id="phone"
                       type="tel"
                       autoComplete="tel"
                       placeholder="e.g. 021 123 4567"
                       value={data.phone}
                       onChange={(e) => handleChange('phone', e.target.value)}
+                      onBlur={() => handleBlur('phone')}
+                      className={errors.phone ? 'has-error' : ''}
+                      aria-invalid={!!errors.phone}
+                      aria-describedby={errors.phone ? 'phone-error' : undefined}
+                      disabled={isSubmitting}
                     />
+                    {errors.phone && (
+                      <span id="phone-error" className="contact-field-error" role="alert">
+                        {errors.phone}
+                      </span>
+                    )}
                   </div>
 
                   <div className="contact-field-group">
@@ -183,12 +353,15 @@ export default function ContactPage() {
                       Service Required <span className="req">*</span>
                     </label>
                     <select
+                      ref={serviceRef}
                       id="service"
                       value={data.service}
                       onChange={(e) => handleChange('service', e.target.value)}
+                      onBlur={() => handleBlur('service')}
                       className={errors.service ? 'has-error' : ''}
                       aria-invalid={!!errors.service}
                       aria-describedby={errors.service ? 'service-error' : undefined}
+                      disabled={isSubmitting}
                     >
                       <option value="">Select a roofing service</option>
                       {SERVICE_OPTION_GROUPS.map((group) => (
@@ -203,7 +376,7 @@ export default function ContactPage() {
                       <option value={OTHER_OPTION}>{OTHER_OPTION}</option>
                     </select>
                     {errors.service && (
-                      <span id="service-error" className="contact-field-error">
+                      <span id="service-error" className="contact-field-error" role="alert">
                         {errors.service}
                       </span>
                     )}
@@ -215,24 +388,47 @@ export default function ContactPage() {
                     Your Message <span className="req">*</span>
                   </label>
                   <textarea
+                    ref={messageRef}
                     id="message"
                     rows={4}
+                    maxLength={2000}
                     placeholder="Describe your roof condition, goals or any urgent requirements..."
                     value={data.message}
                     onChange={(e) => handleChange('message', e.target.value)}
+                    onBlur={() => handleBlur('message')}
                     className={errors.message ? 'has-error' : ''}
                     aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? 'message-error' : undefined}
+                    disabled={isSubmitting}
                   />
-                  {errors.message && (
-                    <span id="message-error" className="contact-field-error">
+                  {errors.message ? (
+                    <span id="message-error" className="contact-field-error" role="alert">
                       {errors.message}
                     </span>
+                  ) : (
+                    <small style={{ color: 'var(--muted2-l)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                      {data.message.length.toLocaleString()}/2,000 characters (minimum 10)
+                    </small>
                   )}
                 </div>
 
-                <button type="submit" className="contact-submit-btn">
-                  Send Message <span>→</span>
+                <button
+                  type="submit"
+                  className="contact-submit-btn"
+                  disabled={isSubmitting}
+                  aria-busy={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="contact-spinner" aria-hidden="true" />
+                      <span>Sending Message...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Send Message</span>
+                      <span>→</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -315,7 +511,9 @@ export default function ContactPage() {
               <iframe
                 className="contact-map-iframe"
                 title="Auckland Roof Professionals Workshop Location"
-                src="https://maps.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                src="https://www.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                style={{ border: 0 }}
+                allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 aria-label="Google Maps showing workshop at 59 Porana Road, Glenfield, Auckland"
