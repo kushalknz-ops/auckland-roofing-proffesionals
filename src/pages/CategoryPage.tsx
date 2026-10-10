@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { SERVICES, isCommercialService, type Service } from '../data/services'
 import { CtaBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
+import { useSEO } from '../hooks/useSEO'
 
 const COPY: Record<
   'commercial' | 'residential',
@@ -80,6 +81,20 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
   const { openQuote } = useQuote()
   const commercial = kind === 'commercial'
   const list = SERVICES.filter((s) => (commercial ? isCommercialService(s) : !isCommercialService(s)))
+
+  useSEO({
+    title: commercial
+      ? 'Commercial Roofing Services Auckland | Auckland Roof Professionals'
+      : 'Residential Roofing Auckland | Shingles & Metal Roofs | Auckland Roof Professionals',
+    description: commercial
+      ? 'Commercial roofing & cladding solutions across Auckland. Standing seam, TPO membrane, warm roof systems, height safety & maintenance. 10-year warranty.'
+      : 'Specialist residential roofing in Auckland: architectural asphalt shingles, Colorsteel® long run metal roofs, membrane decks & warm roofs. Free quotes.',
+    canonical: commercial ? '/commercial' : '/residential',
+    ogImage: c.heroImg,
+    keywords: commercial
+      ? 'commercial roofing Auckland, commercial re-roofing, metal cladding, membrane roofing Auckland, warm roofs NZ, roof safety systems, roof asset maintenance'
+      : 'residential roofing Auckland, asphalt shingles Auckland, Colorsteel roofing, residential re-roofing Auckland, roof leak repair, membrane flat roofs, warm roof retrofit',
+  })
 
   return (
     <main>

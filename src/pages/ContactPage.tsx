@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { SERVICE_OPTION_GROUPS, OTHER_OPTION } from '../data/service-options'
+import { useSEO } from '../hooks/useSEO'
 import '../contact.css'
 
 interface ContactFormData {
@@ -14,6 +15,14 @@ interface ContactFormData {
 type Errors = Partial<Record<keyof ContactFormData, string>>
 
 export default function ContactPage() {
+  useSEO({
+    title: 'Contact Auckland Roof Professionals | Free Roof Quotes & Emergencies',
+    description: 'Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 555 766 or visit 59 Porana Rd, Glenfield.',
+    canonical: '/contact',
+    ogImage: '/assets/img/about.jpg',
+    keywords: 'contact Auckland roofers, roofing quotes Auckland, emergency roof repair Auckland, Glenfield roofer, commercial roof inspection, residential roof quote',
+  })
+
   const [data, setData] = useState<ContactFormData>({
     fullName: '',
     email: '',

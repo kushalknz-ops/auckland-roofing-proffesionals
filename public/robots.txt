@@ -1,0 +1,6 @@
+# Robots.txt for Auckland Roof Professionals
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://aucklandroofprofessionals.nz/sitemap.xml

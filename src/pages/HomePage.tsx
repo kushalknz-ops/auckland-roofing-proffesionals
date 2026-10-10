@@ -8,6 +8,7 @@ import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { RoofingEnquiryForm } from '../components/site/RoofingEnquiryForm'
 import { GoogleReviewsCarousel } from '../components/site/GoogleReviewsCarousel'
+import { useSEO } from '../hooks/useSEO'
 
 /* ============================================================
    STATS BAND — count-up on first view (port of index.js)
@@ -516,6 +517,14 @@ function ProjectsSection() {
 export default function HomePage() {
   const { openQuote } = useQuote()
   const heroVideoRef = useRef<HTMLVideoElement>(null)
+
+  useSEO({
+    title: 'Auckland Roof Professionals | Commercial & Residential Roofing Auckland',
+    description: "Auckland's leading roofing specialists. Commercial & residential metal roofing, membrane systems, warm roofs & asphalt shingles. 10-year warranty. Free quote.",
+    canonical: '/',
+    ogImage: '/assets/img/trust.jpg',
+    keywords: 'roofing Auckland, roofers Auckland, commercial roofing, residential roofing, Colorsteel roofing, asphalt shingles Auckland, membrane roofing, warm roofs NZ',
+  })
 
   useEffect(() => {
     if (heroVideoRef.current) {

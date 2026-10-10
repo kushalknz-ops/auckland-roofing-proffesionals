@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { SERVICES, isCommercialService } from '../data/services'
 import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
+import { useSEO } from '../hooks/useSEO'
 
 export default function ServicePage() {
   const [params] = useSearchParams()
@@ -12,11 +12,13 @@ export default function ServicePage() {
   const categoryPath = commercial ? '/commercial' : '/residential'
   const { openQuote } = useQuote()
 
-  useEffect(() => {
-    document.title = `${s.title} | Auckland Roof Professionals`
-    const meta = document.querySelector('meta[name="description"]')
-    if (meta) meta.setAttribute('content', `${s.short} — Auckland Roof Professionals, Auckland-wide.`)
-  }, [s])
+  useSEO({
+    title: s.seoTitle || `${s.title} | Auckland Roof Professionals`,
+    description: s.seoDescription || `${s.short} — Auckland Roof Professionals, Auckland-wide.`,
+    canonical: `/service?id=${s.id}`,
+    ogImage: s.img,
+    keywords: `${s.title}, Auckland roofing, ${s.chips.join(', ')}, ${category.toLowerCase()} roofing NZ`,
+  })
 
   const others = SERVICES.filter(
     (x) => x.id !== s.id && isCommercialService(x) === commercial,
