@@ -1,0 +1,264 @@
+{
+  "Home": {
+    "mobile": {
+      "performance": 71,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "1.5 s",
+      "lcp": "4.3 s",
+      "tbt": "560 ms",
+      "cls": "0.002",
+      "speedIndex": "1.6 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 32239
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 99,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.4 s",
+      "lcp": "0.8 s",
+      "tbt": "70 ms",
+      "cls": "0.002",
+      "speedIndex": "0.6 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 32702
+          }
+        ]
+      }
+    }
+  },
+  "Commercial": {
+    "mobile": {
+      "performance": 80,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "1.5 s",
+      "lcp": "4.4 s",
+      "tbt": "240 ms",
+      "cls": "0",
+      "speedIndex": "1.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3457/assets/index-BL285KKu.css",
+            "wastedBytes": 13472
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22989
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 98,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.4 s",
+      "lcp": "1.1 s",
+      "tbt": "0 ms",
+      "cls": "0.006",
+      "speedIndex": "0.5 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22989
+          }
+        ]
+      }
+    }
+  },
+  "Residential": {
+    "mobile": {
+      "performance": 76,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "1.5 s",
+      "lcp": "4.7 s",
+      "tbt": "300 ms",
+      "cls": "0.002",
+      "speedIndex": "1.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3457/assets/index-BL285KKu.css",
+            "wastedBytes": 13472
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22989
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 97,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.4 s",
+      "lcp": "1.2 s",
+      "tbt": "0 ms",
+      "cls": "0",
+      "speedIndex": "0.5 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22989
+          }
+        ]
+      }
+    }
+  },
+  "Service": {
+    "mobile": {
+      "performance": 91,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "1.5 s",
+      "lcp": "3.5 s",
+      "tbt": "80 ms",
+      "cls": "0",
+      "speedIndex": "1.5 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3457/assets/index-BL285KKu.css",
+            "wastedBytes": 13035
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22022
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.4 s",
+      "lcp": "0.7 s",
+      "tbt": "0 ms",
+      "cls": "0.002",
+      "speedIndex": "0.5 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34725
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 22022
+          }
+        ]
+      }
+    }
+  },
+  "Contact": {
+    "mobile": {
+      "performance": 87,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "1.5 s",
+      "lcp": "3.8 s",
+      "tbt": "140 ms",
+      "cls": "0",
+      "speedIndex": "1.5 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3457/assets/index-BL285KKu.css",
+            "wastedBytes": 13049
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34157
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 20668
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.4 s",
+      "lcp": "0.7 s",
+      "tbt": "20 ms",
+      "cls": "0.004",
+      "speedIndex": "0.6 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3457/assets/vendor-react-Dy-GIXkn.js",
+            "wastedBytes": 34157
+          },
+          {
+            "url": "http://localhost:3457/assets/index-C9OWeLmB.js",
+            "wastedBytes": 20668
+          }
+        ]
+      }
+    }
+  }
+}

@@ -79,11 +79,16 @@ export default function App() {
   return (
     <BrowserRouter>
       <QuoteProvider>
+        {/* WCAG 2.2 Level AA Skip Link */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         {/* SVG filter used by the liquid-glass header (url(#glass-distortion)) */}
         <GlassFilter />
         <ScrollManager />
         <RevealManager />
         <Header />
+
         <ErrorBoundary>
           <Suspense fallback={<LoadingState fullPage message="Loading page..." />}>
             <Routes>

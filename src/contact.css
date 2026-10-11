@@ -355,14 +355,15 @@
   flex-direction:column;
 }
 .contact-info-label{
-  font-size:10px;
+  font-size:10.5px;
   text-transform:uppercase;
   letter-spacing:1.3px;
   font-weight:700;
-  color:var(--muted3-l);
+  color:var(--muted-l);
   margin-bottom:3px;
   font-family:var(--font-display);
 }
+
 .contact-info-value{
   font-size:14px;
   color:var(--headline);
@@ -548,5 +549,31 @@
     width:100%;
     justify-content:center;
     padding:16px 20px;
+  }
+}
+
+@media (max-width:420px){
+  .contact-form-card{
+    padding:22px 14px;
+  }
+  .contact-form-header h2{
+    font-size:24px;
+  }
+  .contact-details-card{
+    padding:22px 14px;
+  }
+  .contact-info-item{
+    gap:10px;
+  }
+  .contact-info-icon{
+    width:36px;
+    height:36px;
+  }
+  .contact-info-value{
+    font-size:14px;
+  }
+  .emergency-phone-btn{
+    font-size:18px;
+    padding:14px 16px;
   }
 }

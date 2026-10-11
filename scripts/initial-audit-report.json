@@ -1,0 +1,47 @@
+[
+  {
+    "route": "Home Page (Desktop)",
+    "passes": 35,
+    "violations": []
+  },
+  {
+    "route": "Home Page (Mobile)",
+    "passes": 35,
+    "violations": []
+  },
+  {
+    "route": "Commercial Page",
+    "passes": 21,
+    "violations": []
+  },
+  {
+    "route": "Residential Page",
+    "passes": 21,
+    "violations": []
+  },
+  {
+    "route": "Service Detail Page",
+    "passes": 27,
+    "violations": []
+  },
+  {
+    "route": "Contact Page",
+    "passes": 29,
+    "violations": []
+  },
+  {
+    "route": "Contact Page (Mobile)",
+    "passes": 29,
+    "violations": []
+  },
+  {
+    "route": "404 Page",
+    "passes": 23,
+    "violations": []
+  },
+  {
+    "route": "QuoteModal Open",
+    "passes": 35,
+    "violations": []
+  }
+]

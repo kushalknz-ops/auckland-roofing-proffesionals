@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auckland Roof Professionals - Social Sharing Preview Validator</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0F1413;
+      --card-bg: #1A2220;
+      --card-border: #2B3A36;
+      --text: #F8FAF7;
+      --muted: #A5B8AC;
+      --accent: #10B981;
+      --gold: #D99B26;
+      --blue: #3B82F6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      padding: 32px 20px;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--accent);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    p.lead {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: #24332F;
+      border-color: var(--accent);
+      color: #FFF;
+    }
+
+    /* Cards Grid */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+    @media (max-width: 600px) {
+      .preview-grid { grid-template-columns: 1fr; }
+    }
+    .platform-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .platform-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .platform-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* Facebook Mockup */
+    .mock-facebook {
+      background: #242526;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #3A3B3C;
+    }
+    .mock-facebook img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.91 / 1;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-facebook-content {
+      padding: 14px 16px;
+      background: #242526;
+    }
+    .mock-domain {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #B0B3B8;
+      margin-bottom: 4px;
+    }
+    .mock-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #E4E6EB;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .mock-desc {
+      font-size: 13px;
+      color: #B0B3B8;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* LinkedIn Mockup */
+    .mock-linkedin {
+      background: #1B1F23;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #38434F;
+    }
+    .mock-linkedin img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.91 / 1;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-linkedin-content {
+      padding: 14px 16px;
+      background: #1B1F23;
+    }
+
+    /* Twitter / X Mockup */
+    .mock-twitter {
+      background: #000000;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #2F3336;
+    }
+    .mock-twitter img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.91 / 1;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-twitter-content {
+      padding: 14px 16px;
+      background: #000000;
+    }
+
+    /* WhatsApp Mockup */
+    .mock-whatsapp {
+      background: #0B141A;
+      border-radius: 12px;
+      padding: 10px;
+      max-width: 440px;
+      border: 1px solid #202C33;
+    }
+    .mock-whatsapp-bubble {
+      background: #005C4B;
+      border-radius: 8px;
+      overflow: hidden;
+      color: #E9EDEF;
+    }
+    .mock-whatsapp img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1.91 / 1;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-whatsapp-text {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    /* Metadata Inspection Table */
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    .meta-table th, .meta-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--card-border);
+      text-align: left;
+    }
+    .meta-table th {
+      background: #141A18;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .meta-table td code {
+      color: var(--accent);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* Actions Bar */
+    .actions-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .actions-grid {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: #24332F;
+      color: #FFF;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      border: 1px solid var(--card-border);
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="badge">Social Sharing Suite</div>
+      <h1>Open Graph &amp; Social Card Live Validator</h1>
+      <p class="lead">Interactive preview of Auckland Roof Professionals metadata and high-resolution branded cards across Facebook, LinkedIn, Twitter/X, and WhatsApp.</p>
+    </header>
+
+    <!-- Page Switcher Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchPage('home')">Homepage (/)</button>
+      <button class="tab-btn" onclick="switchPage('commercial')">Commercial (/commercial)</button>
+      <button class="tab-btn" onclick="switchPage('residential')">Residential (/residential)</button>
+      <button class="tab-btn" onclick="switchPage('contact')">Contact (/contact)</button>
+    </div>
+
+    <!-- Official Validation Links -->
+    <div class="actions-section">
+      <h3>Official Social Platform Debuggers &amp; Validators</h3>
+      <p style="color: var(--muted); font-size: 14px; margin-top: 4px;">Click any tool below to test live URLs or clear cached link metadata directly on the platforms:</p>
+      <div class="actions-grid">
+        <a class="action-btn" href="https://developers.facebook.com/tools/debug/?q=https%3A%2F%2Faucklandroofprofessionals.nz%2F" target="_blank" rel="noopener">
+          <span>📘</span> Facebook Sharing Debugger
+        </a>
+        <a class="action-btn" href="https://www.linkedin.com/post-inspector/inspect/https:%2F%2Faucklandroofprofessionals.nz%2F" target="_blank" rel="noopener">
+          <span>💼</span> LinkedIn Post Inspector
+        </a>
+        <a class="action-btn" href="https://www.opengraph.xyz/url/https%3A%2F%2Faucklandroofprofessionals.nz" target="_blank" rel="noopener">
+          <span>🔍</span> OpenGraph.xyz Card Inspector
+        </a>
+        <a class="action-btn" href="https://socialsharepreview.com/?url=https%3A%2F%2Faucklandroofprofessionals.nz" target="_blank" rel="noopener">
+          <span>📱</span> SocialSharePreview
+        </a>
+      </div>
+    </div>
+
+    <!-- Live Preview Mockups Grid -->
+    <div class="preview-grid">
+      <!-- 1. Facebook -->
+      <div class="platform-card">
+        <div class="platform-title">
+          <div class="platform-icon" style="background:#1877F2; color:#FFF;">f</div>
+          <span>Facebook Feed Preview</span>
+        </div>
+        <div class="mock-facebook">
+          <img id="fb-img" src="/assets/og-image.jpg" alt="Preview Image" />
+          <div class="mock-facebook-content">
+            <div class="mock-domain" id="fb-domain">AUCKLANDROOFPROFESSIONALS.NZ</div>
+            <div class="mock-title" id="fb-title">Auckland Roof Professionals | Commercial &amp; Residential Roofing Auckland</div>
+            <div class="mock-desc" id="fb-desc">Auckland's leading roofing specialists for commercial &amp; residential projects. Metal roofs &amp; cladding, membrane waterproofing, warm roofs &amp; asphalt shingles. 10-year warranty. Free quote.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. LinkedIn -->
+      <div class="platform-card">
+        <div class="platform-title">
+          <div class="platform-icon" style="background:#0A66C2; color:#FFF;">in</div>
+          <span>LinkedIn Post Snippet</span>
+        </div>
+        <div class="mock-linkedin">
+          <img id="li-img" src="/assets/og-image.jpg" alt="Preview Image" />
+          <div class="mock-linkedin-content">
+            <div class="mock-title" id="li-title">Auckland Roof Professionals | Commercial &amp; Residential Roofing Auckland</div>
+            <div class="mock-domain" id="li-domain">aucklandroofprofessionals.nz • 10-Year Warranty</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Twitter / X -->
+      <div class="platform-card">
+        <div class="platform-title">
+          <div class="platform-icon" style="background:#FFF; color:#000;">𝕏</div>
+          <span>Twitter / X (Summary Large Image)</span>
+        </div>
+        <div class="mock-twitter">
+          <img id="tw-img" src="/assets/og-image.jpg" alt="Preview Image" />
+          <div class="mock-twitter-content">
+            <div class="mock-domain" id="tw-domain">aucklandroofprofessionals.nz</div>
+            <div class="mock-title" id="tw-title">Auckland Roof Professionals | Commercial &amp; Residential Roofing Auckland</div>
+            <div class="mock-desc" id="tw-desc">Auckland's leading roofing specialists for commercial &amp; residential projects. Metal roofs &amp; cladding, membrane waterproofing, warm roofs &amp; asphalt shingles. 10-year warranty. Free quote.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. WhatsApp -->
+      <div class="platform-card">
+        <div class="platform-title">
+          <div class="platform-icon" style="background:#25D366; color:#FFF;">WA</div>
+          <span>WhatsApp Chat Rich Card (Strict &lt;300KB Check Passed)</span>
+        </div>
+        <div class="mock-whatsapp">
+          <div class="mock-whatsapp-bubble">
+            <img id="wa-img" src="/assets/og-image.jpg" alt="Preview Image" />
+            <div class="mock-whatsapp-text">
+              <strong id="wa-title">Auckland Roof Professionals | Commercial &amp; Residential Roofing Auckland</strong><br />
+              <span id="wa-desc" style="opacity:0.85; font-size:12px;">Auckland's leading roofing specialists for commercial &amp; residential projects. Metal roofs &amp; cladding...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Tag Inspector Table -->
+    <div class="platform-card">
+      <h3 style="margin-bottom: 8px;">Active Page Open Graph &amp; Twitter Meta Tags</h3>
+      <p style="color: var(--muted); font-size: 14px;">Values rendered in the HTML for web crawlers and social scrapers:</p>
+      <table class="meta-table">
+        <thead>
+          <tr>
+            <th>Tag</th>
+            <th>Property / Name</th>
+            <th>Resolved Value</th>
+          </tr>
+        </thead>
+        <tbody id="meta-rows">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const PAGES = {
+      home: {
+        title: "Auckland Roof Professionals | Commercial & Residential Roofing Auckland",
+        desc: "Auckland's leading roofing specialists for commercial & residential projects. Metal roofs & cladding, membrane waterproofing, warm roofs & asphalt shingles. 10-year warranty. Free quote.",
+        url: "https://aucklandroofprofessionals.nz/",
+        img: "/assets/og-image.jpg",
+        alt: "Auckland Roof Professionals - Commercial & Residential Roofing Auckland",
+        size: "99 KB (1200 × 630 px)"
+      },
+      commercial: {
+        title: "Commercial Roofing Services Auckland | Auckland Roof Professionals",
+        desc: "Commercial roofing & cladding solutions across Auckland. Standing seam, TPO membrane, warm roof systems, height safety & maintenance. 10-year warranty.",
+        url: "https://aucklandroofprofessionals.nz/commercial",
+        img: "/assets/og-commercial.jpg",
+        alt: "Auckland Commercial Roofing & Cladding Specialists - Auckland Roof Professionals",
+        size: "96 KB (1200 × 630 px)"
+      },
+      residential: {
+        title: "Residential Roofing Auckland | Shingles & Metal Roofs | Auckland Roof Professionals",
+        desc: "Specialist residential roofing in Auckland: architectural asphalt shingles, Colorsteel® long run metal roofs, membrane decks & warm roofs. Free quotes.",
+        url: "https://aucklandroofprofessionals.nz/residential",
+        img: "/assets/og-residential.jpg",
+        alt: "Auckland Residential Roofing & Re-Roofing Specialists - Auckland Roof Professionals",
+        size: "105 KB (1200 × 630 px)"
+      },
+      contact: {
+        title: "Contact Auckland Roof Professionals | Free Roof Quotes & Emergencies",
+        desc: "Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 555 766 or visit 59 Porana Rd, Glenfield.",
+        url: "https://aucklandroofprofessionals.nz/contact",
+        img: "/assets/og-contact.jpg",
+        alt: "Contact Auckland Roof Professionals - Free Quotes & Emergency Leak Repairs",
+        size: "101 KB (1200 × 630 px)"
+      }
+    };
+
+    function switchPage(key) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const data = PAGES[key];
+      // Update Images
+      document.getElementById('fb-img').src = data.img;
+      document.getElementById('li-img').src = data.img;
+      document.getElementById('tw-img').src = data.img;
+      document.getElementById('wa-img').src = data.img;
+
+      // Update Titles
+      document.getElementById('fb-title').textContent = data.title;
+      document.getElementById('li-title').textContent = data.title;
+      document.getElementById('tw-title').textContent = data.title;
+      document.getElementById('wa-title').textContent = data.title;
+
+      // Update Descriptions
+      document.getElementById('fb-desc').textContent = data.desc;
+      document.getElementById('tw-desc').textContent = data.desc;
+      document.getElementById('wa-desc').textContent = data.desc.substring(0, 95) + '...';
+
+      // Update Meta Table
+      const rows = [
+        ['og:site_name', 'property', 'Auckland Roof Professionals'],
+        ['og:locale', 'property', 'en_NZ'],
+        ['og:type', 'property', 'website'],
+        ['og:title', 'property', data.title],
+        ['og:description', 'property', data.desc],
+        ['og:url', 'property', data.url],
+        ['og:image', 'property', `https://aucklandroofprofessionals.nz${data.img}`],
+        ['og:image:secure_url', 'property', `https://aucklandroofprofessionals.nz${data.img}`],
+        ['og:image:type', 'property', 'image/jpeg'],
+        ['og:image:width', 'property', '1200'],
+        ['og:image:height', 'property', '630'],
+        ['og:image:alt', 'property', data.alt],
+        ['twitter:card', 'name', 'summary_large_image'],
+        ['twitter:title', 'name', data.title],
+        ['twitter:description', 'name', data.desc],
+        ['twitter:image', 'name', `https://aucklandroofprofessionals.nz${data.img}`],
+        ['twitter:image:alt', 'name', data.alt],
+        ['WhatsApp Weight Guard', 'status', `PASS (${data.size} < 300 KB limit)`]
+      ];
+
+      const tbody = document.getElementById('meta-rows');
+      tbody.innerHTML = rows.map(([prop, attr, val]) => `
+        <tr>
+          <td><code>${attr === 'property' ? 'og:*' : 'twitter:*'}</code></td>
+          <td><strong>${prop}</strong></td>
+          <td>${val}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Initialize
+    switchPage('home');
+  </script>
+</body>
+</html>

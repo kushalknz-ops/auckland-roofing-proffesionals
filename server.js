@@ -7,8 +7,10 @@ import http from 'node:http'
 import https from 'node:https'
 import fs from 'node:fs'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { handleApiRequest } from './server/api.js'
+import { injectOpenGraphMetadata } from './server/seo.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = path.resolve(__dirname, 'dist')
@@ -29,6 +31,7 @@ const MIME_TYPES = {
   '.webp': 'image/webp',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.mp4': 'video/mp4',
   '.woff2': 'font/woff2',
   '.txt': 'text/plain; charset=utf-8',
@@ -193,8 +196,48 @@ function handleStaticRequest(req, res) {
   applySecurityAndCorsHeaders(req, res, isAsset)
   res.setHeader('Content-Type', contentType)
 
+  // Cache headers for static resources
   if (urlPath.startsWith('/assets/')) {
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+  } else if (['.jpg', '.jpeg', '.png', '.webp', '.svg', '.ico', '.woff2', '.webmanifest'].includes(ext)) {
+    res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800')
+  } else if (ext === '.html') {
+    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate')
+  }
+
+  const acceptEncoding = req.headers['accept-encoding'] || ''
+  const isCompressible = /^(text\/|application\/(javascript|json|xml|manifest\+json)|image\/svg\+xml)/.test(contentType)
+
+  // Inject tailored Open Graph and Twitter metadata into HTML for social crawlers and initial render
+  if (filePath.endsWith('index.html')) {
+    try {
+      const html = fs.readFileSync(filePath, 'utf8')
+      const injectedHtml = injectOpenGraphMetadata(html, req.url || '/')
+
+      if (isCompressible && acceptEncoding.includes('gzip')) {
+        res.setHeader('Content-Encoding', 'gzip')
+        res.setHeader('Vary', 'Accept-Encoding')
+        zlib.gzip(Buffer.from(injectedHtml, 'utf8'), (err, compressed) => {
+          if (err) return res.end(injectedHtml)
+          res.end(compressed)
+        })
+        return
+      }
+
+      res.end(injectedHtml)
+      return
+    } catch {
+      // Fallback to static stream if read error occurs
+    }
+  }
+
+  if (isCompressible && acceptEncoding.includes('gzip')) {
+    res.setHeader('Content-Encoding', 'gzip')
+    res.setHeader('Vary', 'Accept-Encoding')
+    const rawStream = fs.createReadStream(filePath)
+    const gzipStream = zlib.createGzip({ level: 6 })
+    rawStream.pipe(gzipStream).pipe(res)
+    return
   }
 
   fs.createReadStream(filePath).pipe(res)

@@ -54,6 +54,8 @@ export default function NotFoundPage() {
     description: 'The page you requested could not be found. Explore Auckland Roof Professionals commercial and residential roofing services or contact our team.',
     noIndex: true,
     canonical: '/404',
+    ogImage: '/assets/og-image.jpg',
+    ogImageAlt: 'Auckland Roof Professionals - 404 Page Not Found',
   })
 
   // Filter both curated links and services based on user search term
@@ -92,7 +94,7 @@ export default function NotFoundPage() {
   }, [searchTerm])
 
   return (
-    <main className="not-found-page">
+    <main id="main-content" tabIndex={-1} className="not-found-page">
       {/* ============ 1. 404 HERO ============ */}
       <section className="not-found-hero">
         <div className="not-found-hero-media" aria-hidden="true" />
@@ -213,7 +215,6 @@ export default function NotFoundPage() {
                   key={item.id}
                   to={item.href}
                   className="not-found-card"
-                  aria-label={`Go to ${item.title}`}
                 >
                   <div>
                     <div className="not-found-card-top">
@@ -240,7 +241,7 @@ export default function NotFoundPage() {
                     <p>{item.description}</p>
                   </div>
                   <span className="not-found-card-link">
-                    Explore Now <span>→</span>
+                    Explore Now <span aria-hidden="true">→</span>
                   </span>
                 </Link>
               ))}
@@ -250,7 +251,7 @@ export default function NotFoundPage() {
           {/* Urgent Leak / Emergency Contact Box */}
           <div className="not-found-assistance">
             <div className="not-found-assistance-content">
-              <h3>Have an Active Leak or Urgent Enquiry?</h3>
+              <h2>Have an Active Leak or Urgent Enquiry?</h2>
               <p>
                 Our Glenfield workshop and mobile Auckland crews are available for
                 urgent weather-tightness inspections and prompt roof assessments across

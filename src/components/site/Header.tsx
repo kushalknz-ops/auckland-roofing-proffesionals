@@ -108,11 +108,7 @@ export function Header() {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
     } else {
       navigate('/')
-      document.documentElement.style.scrollBehavior = 'auto'
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
-      document.documentElement.style.scrollBehavior = ''
     }
   }
 
@@ -210,8 +206,9 @@ export function Header() {
         <button
           className={`menu-btn${menuOpen ? ' open' : ''}`}
           type="button"
-          aria-label="Open menu"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
+          aria-controls="mobileNav"
           onClick={() => {
             setMenuOpen((o) => !o)
             setServicesOpen(false)
@@ -226,6 +223,7 @@ export function Header() {
           id="servicesMegaMenu"
           className={`services-megamenu${servicesOpen ? ' open' : ''}`}
           aria-hidden={!servicesOpen}
+          inert={!servicesOpen ? true : undefined}
         >
           <div className="megamenu-inner">
             <div className="megamenu-grid">
@@ -330,7 +328,12 @@ export function Header() {
       </header>
 
       {/* Mobile Navigation Panel */}
-      <div className={`mobile-nav${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen}>
+      <div
+        id="mobileNav"
+        className={`mobile-nav${menuOpen ? ' open' : ''}`}
+        aria-hidden={!menuOpen}
+        inert={!menuOpen ? true : undefined}
+      >
         <div className="mobile-nav-scroll">
           <nav aria-label="Mobile Navigation">
             <Link to="/" onClick={handleHomeClick}>Home</Link>

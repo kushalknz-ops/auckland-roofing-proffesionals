@@ -1,0 +1,257 @@
+{
+  "Home": {
+    "mobile": {
+      "performance": 44,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "3.7 s",
+      "lcp": "11.7 s",
+      "tbt": "780 ms",
+      "cls": "0.002",
+      "speedIndex": "5.7 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 31663
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 171796
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 87,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.8 s",
+      "lcp": "2.2 s",
+      "tbt": "80 ms",
+      "cls": "0.003",
+      "speedIndex": "1.4 s",
+      "diagnostics": {
+        "unusedCss": [],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 173296
+          }
+        ]
+      }
+    }
+  },
+  "Commercial": {
+    "mobile": {
+      "performance": 67,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "3.6 s",
+      "lcp": "12.8 s",
+      "tbt": "60 ms",
+      "cls": "0",
+      "speedIndex": "3.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 72771
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 220131
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 85,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.8 s",
+      "lcp": "2.6 s",
+      "tbt": "0 ms",
+      "cls": "0.006",
+      "speedIndex": "0.8 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 34684
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 220131
+          }
+        ]
+      }
+    }
+  },
+  "Residential": {
+    "mobile": {
+      "performance": 67,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "3.6 s",
+      "lcp": "14.0 s",
+      "tbt": "50 ms",
+      "cls": "0",
+      "speedIndex": "3.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 72771
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 220131
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 82,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.8 s",
+      "lcp": "2.9 s",
+      "tbt": "0 ms",
+      "cls": "0",
+      "speedIndex": "1.5 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 34684
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 220131
+          }
+        ]
+      }
+    }
+  },
+  "Service": {
+    "mobile": {
+      "performance": 67,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "3.6 s",
+      "lcp": "7.9 s",
+      "tbt": "60 ms",
+      "cls": "0",
+      "speedIndex": "3.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 70419
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 215828
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 94,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.8 s",
+      "lcp": "1.6 s",
+      "tbt": "0 ms",
+      "cls": "0.002",
+      "speedIndex": "0.9 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 32796
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 215828
+          }
+        ]
+      }
+    }
+  },
+  "Contact": {
+    "mobile": {
+      "performance": 66,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "3.6 s",
+      "lcp": "9.5 s",
+      "tbt": "120 ms",
+      "cls": "0",
+      "speedIndex": "3.6 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 70495
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 209480
+          }
+        ]
+      }
+    },
+    "desktop": {
+      "performance": 91,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "fcp": "0.8 s",
+      "lcp": "1.9 s",
+      "tbt": "10 ms",
+      "cls": "0",
+      "speedIndex": "0.8 s",
+      "diagnostics": {
+        "unusedCss": [
+          {
+            "url": "http://localhost:3456/assets/index-CQCwP8Q_.css",
+            "wastedBytes": 33885
+          }
+        ],
+        "unusedJs": [
+          {
+            "url": "http://localhost:3456/assets/index-BxyW1X6O.js",
+            "wastedBytes": 209480
+          }
+        ]
+      }
+    }
+  }
+}

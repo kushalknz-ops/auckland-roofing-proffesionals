@@ -320,11 +320,12 @@ export function GoogleReviewsCarousel({
                             {rev.authorPhoto ? (
                               <img
                                 src={rev.authorPhoto}
-                                alt={rev.authorName}
+                                alt=""
+                                aria-hidden="true"
                                 className="gr-avatar-img"
                               />
                             ) : (
-                              <div className="gr-avatar-fallback">
+                              <div className="gr-avatar-fallback" aria-hidden="true">
                                 {rev.authorInitials}
                               </div>
                             )}

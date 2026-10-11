@@ -487,3 +487,28 @@
     justify-content: center;
   }
 }
+
+@media (max-width: 420px) {
+  .not-found-hero {
+    padding: 110px 0 40px;
+  }
+  .not-found-body {
+    padding: 40px 0 60px;
+  }
+  .not-found-search-wrap {
+    padding: 18px 14px;
+  }
+  .not-found-search-input {
+    font-size: 13.5px;
+    padding: 12px 14px 12px 40px;
+  }
+  .not-found-search-icon {
+    left: 12px;
+  }
+  .not-found-card {
+    padding: 22px 18px;
+  }
+  .not-found-assistance {
+    padding: 20px 14px;
+  }
+}

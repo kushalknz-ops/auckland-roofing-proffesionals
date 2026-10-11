@@ -1,0 +1,27 @@
+{
+  "name": "Auckland Roof Professionals",
+  "short_name": "ARP Roofing",
+  "description": "Auckland commercial and residential roofing specialists with 10-year warranty.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2C3533",
+  "theme_color": "#2C3533",
+  "icons": [
+    {
+      "src": "/assets/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

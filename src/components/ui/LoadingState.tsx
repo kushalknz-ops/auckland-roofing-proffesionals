@@ -16,12 +16,10 @@ export function LoadingSpinner({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   return (
     <div
       className={`inline-block animate-spin rounded-full border-solid border-[#A5B8AC] border-t-transparent ${sizeClasses}`}
-      role="progressbar"
-      aria-label="Loading content"
-      aria-valuemin={0}
-      aria-valuemax={100}
+      aria-hidden="true"
     />
   )
+
 }
 
 export function LoadingState({

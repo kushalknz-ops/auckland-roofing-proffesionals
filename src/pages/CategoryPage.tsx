@@ -29,7 +29,7 @@ const COPY: Record<
     eyebrow: 'Owners & Building Managers',
     title: <>Commercial<br /><span className="dim">roofing services.</span></>,
     lead: 'Metal roofs & cladding, membrane roofing, warm roof systems, roof safety and asset maintenance — engineered around your building and the people using it.',
-    heroImg: '/assets/img/audience-business.jpg',
+    heroImg: '/assets/img/audience-business.webp',
     btn: 'View commercial services',
     crumb: 'Commercial',
     label: 'Commercial — 5 services',
@@ -45,7 +45,7 @@ const COPY: Record<
     eyebrow: 'Homeowners & Builders',
     title: <>Residential<br /><span className="dim">roofing services.</span></>,
     lead: "Specialised asphalt shingles, metal roofs, membrane roofing and warm roof systems — whether you're tracing a leak, planning a replacement or choosing a roof for a new build.",
-    heroImg: '/assets/img/audience-home.jpg',
+    heroImg: '/assets/img/audience-home.webp',
     btn: 'View residential services',
     crumb: 'Residential',
     label: 'Residential — 4 services',
@@ -65,17 +65,17 @@ function ServiceCard({ s }: { s: Service }) {
       className="image-card"
       to={`/service?id=${s.id}`}
       style={{ '--bg': `url('${s.img}')` } as React.CSSProperties}
-      aria-label={`View ${s.title}`}
     >
       <div className="card-top"><span>{s.num}</span><span className="card-badge">{s.badge}</span></div>
       <div className="card-body">
         <h3>{s.title}</h3>
         <p>{s.short}</p>
-        <span className="card-arrow">→</span>
+        <span className="card-arrow" aria-hidden="true">→</span>
       </div>
     </Link>
   )
 }
+
 
 export default function CategoryPage({ kind }: { kind: 'commercial' | 'residential' }) {
   const c = COPY[kind]
@@ -91,14 +91,17 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
       ? 'Commercial roofing & cladding solutions across Auckland. Standing seam, TPO membrane, warm roof systems, height safety & maintenance. 10-year warranty.'
       : 'Specialist residential roofing in Auckland: architectural asphalt shingles, Colorsteel® long run metal roofs, membrane decks & warm roofs. Free quotes.',
     canonical: commercial ? '/commercial' : '/residential',
-    ogImage: c.heroImg,
+    ogImage: commercial ? '/assets/og-commercial.jpg' : '/assets/og-residential.jpg',
+    ogImageAlt: commercial
+      ? 'Auckland Commercial Roofing & Cladding Specialists - Auckland Roof Professionals'
+      : 'Auckland Residential Roofing & Re-Roofing Specialists - Auckland Roof Professionals',
     keywords: commercial
       ? 'commercial roofing Auckland, commercial re-roofing, metal cladding, membrane roofing Auckland, warm roofs NZ, roof safety systems, roof asset maintenance'
       : 'residential roofing Auckland, asphalt shingles Auckland, Colorsteel roofing, residential re-roofing Auckland, roof leak repair, membrane flat roofs, warm roof retrofit',
   })
 
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       {/* ============ PAGE HERO ============ */}
       <section className="page-hero">
         <div className="page-hero-media" style={{ '--bg': `url('${c.heroImg}')` } as React.CSSProperties} />
@@ -119,7 +122,8 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
       {/* ============ SERVICE CARDS ============ */}
       <section className="section svc-page" id="svcList">
         <div className="container">
-          <p className="service-group-label reveal">{c.label}</p>
+          <h2 className="service-group-label reveal">{c.label}</h2>
+
           {list.length === 0 ? (
             <EmptyState
               title={`No ${commercial ? 'Commercial' : 'Residential'} Services Listed`}

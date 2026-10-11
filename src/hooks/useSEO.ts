@@ -5,7 +5,14 @@ export interface SEOProps {
   description: string
   canonical?: string
   ogImage?: string
+  ogImageAlt?: string
+  ogImageWidth?: number | string
+  ogImageHeight?: number | string
+  ogImageType?: string
   ogType?: 'website' | 'article'
+  siteName?: string
+  locale?: string
+  twitterCard?: 'summary' | 'summary_large_image'
   keywords?: string
   noIndex?: boolean
 }
@@ -16,7 +23,10 @@ export const DEFAULT_ORIGIN = (
     : 'https://aucklandroofprofessionals.nz'
 ).replace(/\/+$/, '')
 
-const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/assets/img/trust.jpg`
+export const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/assets/og-image.jpg`
+export const DEFAULT_OG_ALT = 'Auckland Roof Professionals - Commercial & Residential Roofing Auckland'
+export const DEFAULT_SITE_NAME = 'Auckland Roof Professionals'
+export const DEFAULT_LOCALE = 'en_NZ'
 
 function setMetaTag(attrName: 'name' | 'property', attrValue: string, content: string) {
   let el = document.querySelector(`meta[${attrName}="${attrValue}"]`) as HTMLMetaElement | null
@@ -95,7 +105,14 @@ export function useSEO({
   description,
   canonical,
   ogImage = DEFAULT_OG_IMAGE,
+  ogImageAlt,
+  ogImageWidth = '1200',
+  ogImageHeight = '630',
+  ogImageType,
   ogType = 'website',
+  siteName = DEFAULT_SITE_NAME,
+  locale = DEFAULT_LOCALE,
+  twitterCard = 'summary_large_image',
   keywords,
   noIndex = false,
 }: SEOProps) {
@@ -121,17 +138,44 @@ export function useSEO({
     // 4. Open Graph Meta Tags
     const resolvedOgImage = ogImage.startsWith('http')
       ? ogImage
-      : `${DEFAULT_ORIGIN}${ogImage}`
+      : `${DEFAULT_ORIGIN}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`
 
+    const resolvedAlt = ogImageAlt || `${title} - ${siteName}`
+    const resolvedType = ogImageType || (resolvedOgImage.endsWith('.png') ? 'image/png' : 'image/jpeg')
+
+    setMetaTag('property', 'og:type', ogType)
+    setMetaTag('property', 'og:site_name', siteName)
+    setMetaTag('property', 'og:locale', locale)
     setMetaTag('property', 'og:title', title)
     setMetaTag('property', 'og:description', description)
     setMetaTag('property', 'og:url', resolvedCanonical)
-    setMetaTag('property', 'og:type', ogType)
     setMetaTag('property', 'og:image', resolvedOgImage)
+    setMetaTag('property', 'og:image:secure_url', resolvedOgImage)
+    setMetaTag('property', 'og:image:type', resolvedType)
+    setMetaTag('property', 'og:image:width', String(ogImageWidth))
+    setMetaTag('property', 'og:image:height', String(ogImageHeight))
+    setMetaTag('property', 'og:image:alt', resolvedAlt)
 
-    // 5. Twitter Card Meta Tags
+    // 5. Twitter Card Meta Tags (for X)
+    setMetaTag('name', 'twitter:card', twitterCard)
     setMetaTag('name', 'twitter:title', title)
     setMetaTag('name', 'twitter:description', description)
     setMetaTag('name', 'twitter:image', resolvedOgImage)
-  }, [title, description, canonical, ogImage, ogType, keywords, noIndex])
+    setMetaTag('name', 'twitter:image:alt', resolvedAlt)
+  }, [
+    title,
+    description,
+    canonical,
+    ogImage,
+    ogImageAlt,
+    ogImageWidth,
+    ogImageHeight,
+    ogImageType,
+    ogType,
+    siteName,
+    locale,
+    twitterCard,
+    keywords,
+    noIndex,
+  ])
 }

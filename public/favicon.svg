@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="arpBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#35403D" />
+      <stop offset="100%" stop-color="#1B2220" />
+    </linearGradient>
+    <linearGradient id="arpSage" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C4D6C9" />
+      <stop offset="100%" stop-color="#9CB3A3" />
+    </linearGradient>
+    <filter id="arpShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Coastal Charcoal Squircle Badge -->
+  <rect width="512" height="512" rx="116" fill="url(#arpBg)" />
+  <rect x="6" y="6" width="500" height="500" rx="110" fill="none" stroke="#4F605C" stroke-width="8" stroke-opacity="0.5" />
+
+  <g filter="url(#arpShadow)">
+    <!-- Top Roof Gable — Sage Accent -->
+    <path d="M 256.00,112.56 L 432.96,272.72 L 415.04,289.52 L 256.00,148.96 L 96.96,289.52 L 79.04,272.72 Z" fill="url(#arpSage)" />
+
+    <!-- Inner Roof Gable — Pure Cloud White -->
+    <path d="M 256.00,201.04 L 355.68,290.64 L 336.64,307.44 L 256.00,237.44 L 175.36,307.44 L 156.32,290.64 Z" fill="#FFFFFF" />
+
+    <!-- Foundation Beam — Sage Accent -->
+    <rect x="168.64" y="365.68" width="174.72" height="25.76" rx="5.60" fill="url(#arpSage)" />
+  </g>
+</svg>

@@ -22,7 +22,8 @@ export default function ServicePage() {
       ? s.seoDescription || `${s.short} — Auckland Roof Professionals, Auckland-wide.`
       : 'The requested roofing service was not found in our catalog. Explore all residential and commercial services.',
     canonical: s ? `/service?id=${s.id}` : '/service',
-    ogImage: s?.img || '/assets/img/about.jpg',
+    ogImage: s?.img || '/assets/og-image.jpg',
+    ogImageAlt: s ? `${s.title} - Auckland Roof Professionals` : 'Roofing Services Auckland - Auckland Roof Professionals',
     keywords: s
       ? `${s.title}, Auckland roofing, ${s.chips.join(', ')}`
       : 'Auckland roofing services, commercial roofing, residential roofing',
@@ -31,7 +32,7 @@ export default function ServicePage() {
   // Empty / Not-Found State: user passed an ID that doesn't exist
   if (rawId && !s) {
     return (
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="page-hero-media" style={{ '--bg': `url('/assets/img/about.jpg')` } as React.CSSProperties} />
           <div className="page-hero-shade" />
@@ -64,10 +65,11 @@ export default function ServicePage() {
               }}
             >
               <div style={{ marginTop: '24px', textAlign: 'left' }}>
-                <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#2C3533', marginBottom: '12px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#2C3533', marginBottom: '12px' }}>
                   Available Auckland Roofing Services:
-                </h4>
+                </h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+
                   {SERVICES.map((item) => (
                     <Link
                       key={item.id}
@@ -107,7 +109,7 @@ export default function ServicePage() {
   // Safe fallback if SERVICES is empty
   if (!s) {
     return (
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="section" style={{ background: '#F8FAF7', padding: '100px 0' }}>
           <div className="container">
             <EmptyState
@@ -131,9 +133,10 @@ export default function ServicePage() {
   )
 
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       {/* ============ SERVICE HERO ============ */}
       <section className="page-hero">
+
         <div className="page-hero-media" style={{ '--bg': `url('${s.img}')` } as React.CSSProperties} />
         <div className="page-hero-shade" />
         <div className="container">
@@ -189,8 +192,9 @@ export default function ServicePage() {
                 Request quote →
               </button>
             </div>
-            <nav className="sd-other">
+            <nav className="sd-other" aria-label={`Other ${category.toLowerCase()} services`}>
               <h3>Other {category.toLowerCase()} services</h3>
+
               <div>
                 {others.map((o) => (
                   <Link key={o.id} to={`/service?id=${o.id}`}>{o.title}<span>→</span></Link>

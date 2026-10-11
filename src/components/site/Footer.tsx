@@ -17,11 +17,7 @@ export function Footer() {
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
     } else {
       navigate('/')
-      document.documentElement.style.scrollBehavior = 'auto'
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
-      document.documentElement.style.scrollBehavior = ''
     }
   }
 
@@ -52,16 +48,16 @@ export function Footer() {
           <div className="footer-socials">
             <span>Follow us</span>
             <div>
-              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3c-2.2 0-4 1.8-4 4v2H7v4h3v6h4v-6h3l1-4h-4V8z" /></svg></a>
-              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3.5" /><circle className="social-dot" cx="17.2" cy="6.8" r="1" /></svg></a>
-              <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M6 9v11H3V9h3zM4.5 4a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6zM10 9h3v1.7c.6-1 1.8-2 3.6-2 2.8 0 4.4 1.7 4.4 5V20h-3.3v-5.6c0-1.6-.6-2.6-2-2.6-1.5 0-2.4 1-2.4 2.9V20H10V9z" /></svg></a>
+              <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in new tab)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.2 0-4 1.8-4 4v2H7v4h3v6h4v-6h3l1-4h-4V8z" /></svg></a>
+              <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram (opens in new tab)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3.5" /><circle className="social-dot" cx="17.2" cy="6.8" r="1" /></svg></a>
+              <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn (opens in new tab)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9v11H3V9h3zM4.5 4a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6zM10 9h3v1.7c.6-1 1.8-2 3.6-2 2.8 0 4.4 1.7 4.4 5V20h-3.3v-5.6c0-1.6-.6-2.6-2-2.6-1.5 0-2.4 1-2.4 2.9V20H10V9z" /></svg></a>
             </div>
           </div>
         </div>
 
         <div className="footer-column">
           <h3><Link to="/commercial">Commercial</Link></h3>
-          <nav>
+          <nav aria-label="Commercial roofing services">
             {commercial.map((s) => (
               <Link key={s.id} to={`/service?id=${s.id}`}>{s.title}</Link>
             ))}
@@ -70,7 +66,7 @@ export function Footer() {
 
         <div className="footer-column">
           <h3><Link to="/residential">Residential</Link></h3>
-          <nav>
+          <nav aria-label="Residential roofing services">
             {residential.map((s) => (
               <Link key={s.id} to={`/service?id=${s.id}`}>
                 {s.title}{s.badge.includes('Specialised') ? <em> (specialised)</em> : null}
@@ -81,7 +77,7 @@ export function Footer() {
 
         <div className="footer-column">
           <h3>Company</h3>
-          <nav>
+          <nav aria-label="Company navigation">
             <Link to="/#about" onClick={handleNavClick('/#about')}>About us</Link>
             <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
             <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
@@ -96,14 +92,14 @@ export function Footer() {
             <span>Office</span>
             <p>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</p>
             <span>Phone</span>
-            <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call Auckland Roof Professionals on 0800 555 766">
+            <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call 0800 555 766">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7.1 3.5 9.4 8 7.7 9.7a15.2 15.2 0 0 0 6.6 6.6l1.7-1.7 4.5 2.3-1 3.1c-.3.8-1 1.3-1.8 1.3A15 15 0 0 1 2.7 6.3c0-.8.5-1.5 1.3-1.8l3.1-1Z" />
               </svg>
               <span>0800 555 766</span>
             </a>
             <span>Email</span>
-            <a className="contact-strong contact-action" href="mailto:info@aucklandroofprofessionals.nz" aria-label="Email Auckland Roof Professionals">
+            <a className="contact-strong contact-action" href="mailto:info@aucklandroofprofessionals.nz" aria-label="Email info@aucklandroofprofessionals.nz">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M3 5.5h18v13H3z" />
                 <path d="m4 7 8 6 8-6" />
@@ -112,6 +108,7 @@ export function Footer() {
             </a>
           </address>
         </div>
+
 
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Auckland Roof Professionals Ltd. All rights reserved.</span>

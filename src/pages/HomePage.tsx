@@ -21,33 +21,38 @@ const STATS = [
 ] as const
 
 function StatsBand() {
-  const [values, setValues] = useState<number[]>(STATS.map(() => 0))
   const wrapRef = useRef<HTMLDivElement>(null)
-  const rafRef = useRef(0)
+  const countRefs = useRef<(HTMLSpanElement | null)[]>([])
 
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
+    let rafId = 0
     const io = new IntersectionObserver(
       (entries) => {
         if (!entries[0].isIntersecting) return
         io.disconnect()
-        const dur = 1600
+        const dur = 1200
         const t0 = performance.now()
         const tick = (t: number) => {
           const p = Math.min((t - t0) / dur, 1)
           const eased = 1 - Math.pow(1 - p, 3)
-          setValues(STATS.map((s) => Math.round(s.count * eased)))
-          if (p < 1) rafRef.current = requestAnimationFrame(tick)
+          STATS.forEach((s, i) => {
+            const dom = countRefs.current[i]
+            if (dom) {
+              dom.textContent = String(Math.round(s.count * eased))
+            }
+          })
+          if (p < 1) rafId = requestAnimationFrame(tick)
         }
-        rafRef.current = requestAnimationFrame(tick)
+        rafId = requestAnimationFrame(tick)
       },
-      { threshold: 0.4 },
+      { threshold: 0.2 },
     )
     io.observe(el)
     return () => {
       io.disconnect()
-      cancelAnimationFrame(rafRef.current)
+      cancelAnimationFrame(rafId)
     }
   }, [])
 
@@ -58,10 +63,10 @@ function StatsBand() {
           {STATS.map((s, i) => (
             <div className="reveal" key={s.label}>
               <strong data-count={s.count} data-suffix={s.suffix}>
-                {values[i]}
+                <span className="stat-num" ref={(el) => { countRefs.current[i] = el }}>0</span>
                 <em>{s.suffix}</em>
               </strong>
-              <span>{s.label}</span>
+              <span className="stat-label">{s.label}</span>
             </div>
           ))}
         </div>
@@ -188,7 +193,6 @@ function ProcessSection() {
               key={s.n}
               onClick={() => setActiveStep(i)}
               onMouseEnter={() => setActiveStep(i)}
-              role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -196,9 +200,9 @@ function ProcessSection() {
                   setActiveStep(i)
                 }
               }}
-              aria-label={`Step ${s.n}: ${s.title}`}
+              aria-current={i === activeStep ? 'step' : undefined}
             >
-              <i className="step-dot">
+              <i className="step-dot" aria-hidden="true">
                 <em>Step</em>
                 <b>{s.n}</b>
               </i>
@@ -206,6 +210,7 @@ function ProcessSection() {
               <p>{s.text}</p>
             </article>
           ))}
+
         </div>
       </div>
     </section>
@@ -251,7 +256,17 @@ const FAQS = [
 
 function FaqSection() {
   const [open, setOpen] = useState(-1)
-  const aRefs = useRef<(HTMLDivElement | null)[]>([])
+  const [heights, setHeights] = useState<Record<number, number>>({})
+
+  const measureRef = (idx: number, el: HTMLDivElement | null) => {
+    if (el) {
+      const scrollHeight = el.scrollHeight
+      setHeights((prev) => {
+        if (prev[idx] === scrollHeight) return prev
+        return { ...prev, [idx]: scrollHeight }
+      })
+    }
+  }
 
   return (
     <section className="section faq" id="faq">
@@ -268,15 +283,21 @@ function FaqSection() {
                 type="button"
                 className="faq-q"
                 onClick={() => setOpen(open === i ? -1 : i)}
+                aria-expanded={open === i}
+                aria-controls={`faq-answer-${i}`}
+                id={`faq-question-${i}`}
               >
                 {f.q}<span className="faq-icon" />
               </button>
               <div
+                id={`faq-answer-${i}`}
+                role="region"
+                aria-labelledby={`faq-question-${i}`}
                 className="faq-a"
-                ref={(el) => { aRefs.current[i] = el }}
+                ref={(el) => measureRef(i, el)}
                 style={
                   open === i
-                    ? { maxHeight: `${aRefs.current[i]?.scrollHeight ?? 500}px` }
+                    ? { maxHeight: `${heights[i] ?? 500}px` }
                     : undefined
                 }
               >
@@ -362,6 +383,7 @@ const PROJECTS = [
 function ProjectsSection() {
   const trackRef = useRef<HTMLDivElement>(null)
   const isPausedRef = useRef(false)
+  const isInViewRef = useRef(false)
   const resumeTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -371,21 +393,13 @@ function ProjectsSection() {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     if (mediaQuery.matches) return
 
-    let rafId: number
+    let rafId: number = 0
     let lastTime = performance.now()
     const speed = 40 // px per second
-
-    const setupInitialPosition = () => {
-      if (!track) return
-      const singleSetWidth = track.scrollWidth / 3
-      if (singleSetWidth > 0 && track.scrollLeft === 0) {
-        track.scrollLeft = singleSetWidth
-      }
-    }
-
-    const timer = window.setTimeout(setupInitialPosition, 60)
+    let isTicking = false
 
     const tick = (now: number) => {
+      if (!isTicking) return
       const delta = (now - lastTime) / 1000
       lastTime = now
 
@@ -405,12 +419,47 @@ function ProjectsSection() {
       rafId = requestAnimationFrame(tick)
     }
 
-    rafId = requestAnimationFrame(tick)
+    const startTicking = () => {
+      if (isTicking) return
+      isTicking = true
+      lastTime = performance.now()
+      rafId = requestAnimationFrame(tick)
+    }
+
+    const stopTicking = () => {
+      isTicking = false
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const inView = entries[0]?.isIntersecting ?? false
+        isInViewRef.current = inView
+        if (inView) {
+          startTicking()
+        } else {
+          stopTicking()
+        }
+      },
+      { threshold: 0.05 }
+    )
+    io.observe(track)
+
+    const setupInitialPosition = () => {
+      if (!track) return
+      const singleSetWidth = track.scrollWidth / 3
+      if (singleSetWidth > 0 && track.scrollLeft === 0) {
+        track.scrollLeft = singleSetWidth
+      }
+    }
+
+    const timer = window.setTimeout(setupInitialPosition, 1000)
 
     return () => {
+      io.disconnect()
+      stopTicking()
       window.clearTimeout(timer)
       if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
-      cancelAnimationFrame(rafId)
     }
   }, [])
 
@@ -473,6 +522,8 @@ function ProjectsSection() {
         className="projects-carousel-wrap reveal"
         onMouseEnter={() => { isPausedRef.current = true }}
         onMouseLeave={() => { isPausedRef.current = false }}
+        onFocus={() => { isPausedRef.current = true }}
+        onBlur={() => { isPausedRef.current = false }}
         onTouchStart={() => { isPausedRef.current = true }}
         onTouchEnd={() => {
           if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
@@ -481,7 +532,23 @@ function ProjectsSection() {
           }, 2000)
         }}
       >
-        <div className="projects-track" ref={trackRef}>
+        <div
+          className="projects-track"
+          ref={trackRef}
+          tabIndex={0}
+          role="region"
+          aria-label="Projects showcase gallery. Use Left and Right arrow keys to navigate."
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowLeft') {
+              e.preventDefault()
+              handleNav(-1)
+            } else if (e.key === 'ArrowRight') {
+              e.preventDefault()
+              handleNav(1)
+            }
+          }}
+        >
+
           {allProjects.map((p, idx) => (
             <article key={`${p.num}-${idx}`}>
               <img src={p.img} alt={p.alt} loading="lazy" />
@@ -522,32 +589,52 @@ export default function HomePage() {
     title: 'Auckland Roof Professionals | Commercial & Residential Roofing Auckland',
     description: "Auckland's leading roofing specialists. Commercial & residential metal roofing, membrane systems, warm roofs & asphalt shingles. 10-year warranty. Free quote.",
     canonical: '/',
-    ogImage: '/assets/img/trust.jpg',
+    ogImage: '/assets/og-image.jpg',
+    ogImageAlt: 'Auckland Roof Professionals - Commercial & Residential Roofing Auckland',
     keywords: 'roofing Auckland, roofers Auckland, commercial roofing, residential roofing, Colorsteel roofing, asphalt shingles Auckland, membrane roofing, warm roofs NZ',
   })
 
   useEffect(() => {
-    if (heroVideoRef.current) {
-      heroVideoRef.current.defaultMuted = true
-      heroVideoRef.current.muted = true
-      heroVideoRef.current.play().catch(() => {})
+    if (!heroVideoRef.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      heroVideoRef.current.pause()
+      return
+    }
+    // On small screens, keep the optimized WebP poster to save battery and network bandwidth
+    if (window.innerWidth < 768) return
+
+    heroVideoRef.current.defaultMuted = true
+    heroVideoRef.current.muted = true
+
+    // Defer video play until browser idle to keep initial load and LCP lightning fast
+    const playVideo = () => {
+      heroVideoRef.current?.play().catch(() => {})
+    }
+
+    if ('requestIdleCallback' in window) {
+      const id = (window as any).requestIdleCallback(playVideo, { timeout: 2500 })
+      return () => (window as any).cancelIdleCallback(id)
+    } else {
+      const timer = setTimeout(playVideo, 1500)
+      return () => clearTimeout(timer)
     }
   }, [])
 
   return (
-    <main id="top">
+    <main id="main-content" tabIndex={-1}>
+      <div id="top" />
+
       {/* ============ HERO ============ */}
       <section className="hero">
         <div className="hero-media" aria-hidden="true">
           <video
             ref={heroVideoRef}
             className="hero-video"
-            poster="/assets/landing-video-poster.jpg"
-            autoPlay
+            poster="/assets/landing-video-poster.webp"
             loop
             muted
             playsInline
-            preload="auto"
+            preload="none"
           >
             <source
               src="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4"
@@ -596,7 +683,7 @@ export default function HomePage() {
 
             <div className="audience-grid reveal" id="service-grid">
             <Link className="audience-card" to="/residential"
-              style={{ '--bg': "url('/assets/img/audience-home.jpg')" } as React.CSSProperties}>
+              style={{ '--bg': "url('/assets/img/audience-home.webp')" } as React.CSSProperties}>
               <span className="audience-shade" />
               <span className="audience-body">
                 <span className="audience-eyebrow">Homeowners &amp; Builders</span>
@@ -609,7 +696,7 @@ export default function HomePage() {
               </span>
             </Link>
             <Link className="audience-card" to="/commercial"
-              style={{ '--bg': "url('/assets/img/audience-business.jpg')" } as React.CSSProperties}>
+              style={{ '--bg': "url('/assets/img/audience-business.webp')" } as React.CSSProperties}>
               <span className="audience-shade" />
               <span className="audience-body">
                 <span className="audience-eyebrow">Owners &amp; Building Managers</span>
@@ -646,19 +733,19 @@ export default function HomePage() {
           <div className="container">
             <div className="why-values reveal">
               <div className="trust-value">
-                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /></svg>
                 <div><strong>Licensed experts</strong><small>Qualified LBP professionals</small></div>
               </div>
               <div className="trust-value">
-                <svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 7" /></svg>
                 <div><strong>Quality assured</strong><small>Workmanship built to last</small></div>
               </div>
               <div className="trust-value">
-                <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z" /><path d="M12 8v5M12 16h.01" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z" /><path d="M12 8v5M12 16h.01" /></svg>
                 <div><strong>Safety first</strong><small>Site Safe certified crews</small></div>
               </div>
               <div className="trust-value">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
                 <div><strong>Proven reliability</strong><small>On time and on budget</small></div>
               </div>
             </div>
@@ -683,18 +770,19 @@ export default function HomePage() {
             <p className="story-statement">"Our work is measured by what lasts: strong roofs, safe sites and relationships built on trust."</p>
             <div className="story-pillars">
               <article>
-                <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.4-3 8.4-7 10-4-1.6-7-5.6-7-10V6l7-3z" /><path d="M9 12l2 2 4-4" /></svg>
                 <div><strong>Qualified team</strong><span>Licensed Building Practitioners with safety-led delivery.</span></div>
               </article>
               <article>
-                <svg viewBox="0 0 24 24"><path d="M3 17l6-10 4 6 3-4 5 8H3z" /><path d="M3 21h18" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-10 4 6 3-4 5 8H3z" /><path d="M3 21h18" /></svg>
                 <div><strong>Complete capability</strong><span>Metal, membrane, warm-roof and maintenance expertise.</span></div>
               </article>
               <article>
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" /></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" /></svg>
                 <div><strong>Accountable service</strong><span>Honest advice, reliable timelines and lasting workmanship.</span></div>
               </article>
             </div>
+
           </div>
 
           {/* ============ WORKSHOP CONTACT & BRANCH LOCATION ============ */}

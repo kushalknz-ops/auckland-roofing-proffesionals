@@ -19,7 +19,8 @@ export default function ContactPage() {
     title: 'Contact Auckland Roof Professionals | Free Roof Quotes & Emergencies',
     description: 'Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 555 766 or visit 59 Porana Rd, Glenfield.',
     canonical: '/contact',
-    ogImage: '/assets/img/about.jpg',
+    ogImage: '/assets/og-contact.jpg',
+    ogImageAlt: 'Contact Auckland Roof Professionals - Free Quotes & Emergency Leak Repairs',
     keywords: 'contact Auckland roofers, roofing quotes Auckland, emergency roof repair Auckland, Glenfield roofer, commercial roof inspection, residential roof quote',
   })
 
@@ -162,7 +163,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="contact-page">
+    <main id="main-content" tabIndex={-1} className="contact-page">
       {/* ============ 1. CONTACT PAGE HERO ============ */}
       <section className="contact-hero">
         <div className="contact-hero-media" aria-hidden="true" />
@@ -287,6 +288,7 @@ export default function ContactPage() {
                       onChange={(e) => handleChange('fullName', e.target.value)}
                       onBlur={() => handleBlur('fullName')}
                       className={errors.fullName ? 'has-error' : ''}
+                      aria-required="true"
                       aria-invalid={!!errors.fullName}
                       aria-describedby={errors.fullName ? 'fullName-error' : undefined}
                       disabled={isSubmitting}
@@ -312,6 +314,7 @@ export default function ContactPage() {
                       onChange={(e) => handleChange('email', e.target.value)}
                       onBlur={() => handleBlur('email')}
                       className={errors.email ? 'has-error' : ''}
+                      aria-required="true"
                       aria-invalid={!!errors.email}
                       aria-describedby={errors.email ? 'email-error' : undefined}
                       disabled={isSubmitting}
@@ -359,6 +362,7 @@ export default function ContactPage() {
                       onChange={(e) => handleChange('service', e.target.value)}
                       onBlur={() => handleBlur('service')}
                       className={errors.service ? 'has-error' : ''}
+                      aria-required="true"
                       aria-invalid={!!errors.service}
                       aria-describedby={errors.service ? 'service-error' : undefined}
                       disabled={isSubmitting}
@@ -397,8 +401,9 @@ export default function ContactPage() {
                     onChange={(e) => handleChange('message', e.target.value)}
                     onBlur={() => handleBlur('message')}
                     className={errors.message ? 'has-error' : ''}
+                    aria-required="true"
                     aria-invalid={!!errors.message}
-                    aria-describedby={errors.message ? 'message-error' : undefined}
+                    aria-describedby={errors.message ? 'message-error' : 'message-note'}
                     disabled={isSubmitting}
                   />
                   {errors.message ? (
@@ -406,7 +411,7 @@ export default function ContactPage() {
                       {errors.message}
                     </span>
                   ) : (
-                    <small style={{ color: 'var(--muted2-l)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
+                    <small id="message-note" style={{ color: 'var(--muted-l)', fontSize: '11px', marginTop: '4px', display: 'block' }}>
                       {data.message.length.toLocaleString()}/2,000 characters (minimum 10)
                     </small>
                   )}

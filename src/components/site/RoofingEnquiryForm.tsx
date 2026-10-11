@@ -391,7 +391,8 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
 
       {step === 1 && <section className="enquiry-step" aria-labelledby="property-title">
         <header><h2 id="property-title">What kind of property is it?</h2><p>Choose the option that best describes your project.</p></header>
-        <div className="property-options">
+        <fieldset className="property-options" style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend className="sr-only">Select property type</legend>
           {PROPERTY_OPTIONS.map((option) => <label key={option.value} className={data.property === option.value ? 'selected' : ''}>
             <input
               type="radio"
@@ -405,7 +406,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
             <span className="property-icon"><PropertyIcon type={option.icon} /></span>
             <span className="property-copy"><strong>{option.title}</strong><small>{option.description}</small></span>
           </label>)}
-        </div>
+        </fieldset>
         <div className="enquiry-info"><strong>What happens after you enquire?</strong><p>Your details provide a starting point to discuss scope and any assessment needed. A quote or inspection is agreed separately.</p></div>
         <div className="enquiry-actions right">
           <button
@@ -428,6 +429,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               value={data.service}
               onChange={(e) => update('service', e.target.value)}
               onBlur={() => handleBlur('service')}
+              aria-required="true"
               aria-invalid={!!errors.service}
               aria-describedby={errors.service ? 'service-error' : undefined}
               disabled={isSubmitting}
@@ -446,6 +448,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onChange={(e) => update('location', e.target.value)}
               onBlur={() => handleBlur('location')}
               placeholder="e.g. Mount Eden, Auckland"
+              aria-required="true"
               aria-invalid={!!errors.location}
               aria-describedby={errors.location ? 'location-error' : undefined}
               disabled={isSubmitting}
@@ -457,6 +460,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
             <select
               value={data.timeframe}
               onChange={(e) => update('timeframe', e.target.value)}
+              aria-required="true"
               disabled={isSubmitting}
             >
               <option>Not sure yet</option>
@@ -475,12 +479,13 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onChange={(e) => update('details', e.target.value)}
               onBlur={() => handleBlur('details')}
               placeholder="What have you noticed, or what are you planning?"
+              aria-required="true"
               aria-invalid={!!errors.details}
-              aria-describedby={errors.details ? 'details-error' : undefined}
+              aria-describedby={errors.details ? 'details-error' : 'details-note'}
               disabled={isSubmitting}
             />
             {errors.details && <em id="details-error" role="alert">{errors.details}</em>}
-            <small className="field-note">{data.details.length.toLocaleString()}/2,000 characters (minimum 10). Include roof type or approximate size if known.</small>
+            <small id="details-note" className="field-note">{data.details.length.toLocaleString()}/2,000 characters (minimum 10). Include roof type or approximate size if known.</small>
           </label>
 
           <label className="full upload-label"><span className="upload-title">↥ &nbsp; Add photos (optional)</span>
@@ -564,6 +569,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onChange={(e) => update('name', e.target.value)}
               onBlur={() => handleBlur('name')}
               placeholder="Your name"
+              aria-required="true"
               aria-invalid={!!errors.name}
               aria-describedby={errors.name ? 'name-error' : undefined}
               disabled={isSubmitting}
@@ -580,6 +586,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onChange={(e) => update('email', e.target.value)}
               onBlur={() => handleBlur('email')}
               placeholder="you@example.co.nz"
+              aria-required="true"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? 'email-error' : undefined}
               disabled={isSubmitting}
@@ -596,6 +603,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onChange={(e) => update('phone', e.target.value)}
               onBlur={() => handleBlur('phone')}
               placeholder="021 000 000"
+              aria-required="true"
               aria-invalid={!!errors.phone}
               aria-describedby={errors.phone ? 'phone-error' : undefined}
               disabled={isSubmitting}
@@ -621,9 +629,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               value={data.additionalNotes}
               onChange={(e) => update('additionalNotes', e.target.value)}
               placeholder="Any access instructions, specific times to call, or questions?"
+              aria-describedby="notes-note"
               disabled={isSubmitting}
             />
-            <small className="field-note">{data.additionalNotes.length.toLocaleString()}/2,000 characters</small>
+            <small id="notes-note" className="field-note">{data.additionalNotes.length.toLocaleString()}/2,000 characters</small>
           </label>
 
           <div className="enquiry-actions full">
