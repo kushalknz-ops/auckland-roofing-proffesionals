@@ -727,7 +727,6 @@ export default function HomePage() {
           <p className="eyebrow reveal">Why choose us</p>
           <h2 className="reveal">Built on experience.<br />Driven by quality.</h2>
           <p className="reveal">We partner with businesses, builders, body corporates and homeowners to deliver roofing that is reliable, durable and built to perform in Auckland conditions — from the first site inspection to long after the last screw is driven.</p>
-          <a className="outline-btn reveal" href="#about">About ARP <span>→</span></a>
         </div>
         <div className="why-values-bar">
           <div className="container">
@@ -795,11 +794,15 @@ export default function HomePage() {
               </div>
               <div className="about-contact-list">
                 <div className="about-contact-item">
-                  <span className="about-contact-icon" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <a
+                    href="tel:0800555766"
+                    className="about-contact-icon"
+                    aria-label="Call 0800 555 766"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
-                  </span>
+                  </a>
                   <div className="about-contact-content">
                     <span className="about-contact-label">Phone</span>
                     <span className="about-contact-value">
@@ -809,12 +812,16 @@ export default function HomePage() {
                 </div>
 
                 <div className="about-contact-item">
-                  <span className="about-contact-icon" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <a
+                    href="mailto:info@aucklandroofprofessionals.nz"
+                    className="about-contact-icon"
+                    aria-label="Email info@aucklandroofprofessionals.nz"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <rect width="20" height="16" x="2" y="4" rx="2" />
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
-                  </span>
+                  </a>
                   <div className="about-contact-content">
                     <span className="about-contact-label">Email</span>
                     <span className="about-contact-value">
@@ -824,16 +831,28 @@ export default function HomePage() {
                 </div>
 
                 <div className="about-contact-item">
-                  <span className="about-contact-icon" aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <a
+                    href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="about-contact-icon"
+                    aria-label="View workshop location on Google Maps"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                  </span>
+                  </a>
                   <div className="about-contact-content">
                     <span className="about-contact-label">Workshop Address</span>
                     <span className="about-contact-value">
-                      59 Porana Road, Glenfield, Auckland 0627
+                      <a
+                        href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        59 Porana Road, Glenfield, Auckland 0627
+                      </a>
                     </span>
                   </div>
                 </div>
@@ -858,13 +877,29 @@ export default function HomePage() {
             {/* Card 2: Branch / Location Block (Matching Reference Image) */}
             <div className="about-branch-card">
               <div className="branch-header">
-                <svg className="branch-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.4 11.85 7.4 11.85.34.3.86.3 1.2 0C12.6 21.85 20 15.25 20 10c0-4.42-3.58-8-8-8z" />
-                  <circle cx="12" cy="10" r="2.6" />
-                </svg>
+                <a
+                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="branch-pin-link"
+                  aria-label="View branch location on Google Maps"
+                >
+                  <svg className="branch-pin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7.4 11.85 7.4 11.85.34.3.86.3 1.2 0C12.6 21.85 20 15.25 20 10c0-4.42-3.58-8-8-8z" />
+                    <circle cx="12" cy="10" r="2.6" />
+                  </svg>
+                </a>
                 <h3>Visit our Branch</h3>
               </div>
-              <p className="branch-address">59 Porana Road, Glenfield, Auckland 0627, New Zealand</p>
+              <p className="branch-address">
+                <a
+                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  59 Porana Road, Glenfield, Auckland 0627, New Zealand
+                </a>
+              </p>
               <div className="branch-actions">
                 <a
                   href="https://www.google.com/maps/dir/?api=1&destination=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand"
@@ -930,7 +965,16 @@ export default function HomePage() {
             <ul className="contact-facts reveal">
               <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
               <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
-              <li><span>Office</span>59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand</li>
+              <li>
+                <span>Office</span>
+                <a
+                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand
+                </a>
+              </li>
               <li><span>Hours</span>Mon–Fri · 7:30am–5:00pm</li>
             </ul>
           </div>

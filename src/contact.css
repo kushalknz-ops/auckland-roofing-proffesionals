@@ -349,6 +349,14 @@
   align-items:center;
   justify-content:center;
   flex-shrink:0;
+  text-decoration:none;
+  transition:background .2s,color .2s,transform .2s;
+}
+a.contact-info-icon:hover,
+a.contact-info-icon:focus-visible{
+  background:var(--sage);
+  color:var(--charcoal);
+  transform:translateY(-1px);
 }
 .contact-info-content{
   display:flex;

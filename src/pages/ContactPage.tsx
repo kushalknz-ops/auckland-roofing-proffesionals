@@ -444,12 +444,18 @@ export default function ContactPage() {
             <h2>Our Contact Details</h2>
             <ul className="contact-info-list">
               <li className="contact-info-item">
-                <div className="contact-info-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <a
+                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-info-icon"
+                  aria-label="View workshop location on Google Maps"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
-                </div>
+                </a>
                 <div className="contact-info-content">
                   <span className="contact-info-label">Workshop / Office Address</span>
                   <span className="contact-info-value">
@@ -465,11 +471,15 @@ export default function ContactPage() {
               </li>
 
               <li className="contact-info-item">
-                <div className="contact-info-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <a
+                  href="tel:0800555766"
+                  className="contact-info-icon"
+                  aria-label="Call 0800 555 766"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                   </svg>
-                </div>
+                </a>
                 <div className="contact-info-content">
                   <span className="contact-info-label">Phone</span>
                   <span className="contact-info-value">
@@ -479,12 +489,16 @@ export default function ContactPage() {
               </li>
 
               <li className="contact-info-item">
-                <div className="contact-info-icon" aria-hidden="true">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <a
+                  href="mailto:info@aucklandroofprofessionals.nz"
+                  className="contact-info-icon"
+                  aria-label="Email info@aucklandroofprofessionals.nz"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect width="20" height="16" x="2" y="4" rx="2" />
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
-                </div>
+                </a>
                 <div className="contact-info-content">
                   <span className="contact-info-label">Email</span>
                   <span className="contact-info-value">

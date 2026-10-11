@@ -103,7 +103,7 @@ export const SERVICES: Service[] = [
   },
   // RESIDENTIAL
   {
-    id: 'asphalt-shingles', num: '06', badge: 'Residential · Specialised',
+    id: 'asphalt-shingles', num: '01', badge: 'Residential · Specialised',
     title: 'Asphalt Shingles',
     seoTitle: 'Architectural Asphalt Shingles Auckland | Auckland Roofers',
     seoDescription: 'Specialist architectural asphalt shingle roofing in Auckland. Certified installers of wind, fire and UV resistant shingles with warranties up to 30 years.',
@@ -120,7 +120,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    id: 'metal-roofs-res', num: '07', badge: 'Residential',
+    id: 'metal-roofs-res', num: '02', badge: 'Residential',
     title: 'Metal Roofs',
     seoTitle: 'Colorsteel® Residential Metal Roofing Auckland | Long-Run Re-Roofs',
     seoDescription: 'Premium residential metal roofing in Auckland. Genuine Colorsteel® long run, corrugate, Euro tray & tile-to-metal conversions built for coastal conditions.',
@@ -137,7 +137,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    id: 'membrane-res', num: '08', badge: 'Residential',
+    id: 'membrane-res', num: '03', badge: 'Residential',
     title: 'Membrane Roofing',
     seoTitle: 'Residential Membrane Roofing Auckland | Flat Roofs & Balcony Decks',
     seoDescription: 'Seamless membrane waterproofing for flat roofs, extensions, and walk-out decks on Auckland homes. Certified TPO, torch-on and butynol applicators.',
@@ -154,7 +154,7 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    id: 'warmroof-res', num: '09', badge: 'Residential',
+    id: 'warmroof-res', num: '04', badge: 'Residential',
     title: 'Warm Roof Systems',
     seoTitle: 'Residential Warm Roof Systems Auckland | Condensation-Free Insulation',
     seoDescription: 'Warm roof installations and retrofits for Auckland homes. Insulate above the deck to eliminate condensation and heat loss for a warmer, healthier home.',
