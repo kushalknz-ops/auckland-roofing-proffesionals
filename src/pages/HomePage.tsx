@@ -914,14 +914,6 @@ export default function HomePage() {
                     <line x1="10" y1="14" x2="21" y2="3" />
                   </svg>
                 </a>
-                <a
-                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="branch-btn-secondary"
-                >
-                  View branch on Google Maps
-                </a>
               </div>
             </div>
           </div>
