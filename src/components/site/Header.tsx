@@ -149,8 +149,23 @@ export function Header() {
           aria-label="Auckland Roof Professionals — home"
           onClick={handleHomeClick}
         >
-          <img src="/assets/logo-full.png" alt="Auckland Roof Professionals" className="brand-logo brand-logo--light" />
-          <img src="/assets/logo-navy.png" alt="" className="brand-logo brand-logo--navy" aria-hidden="true" />
+          <img
+            src="/assets/logo-full.png"
+            alt="Auckland Roof Professionals"
+            className="brand-logo brand-logo--light"
+            width={1365}
+            height={276}
+            decoding="async"
+          />
+          <img
+            src="/assets/logo-navy.png"
+            alt=""
+            className="brand-logo brand-logo--navy"
+            width={1365}
+            height={276}
+            aria-hidden="true"
+            decoding="async"
+          />
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary">

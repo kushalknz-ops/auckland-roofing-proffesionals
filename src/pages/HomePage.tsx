@@ -82,7 +82,10 @@ function StatsBand() {
                 src="/assets/img/cert-sitesafe.webp"
                 alt="Site Safe Member - Te Kaitiaki o Haumaru"
                 className="cert-logo cert-logo-sitesafe"
+                width={313}
+                height={161}
                 loading="lazy"
+                decoding="async"
               />
             </div>
             <div className="cert-col cert-col-lbp">
@@ -90,7 +93,10 @@ function StatsBand() {
                 src="/assets/img/cert-lbp.webp"
                 alt="Licensed Building Practitioners"
                 className="cert-logo cert-logo-lbp"
+                width={352}
+                height={127}
                 loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -551,7 +557,14 @@ function ProjectsSection() {
 
           {allProjects.map((p, idx) => (
             <article key={`${p.num}-${idx}`}>
-              <img src={p.img} alt={p.alt} loading="lazy" />
+              <img
+                src={p.img}
+                alt={p.alt}
+                width={1536}
+                height={1024}
+                loading="lazy"
+                decoding="async"
+              />
               <div className="project-content">
                 <div className="project-label">
                   <small>{p.num} · {p.cat}</small>
@@ -765,7 +778,14 @@ export default function HomePage() {
             <p className="reveal">We combine practical experience, licensed expertise and clear communication at every stage — from the first site inspection and detailed planning through to installation, clean-up and ongoing care.</p>
           </div>
           <div className="story-panel reveal">
-            <img src="/assets/logo-navy.png" alt="Auckland Roof Professionals logo" />
+            <img
+              src="/assets/logo-navy.png"
+              alt="Auckland Roof Professionals logo"
+              width={1365}
+              height={276}
+              loading="lazy"
+              decoding="async"
+            />
             <p className="story-statement">"Our work is measured by what lasts: strong roofs, safe sites and relationships built on trust."</p>
             <div className="story-pillars">
               <article>

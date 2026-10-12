@@ -38,7 +38,15 @@ export function Footer() {
       <div className="footer-inner">
         <div className="footer-company">
           <Link to="/" onClick={handleHomeClick} aria-label="Auckland Roof Professionals — home">
-            <img src="/assets/logo-full.png" alt="Auckland Roof Professionals" className="footer-logo" />
+            <img
+              src="/assets/logo-full.png"
+              alt="Auckland Roof Professionals"
+              className="footer-logo"
+              width={1365}
+              height={276}
+              loading="lazy"
+              decoding="async"
+            />
           </Link>
           <p>Commercial and residential roofing specialists, delivering reliable, durable roofing systems across Tāmaki Makaurau — Auckland.</p>
           <div className="footer-credentials">

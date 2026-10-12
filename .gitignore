@@ -24,3 +24,6 @@ localhost/
 *.njsproj
 *.sln
 *.sw?
+
+# Cloudflare Wrangler
+.wrangler
