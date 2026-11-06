@@ -815,9 +815,9 @@ export default function HomePage() {
               <div className="about-contact-list">
                 <div className="about-contact-item">
                   <a
-                    href="tel:0800766311"
+                    href="tel:0800555766"
                     className="about-contact-icon"
-                    aria-label="Call 0800 766 311"
+                    aria-label="Call 0800 555 766"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -826,7 +826,7 @@ export default function HomePage() {
                   <div className="about-contact-content">
                     <span className="about-contact-label">Phone</span>
                     <span className="about-contact-value">
-                      <a href="tel:0800766311">0800 766 311</a>
+                      <a href="tel:0800555766">0800 555 766</a>
                     </span>
                   </div>
                 </div>
@@ -975,7 +975,7 @@ export default function HomePage() {
             <h2 className="reveal">Let's talk about<br />your roof.</h2>
             <p className="reveal">Planning a new build, re-roof or maintenance programme? Tell us what you need and our team will be in touch within one business day.</p>
             <ul className="contact-facts reveal">
-              <li><span>Phone</span><a href="tel:+64800766311">0800 766 311</a></li>
+              <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
               <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
               <li>
                 <span>Office</span>

@@ -60,7 +60,7 @@ test('isValidPhone validation', async (t) => {
     assert.equal(isValidPhone('021 123 4567'), true) // mobile
     assert.equal(isValidPhone('09 555 1234'), true) // landline
     assert.equal(isValidPhone('(09) 555-1234'), true)
-    assert.equal(isValidPhone('0800 766 311'), true) // toll free
+    assert.equal(isValidPhone('0800 555 766'), true) // toll free
     assert.equal(isValidPhone('+64 21 123 4567'), true) // international format
     assert.equal(isValidPhone('+1 555 234 5678'), true)
   })

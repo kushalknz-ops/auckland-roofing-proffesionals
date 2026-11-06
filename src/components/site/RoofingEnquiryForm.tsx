@@ -270,12 +270,12 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
           goTo(2)
         }
       } else if (res.status === 429) {
-        setServerError('Too many submissions. Please wait a few moments or call 0800 766 311.')
+        setServerError('Too many submissions. Please wait a few moments or call 0800 555 766.')
       } else {
-        setServerError(result?.message || 'Unable to submit enquiry. Please try again or call us at 0800 766 311.')
+        setServerError(result?.message || 'Unable to submit enquiry. Please try again or call us at 0800 555 766.')
       }
     } catch {
-      setServerError('Network error. Please check your connection or call us directly on 0800 766 311.')
+      setServerError('Network error. Please check your connection or call us directly on 0800 555 766.')
     } finally {
       setIsSubmitting(false)
     }
@@ -380,10 +380,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               {isSubmitting ? 'Retrying...' : 'Retry submission'}
             </button>
             <a
-              href="tel:0800766311"
+              href="tel:0800555766"
               style={{ fontSize: '11px', fontWeight: 600, color: '#942C2C', textDecoration: 'underline' }}
             >
-              Or call 0800 766 311
+              Or call 0800 555 766
             </a>
           </div>
         </div>

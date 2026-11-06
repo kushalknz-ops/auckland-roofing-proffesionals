@@ -193,7 +193,7 @@ export async function handleApiRequest(req, res) {
   if (isRateLimited(clientIp)) {
     sendJson(res, 429, {
       success: false,
-      message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 766 311.',
+      message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 555 766.',
     }, {
       'Retry-After': '60',
     })

@@ -89,7 +89,7 @@ const STATIC_ROUTES = {
   },
   '/contact': {
     title: 'Contact Auckland Roof Professionals | Free Roof Quotes & Emergencies',
-    description: 'Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 766 311 or visit 59 Porana Rd, Glenfield.',
+    description: 'Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 555 766 or visit 59 Porana Rd, Glenfield.',
     url: `${SITE_URL}/contact`,
     image: `${SITE_URL}/assets/og-contact.jpg`,
     imageAlt: 'Contact Auckland Roof Professionals - Free Quotes & Emergency Leak Repairs',
