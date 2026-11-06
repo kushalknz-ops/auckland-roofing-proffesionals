@@ -102,10 +102,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 Return Home
               </a>
               <a
-                href="tel:0800555766"
+                href="tel:0800766311"
                 className="px-6 py-2.5 rounded-lg bg-[#A5B8AC] text-[#1F2624] font-semibold text-sm hover:bg-[#8FA597] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2C3533]"
               >
-                Call 0800 555 766
+                Call 0800 766 311
               </a>
             </div>
 

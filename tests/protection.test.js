@@ -347,7 +347,7 @@ test('Custom 404 Page & Fallback Handling', async (t) => {
     const body = await res.text()
     assert.match(body, /404 - Page Not Found/i)
     assert.match(body, /Auckland Roof Professionals/i)
-    assert.match(body, /0800 555 766/)
+    assert.match(body, /0800 766 311/)
   })
 })
 

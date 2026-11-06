@@ -108,11 +108,11 @@ export function Footer() {
               </a>
             </p>
             <span>Phone</span>
-            <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call 0800 555 766">
+            <a className="contact-strong contact-action" href="tel:+64800766311" aria-label="Call 0800 766 311">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7.1 3.5 9.4 8 7.7 9.7a15.2 15.2 0 0 0 6.6 6.6l1.7-1.7 4.5 2.3-1 3.1c-.3.8-1 1.3-1.8 1.3A15 15 0 0 1 2.7 6.3c0-.8.5-1.5 1.3-1.8l3.1-1Z" />
               </svg>
-              <span>0800 555 766</span>
+              <span>0800 766 311</span>
             </a>
             <span>Email</span>
             <a className="contact-strong contact-action" href="mailto:info@aucklandroofprofessionals.nz" aria-label="Email info@aucklandroofprofessionals.nz">

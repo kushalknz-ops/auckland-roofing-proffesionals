@@ -257,7 +257,7 @@ async function createSocialCard({
       <g transform="translate(18, 14)">
         <path d="M3.6 1.5 C2.4 1.5 1.5 2.4 1.5 3.6 C1.5 11.6 7.9 18 15.9 18 C17.1 18 18 17.1 18 15.9 L18 13.5 C18 12.8 17.5 12.2 16.8 12.1 L13.3 11.4 C12.7 11.3 12.1 11.5 11.7 12.0 L10.6 13.1 C8.2 11.8 6.2 9.8 4.9 7.4 L6.0 6.3 C6.5 5.9 6.7 5.3 6.6 4.7 L5.9 1.2 C5.8 0.5 5.2 0 4.5 0 L2.1 0 Z" fill="#F8FAF7" transform="scale(1.1)" />
       </g>
-      <text x="50" y="31" class="cta-tel">0800 555 766</text>
+      <text x="50" y="31" class="cta-tel">0800 766 311</text>
     </g>
 
     <!-- Center Pitch -->
@@ -357,7 +357,7 @@ async function main() {
     bgImageSrc: path.join(publicAssetsDir, 'img', 'about.jpg'),
     eyebrowText: 'Free Assessments & Emergency Leak Repairs',
     headline: 'Contact Auckland Roof Professionals',
-    subheadline: 'Call 0800 555 766 or request a free quote online. Based in Glenfield, Auckland.',
+    subheadline: 'Call 0800 766 311 or request a free quote online. Based in Glenfield, Auckland.',
     serviceBullets: ['Free On-Site Quotes', 'Emergency Repairs', 'Insurance Reports', 'Expert Roof Advice'],
     accentColor: '#E5A83B',
     outputFilenameJpg: 'og-contact.jpg',

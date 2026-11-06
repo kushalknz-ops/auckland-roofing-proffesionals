@@ -92,10 +92,10 @@ export function QuoteModal() {
                 <h3 className="text-xl font-bold text-[#2C3533] mb-2">Something went wrong</h3>
                 <p className="text-sm text-[#576562] mb-4">We were unable to load the quote enquiry form right now.</p>
                 <a
-                  href="tel:0800555766"
+                  href="tel:0800766311"
                   className="inline-block px-5 py-2 rounded-lg bg-[#2C3533] text-[#F8FAF7] text-sm font-semibold"
                 >
-                  Call 0800 555 766
+                  Call 0800 766 311
                 </a>
               </div>
             }

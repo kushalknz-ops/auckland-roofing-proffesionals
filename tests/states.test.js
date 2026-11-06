@@ -87,7 +87,7 @@ test('Form Submissions State Machine Logic', async (t) => {
       status: 429,
       data: {
         success: false,
-        message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 555 766.',
+        message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 766 311.',
       },
     }
     assert.equal(rateLimitRes.status, 429)
