@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useQuote } from './quote-context'
 import { SERVICES, isCommercialService } from '../../data/services'
+import '../../navigation.css'
 
 const NAV = [
   { label: 'Home', path: '/' },
@@ -10,11 +11,12 @@ const NAV = [
   { label: 'Process', path: '/#process' },
   { label: 'About', path: '/#about' },
   { label: 'FAQ', path: '/#faq' },
+  { label: 'Blog', path: '/blog' },
   { label: 'Contact Us', path: '/contact' },
 ]
 
 export function Header() {
-  const { pathname, search } = useLocation()
+  const { pathname, search, hash } = useLocation()
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -24,6 +26,9 @@ export function Header() {
 
   const headerRef = useRef<HTMLElement>(null)
   const megaMenuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const servicesButtonRef = useRef<HTMLButtonElement>(null)
+  const mobileNavRef = useRef<HTMLDivElement>(null)
 
   const residentialServices = SERVICES.filter((s) => !isCommercialService(s))
   const commercialServices = SERVICES.filter((s) => isCommercialService(s))
@@ -39,7 +44,18 @@ export function Header() {
   useEffect(() => {
     setMenuOpen(false)
     setServicesOpen(false)
-  }, [pathname, search])
+  }, [pathname, search, hash])
+
+  /* A menu must never remain open after its layout is replaced on resize. */
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1200px)')
+    const onChange = () => {
+      setMenuOpen(false)
+      setServicesOpen(false)
+    }
+    desktop.addEventListener('change', onChange)
+    return () => desktop.removeEventListener('change', onChange)
+  }, [])
 
   /* Click outside to close services mega-menu */
   useEffect(() => {
@@ -58,7 +74,10 @@ export function Header() {
     }
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setServicesOpen(false)
+      if (e.key === 'Escape') {
+        setServicesOpen(false)
+        servicesButtonRef.current?.focus({ preventScroll: true })
+      }
     }
 
     document.addEventListener('mousedown', handlePointerDown)
@@ -72,17 +91,48 @@ export function Header() {
     }
   }, [servicesOpen])
 
-  /* Lock body scroll when mobile menu is open */
+  /* Keep keyboard and background scrolling inside the mobile navigation. */
   useEffect(() => {
     if (menuOpen) {
+      const previousOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
+      const background = Array.from(document.querySelectorAll<HTMLElement>('main, .site-footer'))
+      const previousInert = background.map((element) => element.inert)
+      background.forEach((element) => { element.inert = true })
+      const focusTimer = requestAnimationFrame(() => {
+        mobileNavRef.current?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true })
+      })
       const onKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') setMenuOpen(false)
+        if (e.key === 'Escape') {
+          e.preventDefault()
+          setMenuOpen(false)
+        }
+        if (e.key === 'Tab') {
+          const controls = [menuButtonRef.current, ...Array.from(
+            mobileNavRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') || [],
+          )].filter((element): element is HTMLElement => !!element && element.getClientRects().length > 0)
+          const first = controls[0]
+          const last = controls[controls.length - 1]
+          if (e.shiftKey && (document.activeElement === first || !controls.includes(document.activeElement as HTMLElement))) {
+            e.preventDefault()
+            last?.focus()
+          } else if (!e.shiftKey && (document.activeElement === last || !controls.includes(document.activeElement as HTMLElement))) {
+            e.preventDefault()
+            first?.focus()
+          }
+        }
       }
       document.addEventListener('keydown', onKey)
       return () => {
+        cancelAnimationFrame(focusTimer)
         document.removeEventListener('keydown', onKey)
-        document.body.style.overflow = ''
+        document.body.style.overflow = previousOverflow
+        background.forEach((element, index) => { element.inert = previousInert[index] })
+        // The selected item may already be inert by the time cleanup runs.
+        const trigger = menuButtonRef.current?.getClientRects().length
+          ? menuButtonRef.current
+          : headerRef.current?.querySelector<HTMLElement>('.brand')
+        trigger?.focus({ preventScroll: true })
       }
     }
   }, [menuOpen])
@@ -105,7 +155,7 @@ export function Header() {
       if (window.location.hash) {
         navigate('/', { replace: true })
       }
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, left: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
     } else {
       navigate('/')
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
@@ -124,7 +174,7 @@ export function Header() {
       if (el) {
         e.preventDefault()
         navigate(path)
-        el.scrollIntoView({ behavior: 'smooth' })
+        el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
       }
     }
   }
@@ -133,8 +183,11 @@ export function Header() {
     <>
       <header
         ref={headerRef}
-        className={`site-header${scrolled ? ' scrolled' : ''}${servicesOpen ? ' services-active' : ''}`}
+        className={`site-header responsive-header${scrolled ? ' scrolled' : ''}${servicesOpen ? ' services-active' : ''}`}
         id="siteHeader"
+        onBlur={(event) => {
+          if (servicesOpen && !event.currentTarget.contains(event.relatedTarget as Node | null)) setServicesOpen(false)
+        }}
       >
         {/* liquid-glass layers — shown only when .scrolled on >=901px (see arp.css) */}
         <div className="header-glass" aria-hidden="true">
@@ -174,12 +227,20 @@ export function Header() {
               return (
                 <div key={n.label} className="nav-item-dropdown">
                   <button
+                    ref={servicesButtonRef}
                     type="button"
                     className={`nav-dropdown-btn${servicesOpen ? ' active' : ''}`}
                     onClick={toggleServices}
                     aria-expanded={servicesOpen}
                     aria-haspopup="true"
                     aria-controls="servicesMegaMenu"
+                    onKeyDown={(event) => {
+                      if (event.key === 'ArrowDown') {
+                        event.preventDefault()
+                        setServicesOpen(true)
+                        requestAnimationFrame(() => megaMenuRef.current?.querySelector<HTMLElement>('a')?.focus())
+                      }
+                    }}
                   >
                     <span>{n.label}</span>
                     <svg
@@ -207,6 +268,7 @@ export function Header() {
                 key={n.label}
                 to={n.path}
                 onClick={n.path === '/' ? handleHomeClick : handleNavClick(n.path)}
+                aria-current={n.path === '/blog' && pathname === '/blog' ? 'page' : undefined}
               >
                 {n.label}
               </Link>
@@ -214,11 +276,12 @@ export function Header() {
           })}
         </nav>
 
-        <button className="header-cta" type="button" onClick={() => { closeAllMenus(); openQuote() }}>
+        <button className="header-cta" type="button" onClick={(event) => { closeAllMenus(); openQuote(event.currentTarget) }}>
           Free Quote
         </button>
 
         <button
+          ref={menuButtonRef}
           className={`menu-btn${menuOpen ? ' open' : ''}`}
           type="button"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -262,7 +325,7 @@ export function Header() {
                   {residentialServices.map((s) => (
                     <Link
                       key={s.id}
-                      to={`/service?id=${s.id}`}
+                      to={`/service/${s.id}`}
                       className="megamenu-item"
                       onClick={closeAllMenus}
                     >
@@ -304,7 +367,7 @@ export function Header() {
                   {commercialServices.map((s) => (
                     <Link
                       key={s.id}
-                      to={`/service?id=${s.id}`}
+                      to={`/service/${s.id}`}
                       className="megamenu-item"
                       onClick={closeAllMenus}
                     >
@@ -332,7 +395,7 @@ export function Header() {
                 className="megamenu-footer-btn"
                 onClick={() => {
                   closeAllMenus()
-                  openQuote()
+                  openQuote(servicesButtonRef.current)
                 }}
               >
                 Request a quote →
@@ -344,10 +407,13 @@ export function Header() {
 
       {/* Mobile Navigation Panel */}
       <div
+        ref={mobileNavRef}
         id="mobileNav"
         className={`mobile-nav${menuOpen ? ' open' : ''}`}
         aria-hidden={!menuOpen}
         inert={!menuOpen ? true : undefined}
+        role="region"
+        aria-label="Site navigation"
       >
         <div className="mobile-nav-scroll">
           <nav aria-label="Mobile Navigation">
@@ -360,13 +426,14 @@ export function Header() {
                 className="mobile-services-toggle"
                 onClick={() => setMobileServicesExpanded((prev) => !prev)}
                 aria-expanded={mobileServicesExpanded}
+                aria-controls="mobileServices"
               >
                 <span>Services</span>
                 <span className={`mobile-chevron${mobileServicesExpanded ? ' open' : ''}`}>▼</span>
               </button>
 
               {mobileServicesExpanded && (
-                <div className="mobile-services-accordion">
+                <div id="mobileServices" className="mobile-services-accordion">
                   {/* RESIDENTIAL */}
                   <div className="mobile-services-group">
                     <div className="mobile-services-group-head">
@@ -383,7 +450,7 @@ export function Header() {
                       {residentialServices.map((s) => (
                         <Link
                           key={s.id}
-                          to={`/service?id=${s.id}`}
+                          to={`/service/${s.id}`}
                           className="mobile-service-link"
                           onClick={closeAllMenus}
                         >
@@ -410,7 +477,7 @@ export function Header() {
                       {commercialServices.map((s) => (
                         <Link
                           key={s.id}
-                          to={`/service?id=${s.id}`}
+                          to={`/service/${s.id}`}
                           className="mobile-service-link"
                           onClick={closeAllMenus}
                         >
@@ -428,6 +495,7 @@ export function Header() {
             <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
             <Link to="/#about" onClick={handleNavClick('/#about')}>About</Link>
             <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
+            <Link to="/blog" onClick={closeAllMenus} aria-current={pathname === '/blog' ? 'page' : undefined}>Blog</Link>
             <Link to="/contact" onClick={closeAllMenus}>Contact Us</Link>
           </nav>
 
@@ -436,7 +504,7 @@ export function Header() {
             type="button"
             onClick={() => {
               closeAllMenus()
-              openQuote()
+              openQuote(menuButtonRef.current)
             }}
           >
             Get a free quote <span>→</span>

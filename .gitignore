@@ -13,6 +13,14 @@ dist-ssr
 *.local
 localhost/
 *.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +35,7 @@ localhost/
 
 # Cloudflare Wrangler
 .wrangler
+
+# Generated browser audit reports and screenshots (also excluded from CSS scanning)
+/artifacts/responsive/
+/artifacts/performance-audit/

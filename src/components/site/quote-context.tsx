@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
   type ReactNode,
 } from 'react'
@@ -10,40 +9,32 @@ import {
 interface QuoteCtx {
   open: boolean
   serviceTitle: string | null
-  openQuote: (title?: string) => void
+  returnFocusTo: HTMLElement | null
+  openQuote: (trigger: HTMLElement | null, title?: string) => void
   closeQuote: () => void
 }
 
 const Ctx = createContext<QuoteCtx | null>(null)
 
 export function QuoteProvider({ children }: { children: ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const [serviceTitle, setServiceTitle] = useState<string | null>(null)
+  const [quote, setQuote] = useState<Pick<QuoteCtx, 'serviceTitle' | 'returnFocusTo'> | null>(null)
 
-  const openQuote = useCallback((title?: string) => {
-    setServiceTitle(title ?? null)
-    setOpen(true)
-    document.body.style.overflow = 'hidden'
+  const openQuote = useCallback((trigger: HTMLElement | null, title?: string) => {
+    setQuote({ returnFocusTo: trigger, serviceTitle: title ?? null })
   }, [])
 
   const closeQuote = useCallback(() => {
-    setOpen(false)
-    document.body.style.overflow = ''
+    setQuote(null)
   }, [])
 
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeQuote()
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, closeQuote])
-
-  useEffect(() => () => { document.body.style.overflow = '' }, [])
-
   return (
-    <Ctx.Provider value={{ open, serviceTitle, openQuote, closeQuote }}>
+    <Ctx.Provider value={{
+      open: quote !== null,
+      serviceTitle: quote?.serviceTitle ?? null,
+      returnFocusTo: quote?.returnFocusTo ?? null,
+      openQuote,
+      closeQuote,
+    }}>
       {children}
     </Ctx.Provider>
   )

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { JSDOM } from 'jsdom'
 import sharp from 'sharp'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -26,6 +27,7 @@ test('Favicon & App Icon File Integrity', async (t) => {
       path.join(publicAssetsDir, 'apple-touch-icon.png'),
       path.join(publicAssetsDir, 'android-chrome-192x192.png'),
       path.join(publicAssetsDir, 'android-chrome-512x512.png'),
+      path.join(publicAssetsDir, 'android-chrome-maskable-512x512.png'),
     ]
 
     for (const filePath of requiredFiles) {
@@ -63,8 +65,8 @@ test('Favicon & App Icon File Integrity', async (t) => {
     assert.ok(svgContent.includes('<svg'), 'SVG file must contain <svg> root element')
     assert.ok(svgContent.includes('viewBox="0 0 512 512"'), 'SVG must specify 512x512 viewBox')
     assert.ok(svgContent.includes('xmlns="http://www.w3.org/2000/svg"'), 'SVG must include xml namespace')
-    assert.ok(svgContent.includes('#35403D') || svgContent.includes('arpBg'), 'SVG must use brand Coastal Charcoal')
-    assert.ok(svgContent.includes('#C4D6C9') || svgContent.includes('arpSage'), 'SVG must use brand Sage accent')
+    assert.ok(svgContent.includes('#2C3533'), 'SVG must use brand Coastal Charcoal')
+    assert.ok(svgContent.includes('#A5B8AC'), 'SVG must use brand Sage accent')
   })
 
   await t.test('PNG image dimensions match their standard specifications', async () => {
@@ -76,6 +78,7 @@ test('Favicon & App Icon File Integrity', async (t) => {
       { file: path.join(publicAssetsDir, 'apple-touch-icon.png'), expectedW: 180, expectedH: 180 },
       { file: path.join(publicAssetsDir, 'android-chrome-192x192.png'), expectedW: 192, expectedH: 192 },
       { file: path.join(publicAssetsDir, 'android-chrome-512x512.png'), expectedW: 512, expectedH: 512 },
+      { file: path.join(publicAssetsDir, 'android-chrome-maskable-512x512.png'), expectedW: 512, expectedH: 512 },
     ]
 
     for (const { file, expectedW, expectedH } of expectations) {
@@ -94,24 +97,33 @@ test('Favicon & App Icon File Integrity', async (t) => {
     assert.equal(manifest.background_color, '#2C3533')
     assert.ok(Array.isArray(manifest.icons) && manifest.icons.length >= 2, 'Manifest must declare icons')
     for (const icon of manifest.icons) {
-      const assetPath = path.join(publicDir, icon.src.replace(/^\//, ''))
+      const { pathname } = new URL(icon.src, 'https://example.test')
+      const assetPath = path.join(publicDir, pathname)
       assert.ok(fs.existsSync(assetPath), `Manifest icon file missing: ${icon.src}`)
     }
+    const maskable = manifest.icons.find(icon => icon.purpose === 'maskable')
+    assert.ok(maskable, 'Manifest must declare a maskable icon')
+    assert.equal(maskable.sizes, '512x512')
+    assert.ok(manifest.icons.every(icon => icon === maskable || icon.src !== maskable.src))
   })
 
-  await t.test('index.html links to custom favicon assets', () => {
-    const indexHtml = fs.readFileSync(path.join(projectRoot, 'index.html'), 'utf8')
-    assert.ok(indexHtml.includes('rel="icon" href="/favicon.ico"'), 'index.html missing /favicon.ico')
-    assert.ok(indexHtml.includes('href="/assets/favicon.svg"'), 'index.html missing /assets/favicon.svg')
-    assert.ok(indexHtml.includes('href="/assets/favicon-32x32.png"'), 'index.html missing favicon-32x32.png')
-    assert.ok(indexHtml.includes('href="/assets/apple-touch-icon.png"'), 'index.html missing apple-touch-icon.png')
-    assert.ok(indexHtml.includes('href="/site.webmanifest"'), 'index.html missing site.webmanifest')
-  })
-
-  await t.test('404.html links to custom favicon assets', () => {
-    const errorHtml = fs.readFileSync(path.join(publicDir, '404.html'), 'utf8')
-    assert.ok(errorHtml.includes('rel="icon" href="/favicon.ico"'), '404.html missing /favicon.ico')
-    assert.ok(errorHtml.includes('href="/assets/favicon.svg"'), '404.html missing /assets/favicon.svg')
-    assert.ok(errorHtml.includes('href="/assets/apple-touch-icon.png"'), '404.html missing apple-touch-icon.png')
-  })
+  for (const page of ['index.html', 'public/404.html', 'public/social-preview.html']) {
+    await t.test(`${page} declares the brand icons and theme color`, () => {
+      const html = fs.readFileSync(path.join(projectRoot, page), 'utf8')
+      const { window } = new JSDOM(html, { url: 'https://example.test' })
+      const { head } = window.document
+      const icons = [...head.querySelectorAll('link[rel="icon"]')]
+      assert.deepEqual(icons.map(link => [new URL(link.href).pathname, link.getAttribute('sizes')]), [
+        ['/favicon.ico', '16x16 32x32 48x48'],
+        ['/assets/favicon-16x16.png', '16x16'],
+        ['/assets/favicon-32x32.png', '32x32'],
+        ['/assets/favicon.svg', 'any'],
+      ])
+      const touchIcon = head.querySelector('link[rel="apple-touch-icon"][sizes="180x180"]')
+      assert.equal(new URL(touchIcon.href).pathname, '/assets/apple-touch-icon.png')
+      assert.equal(new URL(head.querySelector('link[rel="manifest"]').href).pathname, '/site.webmanifest')
+      assert.equal(head.querySelector('meta[name="theme-color"]').content, '#2C3533')
+      window.close()
+    })
+  }
 })

@@ -8,17 +8,42 @@ import https from 'node:https'
 import fs from 'node:fs'
 import path from 'node:path'
 import zlib from 'node:zlib'
+import { pipeline } from 'node:stream'
 import { fileURLToPath } from 'node:url'
-import { handleApiRequest } from './server/api.js'
-import { injectOpenGraphMetadata } from './server/seo.js'
+import { isServiceAlias, serviceRedirectPath } from './server/service-pages.js'
+import { normalizePagePath } from './src/lib/site-url.ts'
+import { CSP_POLICY, HSTS_POLICY, PERMISSIONS_POLICY, SECURITY_HEADERS } from './server/security.js'
+import { installProcessMonitoring, logListening, observeNodeRequest, receiveNodeTelemetry, reportStreamFailure } from './server/node-monitoring.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const isDirectRun = Boolean(process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))
+const runningServers = []
+if (isDirectRun) installProcessMonitoring(() => {
+  for (const server of runningServers) server.close()
+})
+const { CANONICAL_HOST, isSecureRequest, readAllowedOrigins, readPort } = await import('./server/config.js')
+const { handleApiRequest } = await import('./server/api.js')
 const DIST_DIR = path.resolve(__dirname, 'dist')
+const development = process.env.NODE_ENV === 'development'
+const ALLOWED_ORIGINS = readAllowedOrigins(
+  development ? process.env.DEV_ALLOWED_ORIGINS : process.env.ALLOWED_ORIGINS,
+  development,
+)
 
-const HTTP_PORT = Number(process.env.PORT || process.env.HTTP_PORT || 80)
-const HTTPS_PORT = Number(process.env.HTTPS_PORT || 443)
-const SSL_KEY = process.env.SSL_KEY_PATH ? fs.readFileSync(process.env.SSL_KEY_PATH) : null
-const SSL_CERT = process.env.SSL_CERT_PATH ? fs.readFileSync(process.env.SSL_CERT_PATH) : null
+const HTTP_PORT = readPort('PORT', process.env.PORT, readPort('HTTP_PORT', process.env.HTTP_PORT, 80))
+const HTTPS_PORT = readPort('HTTPS_PORT', process.env.HTTPS_PORT, 443)
+const { SSL_KEY_PATH, SSL_CERT_PATH } = process.env
+if (Boolean(SSL_KEY_PATH) !== Boolean(SSL_CERT_PATH)) {
+  throw new Error('SSL_KEY_PATH and SSL_CERT_PATH must be configured together.')
+}
+let tlsOptions
+if (SSL_KEY_PATH && SSL_CERT_PATH) {
+  try {
+    tlsOptions = { key: fs.readFileSync(SSL_KEY_PATH), cert: fs.readFileSync(SSL_CERT_PATH) }
+  } catch {
+    throw new Error('Unable to read the configured TLS files.')
+  }
+}
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -38,162 +63,130 @@ const MIME_TYPES = {
   '.xml': 'application/xml; charset=utf-8',
 }
 
-const CANONICAL_HOST = process.env.CANONICAL_HOST || 'aucklandroofprofessionals.nz'
+function isLocalRequest(req) {
+  const host = req.headers.host?.split(':')[0] || 'localhost'
+  return ['localhost', '127.0.0.1', '0.0.0.0'].includes(host) &&
+    ['127.0.0.1', '::ffff:127.0.0.1', '::1'].includes(req.socket?.remoteAddress)
+}
 
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || `https://${CANONICAL_HOST},https://www.${CANONICAL_HOST}`)
-  .split(',')
-  .map((origin) => origin.trim().toLowerCase())
-  .filter(Boolean)
-
-const CSP_POLICY = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: blob: https://aucklandroofprofessionals.nz https://res.cloudinary.com",
-  "media-src 'self' https://res.cloudinary.com blob:",
-  "connect-src 'self' https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com",
-  "frame-src 'self' https://www.google.com https://maps.google.com",
-  "frame-ancestors 'self'",
-  "form-action 'self'",
-  "base-uri 'self'",
-  "object-src 'none'",
-  "upgrade-insecure-requests",
-].join('; ')
-
-const PERMISSIONS_POLICY = [
-  'camera=()',
-  'microphone=()',
-  'geolocation=()',
-  'payment=()',
-  'usb=()',
-  'vr=()',
-  'interest-cohort=()',
-].join(', ')
-
-function applySecurityAndCorsHeaders(req, res, isAsset) {
-  // Security headers
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
-  res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN')
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
-  res.setHeader('X-XSS-Protection', '0')
-  res.setHeader('Permissions-Policy', PERMISSIONS_POLICY)
-  res.setHeader('Content-Security-Policy', CSP_POLICY)
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-
-  // CORS headers
-  const origin = req.headers.origin
-  if (isAsset) {
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS')
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept')
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-  } else {
-    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin')
-    if (origin) {
-      const originLower = origin.toLowerCase()
-      const isAllowed =
-        ALLOWED_ORIGINS.includes(originLower) ||
-        originLower.startsWith('http://localhost:') ||
-        originLower.startsWith('http://127.0.0.1:') ||
-        originLower.startsWith('https://localhost:') ||
-        originLower.startsWith('https://127.0.0.1:')
-
-      if (isAllowed) {
-        res.setHeader('Access-Control-Allow-Origin', origin)
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD')
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
-        res.setHeader('Access-Control-Max-Age', '86400')
-        res.setHeader('Vary', 'Origin')
-      }
-    }
+function applySecurityHeaders(req, res) {
+  for (const [name, value] of Object.entries(SECURITY_HEADERS)) res.setHeader(name, value)
+  if (isSecureRequest(req)) {
+    res.setHeader('Strict-Transport-Security', HSTS_POLICY)
+  } else if (isLocalRequest(req)) {
+    // WebKit upgrades same-origin asset URLs even on an HTTP loopback preview.
+    res.setHeader('Content-Security-Policy', CSP_POLICY.replace('; upgrade-insecure-requests', ''))
   }
 }
 
-function getCanonicalRedirect(req) {
+function pageFileFor(pathname) {
+  if (!/^\/(?:[a-z0-9-]+(?:\/[a-z0-9-]+)*)?$/.test(pathname)) return null
+  return path.join(DIST_DIR, pathname === '/' ? 'index.html' : pathname === '/404' ? '404-app.html' : `${pathname}.html`)
+}
+
+function getCanonicalRedirect(req, forceHttps = false) {
   const hostHeader = req.headers.host || ''
   const host = hostHeader.split(':')[0].toLowerCase()
-
-  // 1. Host canonicalization (www -> non-www in production)
   const isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(host)
-  let targetHost = host
-  let needsHostRedirect = false
-  if (host.startsWith('www.')) {
-    targetHost = host.slice(4)
-    needsHostRedirect = true
-  } else if (!isLocal && host !== CANONICAL_HOST && !host.endsWith('.local')) {
-    targetHost = CANONICAL_HOST
-    needsHostRedirect = true
+  const requestTarget = req.url || '/'
+  const urlPath = requestTarget.split('?', 1)[0]
+  const search = requestTarget.slice(urlPath.length)
+  const clean = normalizePagePath(urlPath)
+  let target = requestTarget.startsWith('/') ? requestTarget : '/'
+  if (req.method === 'GET' || req.method === 'HEAD' || !req.method) {
+    if (isServiceAlias(clean)) {
+      target = serviceRedirectPath(new URLSearchParams(search)) ?? clean + search
+    } else if (clean !== urlPath) {
+      const page = pageFileFor(clean)
+      if (page && fs.existsSync(page)) target = clean + search
+    }
   }
 
-  // 2. Trailing slash canonicalization for subpaths (e.g. /commercial/ -> /commercial)
-  const [urlPath, queryString] = (req.url || '/').split('?')
-  let cleanPath = urlPath
-  let needsPathRedirect = false
-  if (urlPath.length > 1 && urlPath.endsWith('/') && !path.extname(urlPath)) {
-    cleanPath = urlPath.replace(/\/+$/, '') || '/'
-    needsPathRedirect = true
+  if (!forceHttps && (isLocal || host === CANONICAL_HOST) && target === requestTarget) return null
+  if (isLocal && !forceHttps) {
+    // Absolute paths beginning with two slashes are interpreted as a new host.
+    return target.startsWith('//') ? null : target
   }
-
-  if (needsHostRedirect || needsPathRedirect) {
-    const isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(host)
-    if (isLocal && !needsPathRedirect) return null
-
-    const effectiveHost = isLocal ? host : targetHost
-    const search = queryString ? `?${queryString}` : ''
-    const proto = req.headers['x-forwarded-proto'] || (SSL_KEY ? 'https' : 'http')
-    const port = isLocal && req.headers.host?.includes(':') ? `:${req.headers.host.split(':')[1]}` : ''
-    return `${proto}://${effectiveHost}${port}${cleanPath}${search}`
-  }
-
-  return null
+  const authority = isLocal && HTTPS_PORT !== 443 ? `${host}:${HTTPS_PORT}` : isLocal ? host : CANONICAL_HOST
+  return `https://${authority}${target}`
 }
 
 function handleStaticRequest(req, res) {
   const urlPath = req.url?.split('?')[0] || '/'
-  const isAsset = urlPath.startsWith('/assets/')
-
-  // Preflight request handling
-  if (req.method === 'OPTIONS') {
-    applySecurityAndCorsHeaders(req, res, isAsset)
-    if (urlPath.startsWith('/api/')) {
-      return handleApiRequest(req, res)
-    }
-    res.writeHead(204)
-    res.end()
+  applySecurityHeaders(req, res)
+  let decodedPath
+  try {
+    decodedPath = decodeURIComponent(urlPath)
+  } catch {
+    res.writeHead(400).end()
+    return
+  }
+  if (!decodedPath.startsWith('/') || /[\\:\u0000-\u001f\u007f]/.test(decodedPath) ||
+      /(?:^|\/)\./.test(decodedPath) || /\.(?:map|pem|key|p12|pfx)$/i.test(decodedPath)) {
+    res.writeHead(404).end()
     return
   }
 
-  // API endpoints
-  if (urlPath.startsWith('/api/')) {
-    applySecurityAndCorsHeaders(req, res, false)
-    return handleApiRequest(req, res)
+  if (urlPath === '/api/telemetry') {
+    const origin = (isSecureRequest(req) ? 'https://' : 'http://') + req.headers.host
+    return receiveNodeTelemetry(req, res, origin)
+  }
+  if (urlPath === '/api/health') {
+    res.setHeader('Cache-Control', 'no-store')
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      res.writeHead(405, { Allow: 'GET, HEAD' }).end()
+      return
+    }
+    const healthy = fs.existsSync(path.join(DIST_DIR, 'index.html'))
+    res.writeHead(healthy ? 200 : 503, { 'Content-Type': 'application/json' })
+    res.end(req.method === 'HEAD' ? undefined : healthy ? '{"status":"ok"}' : '{"status":"unavailable"}')
+    return
+  }
+  if (urlPath === '/api' || urlPath.startsWith('/api/')) {
+    return handleApiRequest(req, res, ALLOWED_ORIGINS)
+  }
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.writeHead(405, { Allow: 'GET, HEAD' }).end()
+    return
   }
 
   const redirectUrl = getCanonicalRedirect(req)
   if (redirectUrl) {
-    applySecurityAndCorsHeaders(req, res, isAsset)
     res.writeHead(301, {
       Location: redirectUrl,
       'Content-Type': 'text/html; charset=utf-8',
     })
-    res.end(`Redirecting to <a href="${redirectUrl}">${redirectUrl}</a>`)
+    res.end()
     return
   }
 
-  let filePath = path.join(DIST_DIR, urlPath === '/' ? 'index.html' : urlPath)
+  let filePath = pageFileFor(urlPath) || path.join(DIST_DIR, urlPath)
+  if (isServiceAlias(urlPath)) {
+    res.statusCode = 404
+    filePath = path.join(DIST_DIR, 'service-not-found.html')
+  } else if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
+    res.statusCode = 404
+    const staticError = /^\/(?:blog|projects)(?:\/|$)/.test(urlPath) || path.extname(urlPath)
+    filePath = path.join(DIST_DIR, staticError ? '404.html' : '404-app.html')
+  }
+  if (res.statusCode === 404 || urlPath === '/404' || filePath.endsWith('service-not-found.html')) {
+    res.setHeader('X-Robots-Tag', 'noindex')
+  }
 
-  // SPA fallback: If requested file does not exist, serve index.html
-  if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-    filePath = path.join(DIST_DIR, 'index.html')
+  try {
+    const relative = path.relative(fs.realpathSync(DIST_DIR), fs.realpathSync(filePath))
+    if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+      res.writeHead(404).end()
+      return
+    }
+  } catch {
+    res.writeHead(404).end()
+    return
   }
 
   const ext = path.extname(filePath).toLowerCase()
   const contentType = MIME_TYPES[ext] || 'application/octet-stream'
 
-  // Apply Security and CORS headers
-  applySecurityAndCorsHeaders(req, res, isAsset)
   res.setHeader('Content-Type', contentType)
 
   // Cache headers for static resources
@@ -208,27 +201,9 @@ function handleStaticRequest(req, res) {
   const acceptEncoding = req.headers['accept-encoding'] || ''
   const isCompressible = /^(text\/|application\/(javascript|json|xml|manifest\+json)|image\/svg\+xml)/.test(contentType)
 
-  // Inject tailored Open Graph and Twitter metadata into HTML for social crawlers and initial render
-  if (filePath.endsWith('index.html')) {
-    try {
-      const html = fs.readFileSync(filePath, 'utf8')
-      const injectedHtml = injectOpenGraphMetadata(html, req.url || '/')
-
-      if (isCompressible && acceptEncoding.includes('gzip')) {
-        res.setHeader('Content-Encoding', 'gzip')
-        res.setHeader('Vary', 'Accept-Encoding')
-        zlib.gzip(Buffer.from(injectedHtml, 'utf8'), (err, compressed) => {
-          if (err) return res.end(injectedHtml)
-          res.end(compressed)
-        })
-        return
-      }
-
-      res.end(injectedHtml)
-      return
-    } catch {
-      // Fallback to static stream if read error occurs
-    }
+  if (req.method === 'HEAD') {
+    res.end()
+    return
   }
 
   if (isCompressible && acceptEncoding.includes('gzip')) {
@@ -236,62 +211,29 @@ function handleStaticRequest(req, res) {
     res.setHeader('Vary', 'Accept-Encoding')
     const rawStream = fs.createReadStream(filePath)
     const gzipStream = zlib.createGzip({ level: 6 })
-    rawStream.pipe(gzipStream).pipe(res)
+    pipeline(rawStream, gzipStream, res, (error) => reportStreamFailure(res, error))
     return
   }
 
-  fs.createReadStream(filePath).pipe(res)
+  pipeline(fs.createReadStream(filePath), res, (error) => reportStreamFailure(res, error))
 }
 
 export function createRequestHandler() {
-  return (req, res) => {
-    const forwardedProto = req.headers['x-forwarded-proto']
-    const isHttps = forwardedProto === 'https'
-    const rawHost = req.headers.host ? req.headers.host.split(':')[0] : 'localhost'
-    const isLocal = ['localhost', '127.0.0.1', '0.0.0.0'].includes(rawHost)
-    const rawPath = (req.url || '').split('?')[0]
-
-    // Preflight request handling
-    if (req.method === 'OPTIONS') {
-      const isAsset = rawPath.startsWith('/assets/')
-      applySecurityAndCorsHeaders(req, res, isAsset)
-      if (rawPath.startsWith('/api/')) {
-        return handleApiRequest(req, res)
-      }
-      res.writeHead(204)
-      res.end()
-      return
-    }
-
-    // Handle API endpoints directly on HTTP if no SSL or local
-    if (rawPath.startsWith('/api/')) {
-      applySecurityAndCorsHeaders(req, res, false)
-      return handleApiRequest(req, res)
-    }
+  return observeNodeRequest((req, res) => {
+    const isHttps = isSecureRequest(req)
 
     // Behind reverse proxy with SSL termination or local environment without SSL: serve static assets directly
-    if (!SSL_KEY && (isHttps || isLocal)) {
-      handleStaticRequest(req, res)
-      return
+    if (!tlsOptions && (isHttps || isLocalRequest(req))) {
+      return handleStaticRequest(req, res)
     }
 
-    // Otherwise redirect HTTP -> HTTPS with canonical host & clean path
-    const host = isLocal ? rawHost : (rawHost.startsWith('www.') ? rawHost.slice(4) : rawHost)
-    const portSuffix = isLocal && HTTPS_PORT !== 443 ? `:${HTTPS_PORT}` : ''
-
-    const rawQuery = (req.url || '').split('?')[1] || ''
-    const cleanPath = rawPath.length > 1 && rawPath.endsWith('/') && !path.extname(rawPath)
-      ? rawPath.replace(/\/+$/, '')
-      : rawPath
-    const search = rawQuery ? `?${rawQuery}` : ''
-    const targetUrl = `https://${host}${portSuffix}${cleanPath}${search}`
-
-    res.writeHead(301, {
-      Location: targetUrl,
+    applySecurityHeaders(req, res)
+    res.writeHead(req.method === 'GET' || req.method === 'HEAD' ? 301 : 307, {
+      Location: getCanonicalRedirect(req, true),
       'Content-Type': 'text/html; charset=utf-8',
     })
-    res.end(`Redirecting to <a href="${targetUrl}">${targetUrl}</a>`)
-  }
+    res.end()
+  })
 }
 
 // 1. Direct or Reverse-Proxy HTTP Redirect Handler
@@ -300,7 +242,7 @@ export function createHttpRedirectServer(port = HTTP_PORT) {
 
   if (port) {
     server.listen(port, () => {
-      console.log(`[HTTP Server] Listening on port ${port} (Redirects traffic to HTTPS)`)
+      logListening(port, 'http')
     })
   }
 
@@ -309,13 +251,16 @@ export function createHttpRedirectServer(port = HTTP_PORT) {
 
 // 2. HTTPS Server (if SSL certs provided)
 export function createHttpsServer(port = HTTPS_PORT) {
-  if (SSL_KEY && SSL_CERT) {
-    const server = https.createServer({ key: SSL_KEY, cert: SSL_CERT }, (req, res) => {
-      handleStaticRequest(req, res)
-    })
+  if (tlsOptions) {
+    let server
+    try {
+      server = https.createServer(tlsOptions, observeNodeRequest(handleStaticRequest))
+    } catch {
+      throw new Error('The configured TLS certificate or private key is invalid.')
+    }
     if (port) {
       server.listen(port, () => {
-        console.log(`[HTTPS Server] Listening on secure port ${port}`)
+        logListening(port, 'https')
       })
     }
     return server
@@ -324,7 +269,6 @@ export function createHttpsServer(port = HTTPS_PORT) {
 }
 
 export {
-  applySecurityAndCorsHeaders,
   getCanonicalRedirect,
   handleStaticRequest,
   CSP_POLICY,
@@ -333,8 +277,8 @@ export {
   CANONICAL_HOST,
 }
 
-const isDirectRun = Boolean(process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))
 if (isDirectRun) {
-  createHttpRedirectServer()
-  createHttpsServer()
+  const httpsServer = createHttpsServer()
+  if (httpsServer) runningServers.push(httpsServer)
+  runningServers.push(createHttpRedirectServer())
 }

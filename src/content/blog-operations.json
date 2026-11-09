@@ -1,0 +1,351 @@
+[
+  {
+    "slug": "commercial-roof-repair-or-replacement",
+    "title": "Commercial Roof Repair or Replacement? How to Decide",
+    "description": "Learn when a commercial roof repair makes sense, which signs point to replacement, and what to ask for in a New Zealand roof condition report.",
+    "seoTitle": "Commercial Roof Repair vs Replacement | NZ Guide by ARP",
+    "seoDescription": "Learn when a commercial roof repair makes sense, which signs point to replacement, and what to ask for in a New Zealand roof condition report before you decide.",
+    "category": "Project Planning",
+    "answer": "Repair a commercial roof when an inspection identifies a localised defect and confirms that the surrounding cladding, substrate and drainage are sound. Plan replacement when the same failure appears across several areas, water has damaged the layers beneath the roof, or the existing design keeps allowing water in.",
+    "sections": [
+      {
+        "heading": "When is a commercial roof repair enough?",
+        "paragraphs": [
+          "A targeted repair can make sense for a split penetration flashing, a damaged membrane seam or a single sheet damaged by another trade. Ask the roofer to show what failed and how far the damage extends. On a low-slope roof, that can mean checking the substrate around an outlet. On a long-run metal roof, it can mean inspecting adjacent sheets, fasteners and supports from a safe position.",
+          "An isolated leak in an otherwise sound Auckland retail roof is a different proposition from the third leak in the same row of an industrial building. In the first case, a local repair and a follow-up check may give the owner a clear path forward. In the second, trace the pattern across the roof before approving another patch. Keep photos and mark the repair location on your roof plan so the next inspection can tell if it held. [MBIE guide to diagnosing leaky buildings](https://www.building.govt.nz/assets/Uploads/building-code-compliance/e-moisture/e2-external-moisture/weathertightness-guide-to-diagnosis-of-leaky-buildings.pdf)"
+        ]
+      },
+      {
+        "heading": "Which signs point to replacement?",
+        "paragraphs": [
+          "The strongest case for replacement usually comes from several findings together. On a metal roof, corrosion through multiple sheets, deteriorating connections or a repeating failure at laps can make local repairs uneconomic. For membrane roofing, deterioration around multiple seams, widespread wet insulation or a damaged substrate can expand the scope well beyond the visible defect. Have a competent person assess corrosion or visible deformation before anyone accesses the roof. [WorkSafe guidance on assessing roof condition](https://www.worksafe.govt.nz/topic-and-industry/working-at-height/roofs/working-on-roofs-gpg/)",
+          "Ask whether the existing design contributed to the failure. An internal gutter that overflows in heavy rain or a roof-to-wall junction that repeatedly leaks needs a drainage or flashing solution. If an entire roof plane shares a poor detail, replacement is an opportunity to redesign it. [MBIE guide to weathertightness remediation](https://www.building.govt.nz/assets/Uploads/building-code-compliance/e-moisture/e2-external-moisture/weathertightness-remediation/weathertightness-remediation.pdf)"
+        ]
+      },
+      {
+        "heading": "What should the condition report and quote include?",
+        "paragraphs": [
+          "Request two scopes where both are viable, one for the repair and one for replacement. Compare them over your actual ownership or tenancy horizon. Include [repeat access, stock protection, tenant disruption and likely follow-up work](/blog/commercial-roofing-cost-nz). A small repair directly above a dispatch conveyor can have a bigger operational cost than its invoice suggests."
+        ],
+        "ordered": true,
+        "points": [
+          "Ask for dated photos, a map of defects and a distinction between areas inspected and areas the roofer could only assess from a distance.",
+          "Check what is included for gutters, flashings, roof penetrations, safety access, waste removal and weather protection during the work.",
+          "Agree how hidden damage will be photographed, priced and authorised before the contractor proceeds beyond the quoted scope.",
+          "Ask who will check the consent position and what installation records, product details and maintenance instructions you will receive."
+        ]
+      },
+      {
+        "heading": "Can a New Zealand commercial reroof be exempt from consent?",
+        "paragraphs": [
+          "Some replacements using comparable components in the same position can fall within [Schedule 1](/blog/commercial-roofing-building-consent-nz). The exemption has exclusions, including certain structural and fire-safety work and repair or replacement of components that failed applicable durability requirements. Check the proposed scope with your designer or council before committing to a material change, altered roof layout or structural work. [MBIE general repair and replacement exemption](https://www.building.govt.nz/projects-and-consents/planning-a-successful-build/scope-and-design/check-if-you-need-consents/building-work-that-doesnt-need-a-building-consent/technical-requirements-for-exempt-building-work/1-general-alterations-maintenance-and-removal/1-1-general-repair-maintenance-and-replacement)",
+          "Start with [commercial roof asset maintenance](/service/asset-maintenance) if you need help assessing whether the existing roof can be kept in service. For a replacement brief, review the [commercial metal roofing service](/service/metal-roofs-cladding) or [commercial membrane roofing service](/service/membrane-commercial), depending on the roof build-up."
+        ]
+      }
+    ],
+    "takeaways": [
+      "Base the decision on the spread and cause of the damage, the condition beneath the roof and the impact on building operations.",
+      "Ask for comparable scopes with access, drainage, concealed damage and tenant protection addressed.",
+      "Confirm the consent position before changing the roof system or structure."
+    ],
+    "faq": [
+      {
+        "question": "Is a single leak a reason to replace the entire commercial roof?",
+        "answer": "An isolated defect can often be repaired after a roofer verifies the surrounding roof is sound. Ask for a wider condition assessment if there are repeated leaks, extensive corrosion or signs of trapped moisture."
+      },
+      {
+        "question": "Can we replace only one section of a commercial roof?",
+        "answer": "A staged reroof may be feasible if the work can finish at a sound junction and maintain weathertightness and drainage throughout. Ask the contractor to show the temporary and permanent junction details and how warranty responsibility will be handled."
+      },
+      {
+        "question": "Does the age of the roof tell me when to replace it?",
+        "answer": "Use age to help plan inspection and budgeting. Remaining service life depends on condition, exposure, detailing, maintenance and the consequences if another leak occurs."
+      }
+    ],
+    "image": "albany",
+    "services": ["asset-maintenance", "metal-roofs-cladding", "membrane-commercial"],
+    "related": ["commercial-roof-inspection", "commercial-roofing-cost-nz", "commercial-roofing-building-consent-nz"],
+    "cta": {
+      "title": "Get a repair or replacement assessment",
+      "text": "Tell us your roof type, where leaks have occurred and any deadlines that affect access. We can discuss the scope of an Auckland commercial roof assessment.",
+      "label": "Request a roof assessment"
+    }
+  },
+  {
+    "slug": "commercial-roof-leaks",
+    "title": "How to Find and Fix a Commercial Roof Leak",
+    "description": "Use a safe first-response checklist, learn how roofers trace commercial leaks, and know what to ask for before authorising a repair.",
+    "seoTitle": "How to Find and Fix a Commercial Roof Leak | NZ Guide",
+    "seoDescription": "Use a safe first-response checklist for a commercial roof leak, see how roofers trace the source and find out what to ask for before authorising repair work.",
+    "category": "Maintenance",
+    "answer": "If a commercial roof is leaking, isolate the affected area and record where and when water appears from a safe location. Arrange a roofing inspection to trace the entry point before choosing a repair. Water can travel along roof sheets, underlay and framing before it becomes visible indoors.",
+    "sections": [
+      {
+        "heading": "What should you do when water starts coming in?",
+        "paragraphs": [
+          "Keep workers and visitors away from wet floors, wet electrical equipment and any area beneath sagging ceiling material. Follow your site's emergency procedure and involve the site manager. Have an electrician assess affected electrical equipment. Move stock or equipment only where it is safe to do so and use a dry vantage point for photographs. [WorkSafe guidance on electrical safety after water exposure](https://www.worksafe.govt.nz/topic-and-industry/natural-events-and-emergencies/safety-with-electricity-and-gas-after-a-natural-event-or-emergency/)",
+          "Keep staff off the roof. Wet surfaces, concealed skylights and deteriorated sheets can create fall hazards. Give the attending contractor the roof access plan and tell them about known fragile areas and any asbestos information before they arrive. [WorkSafe guidance on working on roofs](https://www.worksafe.govt.nz/topic-and-industry/working-at-height/roofs/working-on-roofs-gpg/)"
+        ],
+        "ordered": true,
+        "points": [
+          "Mark the affected spot on a floor plan or identify it by column, aisle, tenancy or room number.",
+          "Record the onset time, rain intensity, wind direction if known and how long the drip continued after the rain eased.",
+          "Note whether nearby HVAC equipment, plumbing or washdown operations were running, and flag any recent rooftop work.",
+          "Send the roofer the incident log and photos so they can prioritise where to look when access is safe."
+        ]
+      },
+      {
+        "heading": "How do roofers find the entry point?",
+        "paragraphs": [
+          "A useful [commercial roof inspection](/blog/commercial-roof-inspection) starts with the indoor evidence and checks the matching roof zone and nearby areas uphill of the stain. Investigators look at where different systems meet, such as a roof-to-wall flashing, a plant penetration, a parapet or an outlet. They may also check whether a gutter overtopped, an overflow was obstructed or a membrane termination had lifted. [MBIE guide to diagnosing leaky buildings](https://www.building.govt.nz/assets/Uploads/building-code-compliance/e-moisture/e2-external-moisture/weathertightness-guide-to-diagnosis-of-leaky-buildings.pdf)",
+          "For example, a Penrose warehouse may see water by an internal column only in heavy rain. It is worth checking the upstream internal gutter and outlet as well as the roof directly above the column. If water shows up beneath a rooftop unit on clear mornings, a contractor can look into condensate, plumbing and cold surfaces as well as the roof. A log helps separate these possibilities. [NZ Metal Roofing Manufacturers guidance on condensation](https://www.metalroofing.org.nz/cop/internal-moisture/condensation)"
+        ]
+      },
+      {
+        "heading": "What does a lasting commercial roof leak repair look like?",
+        "paragraphs": [
+          "The repair scope should tie back to the cause. A broken penetration flashing may need replacement with a compatible detail. If a membrane seam is defective, ask how the roofer will check the surrounding membrane and substrate and prepare them for a compatible repair. If an outlet is clear but the gutter still overtops, ask whether the catchment, fall or overflow arrangement needs design review. [MBIE guidance on Building Code clause E1 Surface Water](https://www.building.govt.nz/building-code-compliance/e-moisture/e1-surface-water)",
+          "Ask for before-and-after photographs, a clear distinction between temporary weather protection and the permanent repair, and a plan for confirming that the issue is resolved. Record the outcome at the next comparable rain event. If water returns, add it to the same incident record and review [whether further repairs or replacement make sense](/blog/commercial-roof-repair-or-replacement). Use the [roof asset maintenance service](/service/asset-maintenance) for recurring issues or the [commercial membrane roofing service](/service/membrane-commercial) when the fault concerns a low-slope membrane system."
+        ]
+      }
+    ],
+    "takeaways": [
+      "Keep people clear of the affected area and gather evidence safely from indoors.",
+      "Use the leak timing and roof plan to narrow the search, including drainage, junctions and rooftop plant.",
+      "Ask for a documented repair that addresses the cause and a follow-up check."
+    ],
+    "faq": [
+      {
+        "question": "Why does the roof only leak during wind-driven rain?",
+        "answer": "Wind-driven rain can reach vulnerable laps, flashings and wall-to-roof junctions. Record which wind direction triggers the leak and share it with the roofer."
+      },
+      {
+        "question": "Can a blocked gutter cause water to show up far from the gutter?",
+        "answer": "Yes. Once water enters the roof build-up, it may run along an underlay, sheet or structural member before dripping into the room. Note the indoor location and have a roofer trace the path."
+      },
+      {
+        "question": "How can I tell condensation from a roof leak?",
+        "answer": "Condensation can appear in dry weather and follow a pattern linked to internal humidity or cold surfaces. Compare wet and dry days and ask the contractor to check for rain entry, condensate drainage and internal moisture."
+      }
+    ],
+    "image": "membrane",
+    "services": ["asset-maintenance", "membrane-commercial", "metal-roofs-cladding"],
+    "related": ["commercial-roof-maintenance", "commercial-roof-repair-or-replacement", "flat-roof-waterproofing"],
+    "cta": {
+      "title": "Arrange a commercial leak inspection",
+      "text": "Share the affected location, when the leak first appeared and whether it happens in particular weather. Those details give the inspection a useful starting point.",
+      "label": "Discuss a roof leak"
+    }
+  },
+  {
+    "slug": "commercial-roof-maintenance",
+    "title": "Commercial Roof Maintenance for New Zealand Property Managers",
+    "description": "Build a commercial roof maintenance schedule with inspection intervals, cleaning priorities, contractor access controls and a useful roof register.",
+    "seoTitle": "Commercial Roof Maintenance Guide for NZ Property Managers",
+    "seoDescription": "Build a commercial roof maintenance schedule with inspection intervals, gutter cleaning, safe contractor access and a roof register for your property.",
+    "category": "Maintenance",
+    "answer": "Maintain a commercial roof by recording its systems and warranty requirements, booking periodic professional inspections, keeping drainage clear and acting on defects before they spread. For metal cladding, NZ Metal Roofing Manufacturers recommends inspections at the washing intervals or at least annually. Adjust the schedule to the building's exposure, roof type and product instructions.",
+    "sections": [
+      {
+        "heading": "What belongs in a commercial roof maintenance plan?",
+        "paragraphs": [
+          "Start with a plan that marks each roof plane, material, internal gutter, outlet, overflow, skylight and rooftop unit. Add installation dates, product instructions, warranty documents, repair history and an access plan. If your property has a warehouse roof and a separate membrane roof above the offices, give each its own maintenance tasks and records.",
+          "Assign one person to receive reports, authorise action and make sure previous defects are closed out. This matters when an HVAC contractor, solar installer and roofer all visit the same building. A shared access log helps the property manager trace new penetrations or damage to the right visit. WorkSafe's roof guidance covers safe access planning and the hazards of working around fragile sheets and skylights. [WorkSafe good practice guidelines](https://www.worksafe.govt.nz/topic-and-industry/working-at-height/roofs/working-on-roofs-gpg/)"
+        ]
+      },
+      {
+        "heading": "How often should you inspect and clean?",
+        "paragraphs": [
+          "Use the supplier's maintenance instructions and warranty terms as the starting point. NZ Metal Roofing Manufacturers advises checking metal cladding at the washing intervals or at least annually, and using the [inspection findings](/blog/commercial-roof-inspection) to identify zones needing more attention. Sheltered metalwork receives less rain washing. Ask the supplier or contractor which surfaces require manual washing and how often. [NZ Metal Roofing Manufacturers guidance on inspection](https://www.metalroofing.org.nz/cop/maintenance/inspection_)",
+          "Add inspections after [severe weather](/blog/nz-weather-commercial-roof-lifespan), a reported leak or work on rooftop plant when conditions allow safe access. For an Auckland site with overhanging trees, base extra gutter checks on how quickly leaves build up. For a canopy near the coast, record sheltered metal surfaces separately from the rain-washed roof above it. [NZ Metal Roofing Manufacturers scheduled maintenance guidance](https://www.metalroofing.org.nz/copfull/maintenance)"
+        ]
+      },
+      {
+        "heading": "What should the contractor look at each visit?",
+        "paragraphs": [
+          "Give the contractor last visit's photos and open actions. Ask them to report where drainage, seams and flashings are working as expected and where further investigation is needed. The details they check depend on the roof type and how the building is used. [MBIE guidance on protecting building elements through maintenance](https://www.building.govt.nz/projects-and-consents/sign-off-and-maintenance/protecting-your-investment)"
+        ],
+        "points": [
+          "Drainage. Check accessible outlets, gutters and overflows for debris, leakage and water marks that suggest an overflow event.",
+          "Metal roof zones. Note coating damage, corrosion, suspect fixings, damaged laps and condition at cut edges and eaves.",
+          "Membrane roof zones. Record open seams, damage from foot traffic, changes around terminations, and recurring ponding after surrounding areas have drained.",
+          "Junctions and plant. Check flashings and seals around pipes, vents and equipment, and document any recent modifications.",
+          "Roof access. Record visibly damaged access equipment or walking surfaces and route any necessary inspection to the relevant specialist."
+        ]
+      },
+      {
+        "heading": "How do you turn inspection findings into a maintenance budget?",
+        "paragraphs": [
+          "Give each action an owner, target date and status. Treat active leaks above essential operations and hazards affecting safe access as urgent. Programme smaller work alongside scheduled access where practical. Put recurring defects on a separate list for diagnosis so they are visible when you prepare next year's repair or renewal budget.",
+          "For an occupied office or industrial building, ask the [commercial roof maintenance team](/service/asset-maintenance) to quote against the actual roof zones and required visit records. If regular access needs improvement, include [commercial roof safety systems](/service/roof-safety-systems) in the scope discussion."
+        ]
+      }
+    ],
+    "takeaways": [
+      "Keep a single roof register with the plan, product instructions, inspection history and approved access arrangements.",
+      "Set intervals by system and exposure, then check after events that could change roof condition.",
+      "Track defects through to closure and use repeat findings to build the capital works forecast."
+    ],
+    "faq": [
+      {
+        "question": "Who should inspect a commercial roof?",
+        "answer": "Use a competent roofing contractor or building-envelope specialist familiar with the roof system and safe access requirements. In-house staff can log symptoms and make observations from safe, accessible locations."
+      },
+      {
+        "question": "What records should I retain for the roof warranty?",
+        "answer": "Keep the actual product warranty, installation and handover records, inspection reports, cleaning dates, photos and details of changes or repairs. Check the supplier's conditions for any specified methods, intervals and reporting requirements."
+      },
+      {
+        "question": "Can gutters be cleaned as part of a normal maintenance visit?",
+        "answer": "Yes, where the scope includes the drainage and the contractor can reach it safely. Flag any suspected asbestos-containing material in advance so a specialist can determine the appropriate approach."
+      }
+    ],
+    "image": "maintenance",
+    "services": ["asset-maintenance", "roof-safety-systems", "membrane-commercial"],
+    "related": ["commercial-roof-inspection", "commercial-roof-leaks", "nz-weather-commercial-roof-lifespan"],
+    "cta": {
+      "title": "Set up a maintenance plan for your building",
+      "text": "Tell us what you manage, how many roof zones it has and what access records are available. We can help scope inspections and routine maintenance for the property.",
+      "label": "Discuss roof maintenance"
+    }
+  },
+  {
+    "slug": "nz-weather-commercial-roof-lifespan",
+    "title": "How New Zealand Weather Affects Commercial Roof Lifespan",
+    "description": "See how Auckland rain, coastal salt, wind exposure and condensation affect commercial roofs and what owners can do to manage service life.",
+    "seoTitle": "How NZ Weather Affects Commercial Roof Lifespan | ARP",
+    "seoDescription": "See how Auckland rain, coastal salt, wind exposure and condensation affect commercial roof lifespan, and what property owners can do to manage wear over time.",
+    "category": "Roof Systems",
+    "answer": "New Zealand weather affects how quickly commercial roofs deteriorate by increasing wetting, corrosion, wind loading and condensation risk. In Auckland, specify materials for the building's actual exposure, verify drainage and wind design, and pay particular attention to sheltered surfaces and rooftop junctions during maintenance.",
+    "sections": [
+      {
+        "heading": "How does Auckland rain affect commercial roofs?",
+        "paragraphs": [
+          "Earth Sciences New Zealand describes Auckland as having plentiful rain throughout the year, with occasional very heavy falls. A large commercial roof collects water over a wide area and sends it to a limited set of outlets. Ask where water will go if one outlet is blocked, especially on a roof behind parapets or with internal gutters. A clear overflow route gives the building manager something to monitor during heavy rain. [Auckland regional climatology](https://niwa.co.nz/climate-and-weather/regional-climatologies/auckland) and [MBIE Building Code clause E1 Surface Water](https://www.building.govt.nz/building-code-compliance/e-moisture/e1-surface-water)",
+          "Use [recurring ponding](/blog/flat-roof-waterproofing) or streaking below an overflow as a reason to ask for a drainage inspection. The cause can be an outlet obstruction, inadequate fall or a change to the catchment. For example, an extension that directs an extra roof plane into an existing internal gutter warrants a fresh look at capacity."
+        ]
+      },
+      {
+        "heading": "Why do sheltered areas corrode on coastal buildings?",
+        "paragraphs": [
+          "Wind can carry salt onto buildings, and sheltered surfaces can retain deposits because rain rarely washes them. When damp, those deposits can promote corrosion. On a commercial canopy near the Waitematā Harbour, compare the exposed upper surface with sheltered edges and the underside. Ask the supplier which coating and fastener combinations suit the address and which surfaces need manual washing. [NZ Metal Roofing Manufacturers guidance on unwashed areas](https://www.metalroofing.org.nz/cop/durability/other-causes-corrosion#unwashed-areas)",
+          "Consider the immediate building environment as well as the distance from water. Discharge from a flue and runoff from incompatible metals can create local problems. Include those areas in the inspection schedule and report early coating changes while the work can still be scoped as local maintenance. [NZ Metal Roofing Manufacturers maintenance guidance](https://www.metalroofing.org.nz/copfull/maintenance)"
+        ]
+      },
+      {
+        "heading": "What should you check on exposed sites and humid buildings?",
+        "paragraphs": [
+          "Wind uplift demand varies across the roof. The designer should select the system and fixing pattern for the building geometry, the support layout and local design loads. When inspecting after high winds, a contractor can focus on edges, corners, flashings and other exposed details in addition to the main roof area. [NZ Metal Roofing Manufacturers structural design guidance](https://www.metalroofing.org.nz/copfull/structure)",
+          "Indoors, condensation is a separate moisture risk. Warm moist air can condense when it meets a cold surface. An industrial unit with washdown or steam-producing equipment may need a moisture assessment that accounts for its ventilation, insulation and operating hours. If the building use changes, ask a designer to review whether the roof build-up still suits the internal conditions. [NZ Metal Roofing Manufacturers guidance on condensation](https://www.metalroofing.org.nz/cop/internal-moisture/condensation)"
+        ]
+      },
+      {
+        "heading": "Can you estimate how many years a commercial roof has left?",
+        "paragraphs": [
+          "Start with installation records, the product warranty, [maintenance history](/blog/commercial-roof-maintenance) and an inspection. Code clause B2 sets minimum durability periods for building elements under normal maintenance. Ask the assessor for a condition-based estimate with assumptions, the defects that could shorten service life and the areas they could access. That estimate will help you decide when to budget for the next inspection or stage of work. [MBIE Building Code clause B2 Durability](https://www.building.govt.nz/building-code-compliance/b-stability/b2-durability)",
+          "For an existing building, use [commercial roof maintenance](/service/asset-maintenance) to monitor exposed zones and schedule work. If a new specification is needed, ask the [commercial metal roofing team](/service/metal-roofs-cladding) what product, drainage and fixing information will support that decision."
+        ]
+      }
+    ],
+    "takeaways": [
+      "Assess exposure at the building and roof-zone level, including sheltered edges, drainage paths and rooftop plant.",
+      "Use site-specific design for wind loads and follow supplier instructions for coating care and washing.",
+      "Budget from inspection evidence and maintenance history as well as installation age."
+    ],
+    "faq": [
+      {
+        "question": "Does every roof near the Auckland coast need the same coating?",
+        "answer": "Ask the manufacturer for product suitability at your address. Salt exposure, shelter, prevailing winds and adjacent industrial activities can vary between buildings in the same suburb."
+      },
+      {
+        "question": "What roof checks make sense after a storm?",
+        "answer": "Log any water entry, overflowing drains or visible damage from a safe location. Once conditions allow, a roofer can check the relevant drainage, roof edges, flashings and penetrations."
+      },
+      {
+        "question": "How does condensation affect service life?",
+        "answer": "Repeated wetting can affect materials within the roof assembly and contribute to deterioration. Have a specialist assess where moisture comes from, where it condenses and whether the roof build-up can dry between events."
+      }
+    ],
+    "image": "metal",
+    "services": ["metal-roofs-cladding", "asset-maintenance", "warmroof-commercial"],
+    "related": ["commercial-roof-maintenance", "industrial-warehouse-roofing", "metal-vs-membrane-roofing"],
+    "cta": {
+      "title": "Assess your roof's exposure and condition",
+      "text": "Tell us the building's location, roof system and any signs of wind, water or corrosion damage. We can discuss an inspection or help define a replacement scope.",
+      "label": "Request a roof assessment"
+    }
+  },
+  {
+    "slug": "industrial-warehouse-roofing",
+    "title": "Industrial Roofing for New Zealand Warehouses and Factories",
+    "description": "Compare roof systems for warehouses and factories and plan pitch, drainage, condensation control, safe access and staged installation.",
+    "seoTitle": "Industrial Roofing for NZ Warehouses and Factories | ARP",
+    "seoDescription": "Compare roof systems for New Zealand warehouses and factories. Plan roof pitch, drainage, condensation control, safe access and staging around daily operations.",
+    "category": "Roof Systems",
+    "answer": "Choose industrial roofing for the building's actual pitch, support spacing, wind exposure, drainage and indoor use. Profiled metal can suit large warehouse roof planes where the system meets the design requirements. Low-slope sections with plant, parapets or complex junctions may suit a designed membrane or insulated roof assembly.",
+    "sections": [
+      {
+        "heading": "What should an industrial roofing brief cover?",
+        "paragraphs": [
+          "Put the building use, site address, roof plans and operating constraints into one brief. A dry goods distribution warehouse, a refrigerated operation and a factory with high humidity create different demands. Identify washdown or vapour-producing processes, temperature targets, shift patterns and areas where the consequences of an uncontrolled drip are highest.",
+          "For a reroof, ask the team to verify the as-built fall and existing support layout. Compare product spans, fixing patterns and minimum as-laid pitches with those conditions. A long sheet run and a shallow fall can make the profile, laps and junctions particularly important. [NZ Metal Roofing Manufacturers guidance on roof pitch](https://www.metalroofing.org.nz/maximum-run-calculator) and [structural design guidance](https://www.metalroofing.org.nz/copfull/structure)"
+        ]
+      },
+      {
+        "heading": "When do metal, membrane and warm roofs make sense?",
+        "paragraphs": [
+          "A [profiled metal roof](/service/metal-roofs-cladding) can suit simple, pitched warehouse planes. Its design needs to account for the profile's pitch and span limits, attachment to the supports, drainage and penetrations. A [membrane roof](/service/membrane-commercial) may suit a low-slope plant room or office wing where the designer can detail continuous waterproofing, substrate, falls, seams, upstands and outlets as a system. [BRANZ guidance on roofing membranes](https://www.branz.co.nz/design-build/articles/membranes-do-matter)",
+          "For a closer comparison, see our guide to [metal and membrane roofing systems](/blog/metal-vs-membrane-roofing). A [commercial warm roof](/service/warmroof-commercial) is an assembly with insulation above the supporting deck. Ask the designer to explain how the complete build-up will manage heat and moisture for the building's actual use. In a factory, roof specification and indoor moisture control need to be considered together. An insulated assembly can help manage the temperature of surfaces, while ventilation and source control address the indoor moisture load. [BRANZ guidance on warm roofs](https://www.branz.co.nz/design-build/articles/what-really-is-a-warm-roof) and [NZ Metal Roofing Manufacturers guidance on condensation](https://www.metalroofing.org.nz/cop/internal-moisture/condensation)"
+        ]
+      },
+      {
+        "heading": "How can an occupied warehouse stay operational during a reroof?",
+        "paragraphs": [
+          "Treat [staging as part of the quote](/blog/commercial-roofing-cost-nz). For example, an East Tāmaki distribution facility could schedule work in roof bays above stock that can be moved, while reserving the dispatch lane for a planned shutdown. Agree exclusion zones, traffic routes for deliveries and lifting, and the maximum area that can be exposed to weather at one time. WorkSafe's roofing guidance covers access, fall protection and assessment of brittle surfaces. [WorkSafe good practice guidelines for working on roofs](https://www.worksafe.govt.nz/topic-and-industry/working-at-height/roofs/working-on-roofs-gpg/)"
+        ],
+        "ordered": true,
+        "points": [
+          "Map safety mesh, skylights, plant and any recorded asbestos-containing material before arranging intrusive work.",
+          "Agree the sequence with the tenant and contractor, including temporary weather protection and what happens if the forecast changes.",
+          "Confirm how rooftop services will be isolated, supported or reinstated and who will verify those steps.",
+          "Set hold points for documenting concealed defects and obtaining approval for changes.",
+          "Require handover records for as-built roof zones, product warranties, drainage, plant details and future safe access."
+        ]
+      },
+      {
+        "heading": "What should you check before signing the scope?",
+        "paragraphs": [
+          "Make sure the roof design includes a drainage and overflow strategy for the actual catchments. Check whether rooftop plant or future solar installations will need dedicated access, structural allowance or different drainage and flashing details. [MBIE Building Code clause E1 Surface Water](https://www.building.govt.nz/building-code-compliance/e-moisture/e1-surface-water)",
+          "Share existing asbestos records before any disturbance and arrange specialist advice if materials are suspect. This includes older profiled cement sheets and associated roof or wall products. Set aside time for the contractor and building designer to confirm the consent pathway and any other approvals relevant to the work. [WorkSafe asbestos guidance for building owners and managers](https://www.worksafe.govt.nz/topic-and-industry/asbestos/information-for-businesses-organisations-and-building-owners/managing-asbestos-in-your-building-or-workplace-for-pcbus/)"
+        ]
+      }
+    ],
+    "takeaways": [
+      "Specify the roof against the building's use, measured pitch, supports, design loads and indoor moisture conditions.",
+      "Price drainage, penetrations, safe access and tenant protection within the project scope.",
+      "Plan work bay by bay where necessary and collect handover records for future inspections and rooftop works."
+    ],
+    "faq": [
+      {
+        "question": "Can a factory or warehouse stay open during a reroof?",
+        "answer": "Some sites can stay partly operational with roof zones, controlled access and coordinated shutdowns. Feasibility depends on the condition of the roof, the protection available, the work below it and the tenant's operations."
+      },
+      {
+        "question": "Should we plan for solar panels before replacing the roof?",
+        "answer": "Yes, if solar is a realistic option. Tell the designer early so they can assess structural capacity, the mounting method, roof maintenance access and effects on drainage or warranties."
+      },
+      {
+        "question": "What makes factory roofing different from warehouse roofing?",
+        "answer": "Factory processes can add moisture, heat, fumes or more rooftop equipment. Include those conditions and the production schedule in the brief so the roof assembly and installation plan address them."
+      }
+    ],
+    "image": "warehouse",
+    "services": ["metal-roofs-cladding", "warmroof-commercial", "roof-safety-systems"],
+    "related": ["metal-vs-membrane-roofing", "commercial-roof-repair-or-replacement", "commercial-roofing-cost-nz"],
+    "cta": {
+      "title": "Scope a warehouse or factory roofing project",
+      "text": "Share the site location, approximate roof area, current roof type and operating hours. We can discuss system options, access and staging for your Auckland site.",
+      "label": "Discuss industrial roofing"
+    }
+  }
+]

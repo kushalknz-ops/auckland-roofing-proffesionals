@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useSEO } from '../hooks/useSEO'
+import { pageSEO } from '../lib/page-seo'
 import { useQuote } from '../components/site/quote-context'
 import { SERVICES } from '../data/services'
 import '../notfound.css'
@@ -49,14 +50,7 @@ export default function NotFoundPage() {
   const { openQuote } = useQuote()
   const [searchTerm, setSearchTerm] = useState('')
 
-  useSEO({
-    title: '404 - Page Not Found | Auckland Roof Professionals',
-    description: 'The page you requested could not be found. Explore Auckland Roof Professionals commercial and residential roofing services or contact our team.',
-    noIndex: true,
-    canonical: '/404',
-    ogImage: '/assets/og-image.jpg',
-    ogImageAlt: 'Auckland Roof Professionals - 404 Page Not Found',
-  })
+  useSEO(pageSEO['/404'])
 
   // Filter both curated links and services based on user search term
   const searchResults = useMemo(() => {
@@ -80,7 +74,7 @@ export default function NotFoundPage() {
       title: s.title,
       category: s.badge,
       description: s.short,
-      href: `/service?id=${s.id}`,
+      href: `/service/${s.id}`,
     }))
 
     // Deduplicate
@@ -135,7 +129,7 @@ export default function NotFoundPage() {
             <button
               type="button"
               className="btn-sage-accent"
-              onClick={() => openQuote()}
+              onClick={(event) => openQuote(event.currentTarget)}
             >
               <span>Request a Free Quote →</span>
             </button>
@@ -168,7 +162,7 @@ export default function NotFoundPage() {
               </span>
               <input
                 id="notFoundSearch"
-                type="text"
+                type="search"
                 className="not-found-search-input"
                 placeholder="Search metal roofs, shingles, membrane, leak repairs, inspections..."
                 value={searchTerm}
@@ -184,7 +178,7 @@ export default function NotFoundPage() {
                 ? `Search Results for "${searchTerm}"`
                 : 'Popular Destinations & Services'}
             </h2>
-            <p>
+            <p role="status">
               {searchResults !== null
                 ? `Found ${searchResults.length} matching destinations.`
                 : 'Choose an option below to jump directly to where you need to go.'}
@@ -253,13 +247,13 @@ export default function NotFoundPage() {
             <div className="not-found-assistance-content">
               <h2>Have an Active Leak or Urgent Enquiry?</h2>
               <p>
-                Our Glenfield workshop and mobile Auckland crews are available for
+                Our Wairau Valley workshop and mobile Auckland crews are available for
                 urgent weather-tightness inspections and prompt roof assessments across
                 all Auckland suburbs.
               </p>
             </div>
             <div className="not-found-assistance-contact">
-              <a href="tel:0800555766" className="not-found-phone-btn">
+              <a href="tel:0800766311" className="not-found-phone-btn">
                 <svg
                   width="16"
                   height="16"
@@ -272,7 +266,7 @@ export default function NotFoundPage() {
                 >
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
-                <span>Call 0800 555 766</span>
+                <span>Call 0800 766 311</span>
               </a>
               <Link to="/contact" className="btn-outline-charcoal" style={{ color: '#F8FAF7', borderColor: '#DCE4DF' }}>
                 <span>Send a Message</span>

@@ -34,49 +34,84 @@ test.after(async () => {
   await new Promise((resolve) => server.close(resolve))
 })
 
-test('Protected Routes - Security Headers & Policies', async (t) => {
-  await t.test('enforces all production security headers on API routes', async () => {
-    const res = await fetch(`${baseUrl}/api/contact`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://aucklandroofprofessionals.nz' },
+function rawRequest(path, options = {}, body) {
+  return new Promise((resolve, reject) => {
+    const req = http.request(baseUrl, { ...options, path }, (res) => {
+      const chunks = []
+      res.on('data', (chunk) => chunks.push(chunk))
+      res.on('end', () => resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString(), headers: res.headers }))
+      res.on('error', reject)
     })
-
-    assert.equal(res.headers.get('strict-transport-security'), 'max-age=31536000; includeSubDomains; preload')
-    assert.equal(res.headers.get('x-content-type-options'), 'nosniff')
-    assert.equal(res.headers.get('x-frame-options'), 'SAMEORIGIN')
-    assert.equal(res.headers.get('referrer-policy'), 'strict-origin-when-cross-origin')
-    assert.equal(res.headers.get('x-xss-protection'), '0')
-    assert.equal(res.headers.get('cross-origin-opener-policy'), 'same-origin')
-    assert.equal(res.headers.get('permissions-policy'), PERMISSIONS_POLICY)
-    assert.equal(res.headers.get('content-security-policy'), CSP_POLICY)
+    req.on('error', reject)
+    req.end(body)
   })
+}
 
-  await t.test('restricts CORS origin to allowed domains on API endpoints', async () => {
-    // 1. Untrusted origin should NOT receive Access-Control-Allow-Origin
-    const untrustedRes = await fetch(`${baseUrl}/api/contact`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://malicious-attacker.com' },
-    })
-    assert.notEqual(untrustedRes.headers.get('access-control-allow-origin'), 'https://malicious-attacker.com')
+test('blocks file traversal, private filenames and browser source maps', async () => {
+  for (const url of ['/../package.json', '/%2e%2e/package.json', '/%2eenv.local', '/..\\package.json', '/assets/app.js.map']) {
+    assert.equal((await rawRequest(url)).status, 404)
+  }
+})
 
-    // 2. Trusted production origin receives Access-Control-Allow-Origin
-    const trustedRes = await fetch(`${baseUrl}/api/contact`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://aucklandroofprofessionals.nz' },
-    })
-    assert.equal(trustedRes.headers.get('access-control-allow-origin'), 'https://aucklandroofprofessionals.nz')
-    assert.ok(trustedRes.headers.get('vary')?.includes('Origin'))
+test('ignores untrusted protocol headers and keeps redirects on the canonical host', async () => {
+  const response = await rawRequest('/contact?next=<sample>', {
+    method: 'POST',
+    headers: { Host: 'example.invalid', 'X-Forwarded-Proto': 'https' },
   })
+  assert.equal(response.status, 307)
+  assert.equal(response.headers['content-security-policy'], CSP_POLICY)
+  assert.equal(new URL(response.headers.location).hostname, 'aucklandroofprofessionals.nz')
+  assert.equal(response.body, '')
+})
 
-  await t.test('permits open CORS and cross-origin resource policy on /assets/ paths', async () => {
-    const res = await fetch(`${baseUrl}/assets/logo.png`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://anywhere.org' },
-    })
+test('blocks unauthorized browser origins and never reflects the requested API path', async () => {
+  const denied = await rawRequest('/api/contact', { method: 'POST', headers: { Origin: 'https://example.invalid' } })
+  assert.equal(denied.status, 403)
+  assert.equal(denied.headers['cache-control'], 'no-store')
+  const unknown = await rawRequest('/api/synthetic-request-marker', { method: 'POST' })
+  assert.equal(unknown.status, 404)
+  assert.equal(unknown.body.includes('synthetic-request-marker'), false)
+})
 
-    assert.equal(res.headers.get('access-control-allow-origin'), '*')
-    assert.equal(res.headers.get('cross-origin-resource-policy'), 'cross-origin')
-  })
+test('enforces the streamed JSON limit without a Content-Length header', async () => {
+  resetRateLimits()
+  const response = await rawRequest('/api/contact', {
+    method: 'POST',
+    headers: { 'Transfer-Encoding': 'chunked', 'Content-Type': 'application/json' },
+  }, Buffer.alloc(1024 * 1024 + 1, 32))
+  assert.equal(response.status, 413)
+  resetRateLimits()
+})
+
+test('applies security headers to documents, assets, API errors and redirects', async () => {
+  for (const route of ['/', '/assets/og-image.jpg', '/404.html', '/blog/unknown', '/%invalid', '/api/contact', '/contact/']) {
+    const { headers } = await rawRequest(route)
+    assert.equal(headers['strict-transport-security'], undefined, route)
+    assert.equal(headers['x-content-type-options'], 'nosniff', route)
+    assert.equal(headers['x-frame-options'], 'DENY', route)
+    assert.equal(headers['referrer-policy'], 'strict-origin-when-cross-origin', route)
+    assert.equal(headers['cross-origin-opener-policy'], 'same-origin', route)
+    assert.equal(headers['permissions-policy'], PERMISSIONS_POLICY, route)
+    assert.equal(headers['content-security-policy'], CSP_POLICY.replace('; upgrade-insecure-requests', ''), route)
+    assert.equal(headers['x-powered-by'], undefined, route)
+    assert.doesNotMatch(headers['content-security-policy'], /unsafe-inline|unsafe-eval/)
+  }
+})
+
+test('rejects untrusted preflights and keeps static assets same-origin for fetches', async () => {
+  const headers = {
+    Origin: 'https://untrusted.example',
+    'Access-Control-Request-Method': 'POST',
+  }
+  for (const [route, status] of [['/api/contact', 403], ['/assets/og-image.jpg', 405]]) {
+    const result = await rawRequest(route, { method: 'OPTIONS', headers })
+    assert.equal(result.status, status)
+    assert.equal(result.headers['access-control-allow-origin'], undefined)
+    assert.equal(result.headers['access-control-allow-methods'], undefined)
+  }
+  const result = await rawRequest('/assets/og-image.jpg', { headers })
+  assert.equal(result.status, 200)
+  assert.equal(result.headers['access-control-allow-origin'], undefined)
 })
 
 test('Protected Routes - Rate Limiting Defense (HTTP 429)', async (t) => {
@@ -120,7 +155,7 @@ test('Protected Routes - Rate Limiting Defense (HTTP 429)', async (t) => {
     assert.match(json.message, /Too many requests/i)
   })
 
-  await t.test('isolates rate limits per client IP (different IP is unaffected)', async () => {
+  await t.test('ignores forged forwarding headers on direct connections', async () => {
     const differentIp = '198.51.100.100'
     const res = await fetch(`${baseUrl}/api/contact`, {
       method: 'POST',
@@ -137,11 +172,9 @@ test('Protected Routes - Rate Limiting Defense (HTTP 429)', async (t) => {
       }),
     })
 
-    assert.equal(res.status, 200)
-    const json = await res.json()
-    assert.equal(json.success, true)
-    assert.ok(json.data?.id?.startsWith('cnt_'))
+    assert.equal(res.status, 429)
   })
+  resetRateLimits()
 })
 
 test('Protected Routes - Payload Size Guard (HTTP 413)', async (t) => {
@@ -305,7 +338,7 @@ test('Protected Routes - Canonical Host and URL Redirection', async (t) => {
     }
     const redirect = getCanonicalRedirect(req)
     assert.ok(redirect)
-    assert.equal(redirect, 'http://aucklandroofprofessionals.nz/contact')
+    assert.equal(redirect, 'https://aucklandroofprofessionals.nz/contact')
   })
 
   await t.test('getCanonicalRedirect preserves query parameters', () => {
@@ -315,7 +348,7 @@ test('Protected Routes - Canonical Host and URL Redirection', async (t) => {
     }
     const redirect = getCanonicalRedirect(req)
     assert.ok(redirect)
-    assert.equal(redirect, 'http://aucklandroofprofessionals.nz/service?id=metal-roofing')
+    assert.equal(redirect, 'https://aucklandroofprofessionals.nz/service?id=metal-roofing')
   })
 
   await t.test('getCanonicalRedirect leaves clean apex URLs unchanged', () => {
@@ -329,11 +362,12 @@ test('Protected Routes - Canonical Host and URL Redirection', async (t) => {
 })
 
 test('Custom 404 Page & Fallback Handling', async (t) => {
-  await t.test('SPA serves HTML for unknown route paths so custom React 404 renders', async () => {
+  await t.test('unknown SPA routes serve the React error page with HTTP 404 and noindex', async () => {
     const res = await fetch(`${baseUrl}/nonexistent-page-url`, {
       headers: { 'X-Forwarded-For': '198.51.100.140' },
     })
-    assert.equal(res.status, 200)
+    assert.equal(res.status, 404)
+    assert.equal(res.headers.get('x-robots-tag'), 'noindex')
     assert.match(res.headers.get('content-type') || '', /text\/html/)
     const body = await res.text()
     assert.match(body, /<div id="root">/)
@@ -347,7 +381,7 @@ test('Custom 404 Page & Fallback Handling', async (t) => {
     const body = await res.text()
     assert.match(body, /404 - Page Not Found/i)
     assert.match(body, /Auckland Roof Professionals/i)
-    assert.match(body, /0800 555 766/)
+    assert.match(body, /0800 766 311/)
   })
 })
 

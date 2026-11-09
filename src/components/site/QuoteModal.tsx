@@ -4,20 +4,22 @@ import { RoofingEnquiryForm } from './RoofingEnquiryForm'
 import { ErrorBoundary } from '../ui/ErrorBoundary'
 
 export function QuoteModal() {
-  const { open, serviceTitle, closeQuote } = useQuote()
+  const { open, serviceTitle, returnFocusTo, closeQuote } = useQuote()
   const modalRef = useRef<HTMLDivElement>(null)
   const closeBtnRef = useRef<HTMLButtonElement>(null)
-  const previousActiveElementRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (open) {
-      previousActiveElementRef.current = document.activeElement as HTMLElement | null
+      const previousOverflow = document.body.style.overflow
       document.body.style.overflow = 'hidden'
+      const background = Array.from(document.querySelectorAll<HTMLElement>('main, .site-header, .site-footer, #mobileNav'))
+      const previousInert = background.map((element) => element.inert)
+      background.forEach((element) => { element.inert = true })
 
       // Focus the close button or first focusable element inside the modal
       const timer = setTimeout(() => {
         if (closeBtnRef.current) {
-          closeBtnRef.current.focus()
+          closeBtnRef.current.focus({ preventScroll: true })
         }
       }, 50)
 
@@ -29,21 +31,21 @@ export function QuoteModal() {
         }
 
         if (e.key === 'Tab' && modalRef.current) {
-          const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+          const focusableElements = Array.from(modalRef.current.querySelectorAll<HTMLElement>(
             'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
+          )).filter((element) => element.getClientRects().length > 0 && !element.closest('[inert]'))
           if (focusableElements.length === 0) return
 
           const firstElement = focusableElements[0]
           const lastElement = focusableElements[focusableElements.length - 1]
 
           if (e.shiftKey) {
-            if (document.activeElement === firstElement) {
+            if (document.activeElement === firstElement || !modalRef.current.contains(document.activeElement)) {
               e.preventDefault()
               lastElement.focus()
             }
           } else {
-            if (document.activeElement === lastElement) {
+            if (document.activeElement === lastElement || !modalRef.current.contains(document.activeElement)) {
               e.preventDefault()
               firstElement.focus()
             }
@@ -56,13 +58,14 @@ export function QuoteModal() {
       return () => {
         clearTimeout(timer)
         document.removeEventListener('keydown', handleKeyDown)
-        document.body.style.overflow = ''
-        if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === 'function') {
-          previousActiveElementRef.current.focus()
+        document.body.style.overflow = previousOverflow
+        background.forEach((element, index) => { element.inert = previousInert[index] })
+        if (returnFocusTo?.isConnected) {
+          returnFocusTo.focus({ preventScroll: true })
         }
       }
     }
-  }, [open, closeQuote])
+  }, [open, closeQuote, returnFocusTo])
 
   return (
     <div
@@ -92,10 +95,10 @@ export function QuoteModal() {
                 <h3 className="text-xl font-bold text-[#2C3533] mb-2">Something went wrong</h3>
                 <p className="text-sm text-[#576562] mb-4">We were unable to load the quote enquiry form right now.</p>
                 <a
-                  href="tel:0800555766"
-                  className="inline-block px-5 py-2 rounded-lg bg-[#2C3533] text-[#F8FAF7] text-sm font-semibold"
+                  href="tel:0800766311"
+                  className="min-h-11 inline-flex items-center px-5 py-2 rounded-lg bg-[#2C3533] text-[#F8FAF7] text-sm font-semibold"
                 >
-                  Call 0800 555 766
+                  Call 0800 766 311
                 </a>
               </div>
             }

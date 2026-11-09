@@ -6,6 +6,15 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import http from 'node:http'
 import { handleApiRequest } from '../server/api.js'
+import { readAllowedOrigins } from '../server/config.js'
+
+const trustedOrigin = 'https://forms.example'
+const allowedOrigins = readAllowedOrigins(trustedOrigin, false)
+const preflightHeaders = {
+  Origin: trustedOrigin,
+  'Access-Control-Request-Method': 'POST',
+  'Access-Control-Request-Headers': 'content-type',
+}
 
 let server
 let baseUrl
@@ -13,7 +22,7 @@ let baseUrl
 test.before(async () => {
   server = http.createServer(async (req, res) => {
     if (req.url.startsWith('/api/')) {
-      await handleApiRequest(req, res)
+      await handleApiRequest(req, res, allowedOrigins)
     } else {
       res.writeHead(404)
       res.end()
@@ -34,13 +43,34 @@ test.after(async () => {
 })
 
 test('API endpoints integration', async (t) => {
-  await t.test('OPTIONS preflight request returns 204 with CORS headers', async () => {
-    const res = await fetch(`${baseUrl}/api/contact`, {
-      method: 'OPTIONS',
-      headers: { Origin: 'https://aucklandroofprofessionals.nz' },
-    })
-    assert.equal(res.status, 204)
-    assert.ok(res.headers.get('access-control-allow-methods')?.includes('POST'))
+  await t.test('grants a trusted origin only the required method and header', async () => {
+    for (const path of ['contact', 'enquiry', 'quote']) {
+      const res = await fetch(baseUrl + '/api/' + path, { method: 'OPTIONS', headers: preflightHeaders })
+      assert.equal(res.status, 204)
+      assert.equal(res.headers.get('access-control-allow-origin'), trustedOrigin)
+      assert.equal(res.headers.get('access-control-allow-methods'), 'POST')
+      assert.equal(res.headers.get('access-control-allow-headers'), 'Content-Type')
+      assert.equal(res.headers.get('access-control-allow-credentials'), null)
+      assert.equal(res.headers.get('vary'), 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers')
+    }
+  })
+
+  await t.test('rejects preflights for untrusted origins, methods, headers and routes', async () => {
+    for (const [route, override, status] of [
+      ['contact', { Origin: 'null' }, 403],
+      ['contact', { Origin: trustedOrigin + '.attacker.example' }, 403],
+      ['contact', { 'Access-Control-Request-Method': 'PUT' }, 403],
+      ['contact', { 'Access-Control-Request-Headers': 'content-type, authorization' }, 403],
+      ['missing', {}, 404],
+    ]) {
+      const res = await fetch(baseUrl + '/api/' + route, {
+        method: 'OPTIONS', headers: { ...preflightHeaders, ...override },
+      })
+      assert.equal(res.status, status)
+      assert.equal(res.headers.get('access-control-allow-origin'), null)
+      assert.equal(res.headers.get('access-control-allow-headers'), null)
+      assert.equal(res.headers.get('cache-control'), 'no-store')
+    }
   })
 
   await t.test('GET method returns 405 Method Not Allowed', async () => {
@@ -61,11 +91,13 @@ test('API endpoints integration', async (t) => {
 
     const res = await fetch(`${baseUrl}/api/contact`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Origin: trustedOrigin },
       body: JSON.stringify(payload),
     })
 
     assert.equal(res.status, 200)
+    assert.equal(res.headers.get('access-control-allow-origin'), trustedOrigin)
+    assert.equal(res.headers.get('access-control-allow-credentials'), null)
     const json = await res.json()
     assert.equal(json.success, true)
     assert.ok(json.data?.id?.startsWith('cnt_'))
@@ -147,4 +179,15 @@ test('API endpoints integration', async (t) => {
     assert.ok(json.errors.location)
     assert.ok(json.errors.name)
   })
+})
+
+test('production CORS fails closed and accepts only explicit HTTPS origins', () => {
+  assert.equal(readAllowedOrigins(undefined, false).size, 0)
+  for (const value of ['*', 'https://*.example', 'https://%2a.example', 'null', 'https://user:pass@forms.example',
+    'https://forms.example/path', 'http://localhost:5174']) {
+    assert.throws(() => readAllowedOrigins(value, false), /ALLOWED_ORIGINS/)
+  }
+  const developmentOrigins = readAllowedOrigins('http://localhost:5174, https://forms.example', true)
+  assert.deepEqual([...developmentOrigins], ['http://localhost:5174', 'https://forms.example'])
+  assert.equal(developmentOrigins.has('http://localhost:5175'), false)
 })

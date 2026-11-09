@@ -1,6 +1,7 @@
 import { useState, useRef, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { SERVICE_OPTION_GROUPS, OTHER_OPTION } from '../data/service-options'
+import { fetchSubmission } from '../lib/monitoring'
 import {
   validateContactForm,
   validateName,
@@ -12,17 +13,11 @@ import {
   type ContactFormErrors,
 } from '../lib/validation'
 import { useSEO } from '../hooks/useSEO'
+import { pageSEO } from '../lib/page-seo'
 import '../contact.css'
 
 export default function ContactPage() {
-  useSEO({
-    title: 'Contact Auckland Roof Professionals | Free Roof Quotes & Emergencies',
-    description: 'Contact our Auckland roofing team for free assessments, quotes and rapid leak assistance. Call 0800 555 766 or visit 59 Porana Rd, Glenfield.',
-    canonical: '/contact',
-    ogImage: '/assets/og-contact.jpg',
-    ogImageAlt: 'Contact Auckland Roof Professionals - Free Quotes & Emergency Leak Repairs',
-    keywords: 'contact Auckland roofers, roofing quotes Auckland, emergency roof repair Auckland, Glenfield roofer, commercial roof inspection, residential roof quote',
-  })
+  useSEO(pageSEO['/contact'])
 
   const [data, setData] = useState<ContactFormData>({
     fullName: '',
@@ -116,7 +111,7 @@ export default function ContactPage() {
     // 2. Server-side submission & validation
     setIsSubmitting(true)
     try {
-      const res = await fetch('/api/contact', {
+      const { res, result } = await fetchSubmission('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,8 +119,6 @@ export default function ContactPage() {
         },
         body: JSON.stringify(data),
       })
-
-      const result = await res.json().catch(() => null)
 
       if (res.ok && result?.success) {
         setSubmitted(true)
@@ -136,12 +129,12 @@ export default function ContactPage() {
         setServerError(result.message || 'Please fix the highlighted errors below.')
         focusFirstError(result.errors)
       } else if (res.status === 429) {
-        setServerError('Too many submissions. Please wait a few moments or call us directly at 0800 555 766.')
+        setServerError('Too many submissions. Please wait a few moments or call us directly at 0800 766 311.')
       } else {
-        setServerError(result?.message || 'Something went wrong submitting your message. Please try again or call 0800 555 766.')
+        setServerError(result?.message || 'Something went wrong submitting your message. Please try again or call 0800 766 311.')
       }
     } catch {
-      setServerError('Unable to connect to the server. Please check your connection or call us at 0800 555 766.')
+      setServerError('Unable to connect to the server. Please check your connection or call us at 0800 766 311.')
     } finally {
       setIsSubmitting(false)
     }
@@ -234,10 +227,10 @@ export default function ContactPage() {
                             {isSubmitting ? 'Retrying...' : 'Retry Sending'}
                           </button>
                           <a
-                            href="tel:0800555766"
+                            href="tel:0800766311"
                             style={{ color: '#942C2C', fontSize: '11px', fontWeight: 600, textDecoration: 'underline' }}
                           >
-                            Or Call 0800 555 766
+                            Or Call 0800 766 311
                           </a>
                         </div>
                       </div>
@@ -445,7 +438,7 @@ export default function ContactPage() {
             <ul className="contact-info-list">
               <li className="contact-info-item">
                 <a
-                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="contact-info-icon"
@@ -460,11 +453,11 @@ export default function ContactPage() {
                   <span className="contact-info-label">Workshop / Office Address</span>
                   <span className="contact-info-value">
                     <a
-                      href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                      href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      59 Porana Road, Glenfield, Auckland 0627, New Zealand
+                      59/7 Porana Road, Wairau Valley, Auckland 0627, New Zealand
                     </a>
                   </span>
                 </div>
@@ -472,9 +465,9 @@ export default function ContactPage() {
 
               <li className="contact-info-item">
                 <a
-                  href="tel:0800555766"
+                  href="tel:0800766311"
                   className="contact-info-icon"
-                  aria-label="Call 0800 555 766"
+                  aria-label="Call 0800 766 311"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -483,7 +476,7 @@ export default function ContactPage() {
                 <div className="contact-info-content">
                   <span className="contact-info-label">Phone</span>
                   <span className="contact-info-value">
-                    <a href="tel:0800555766">0800 555 766</a>
+                    <a href="tel:0800766311">0800 766 311</a>
                   </span>
                 </div>
               </li>
@@ -530,12 +523,12 @@ export default function ContactPage() {
               <iframe
                 className="contact-map-iframe"
                 title="Auckland Roof Professionals Workshop Location"
-                src="https://www.google.com/maps?q=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                src="https://www.google.com/maps?q=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand&t=&z=14&ie=UTF8&iwloc=&output=embed"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                aria-label="Google Maps showing workshop at 59 Porana Road, Glenfield, Auckland"
+                aria-label="Google Maps showing workshop at 59/7 Porana Road, Wairau Valley, Auckland 0627, New Zealand"
               />
             </div>
           </div>
@@ -549,11 +542,11 @@ export default function ContactPage() {
             <h2>Roof Emergency? Call Us Now</h2>
             <p>Leak or urgent roof damage? Contact our team for rapid assistance.</p>
           </div>
-          <a href="tel:0800555766" className="emergency-phone-btn" aria-label="Emergency roof assistance: Call 0800 555 766">
+          <a href="tel:0800766311" className="emergency-phone-btn" aria-label="Emergency roof assistance: Call 0800 766 311">
             <svg className="emergency-phone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
             </svg>
-            <span>0800 555 766</span>
+            <span>0800 766 311</span>
           </a>
         </div>
       </section>

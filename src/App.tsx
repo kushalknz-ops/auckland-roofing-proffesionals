@@ -1,4 +1,4 @@
-import { useEffect, Suspense } from 'react'
+import { useEffect, Suspense, lazy } from 'react'
 import {
   BrowserRouter,
   Route,
@@ -18,6 +18,22 @@ import CategoryPage from './pages/CategoryPage'
 import ServicePage from './pages/ServicePage'
 import ContactPage from './pages/ContactPage'
 import NotFoundPage from './pages/NotFoundPage'
+import type { pageSEO } from './lib/page-seo'
+
+const BlogPage = lazy(() => import('./pages/BlogPage'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
+const ProjectPage = lazy(() => import('./pages/ProjectPage'))
+const BlogArticlePage = lazy(() => import('./pages/BlogPage').then((module) => ({ default: module.BlogArticlePage })))
+
+const staticPages = {
+  '/': <HomePage />,
+  '/commercial': <CategoryPage kind="commercial" />,
+  '/residential': <CategoryPage kind="residential" />,
+  '/contact': <ContactPage />,
+  '/privacy-policy': <LegalPage page="privacy" />,
+  '/terms-and-conditions': <LegalPage page="terms" />,
+  '/404': <NotFoundPage />,
+} satisfies Record<keyof typeof pageSEO, React.ReactElement>
 
 /**
  * Scroll manager — emulates native anchor navigation for routed links:
@@ -39,7 +55,7 @@ function ScrollManager() {
       const tryScroll = () => {
         const el = document.getElementById(targetId)
         if (el) {
-          el.scrollIntoView({ behavior: 'smooth' })
+          el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
         } else if (attempts < maxAttempts) {
           attempts++
           rafId = requestAnimationFrame(tryScroll)
@@ -75,36 +91,39 @@ function RevealManager() {
   return null
 }
 
-export default function App() {
+export function AppLayout() {
   return (
-    <BrowserRouter>
-      <QuoteProvider>
-        {/* WCAG 2.2 Level AA Skip Link */}
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
-        {/* SVG filter used by the liquid-glass header (url(#glass-distortion)) */}
-        <GlassFilter />
-        <ScrollManager />
-        <RevealManager />
-        <Header />
+    <QuoteProvider>
+      {/* WCAG 2.2 Level AA Skip Link */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      {/* SVG filter used by the liquid-glass header (url(#glass-distortion)) */}
+      <GlassFilter />
+      <ScrollManager />
+      <RevealManager />
+      <Header />
 
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingState fullPage message="Loading page..." />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/commercial" element={<CategoryPage kind="commercial" />} />
-              <Route path="/residential" element={<CategoryPage kind="residential" />} />
-              <Route path="/service" element={<ServicePage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/404" element={<NotFoundPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-        <Footer />
-        <QuoteModal />
-      </QuoteProvider>
-    </BrowserRouter>
+      <ErrorBoundary>
+        <Suspense fallback={<LoadingState fullPage message="Loading page..." />}>
+          <Routes>
+            {Object.entries(staticPages).map(([path, element]) => <Route key={path} path={path} element={element} />)}
+            <Route path="/service" element={<ServicePage />} />
+            <Route path="/service-default" element={<ServicePage />} />
+            <Route path="/service/:id" element={<ServicePage />} />
+            <Route path="/projects/:slug" element={<ProjectPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogArticlePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
+      <Footer />
+      <QuoteModal />
+    </QuoteProvider>
   )
+}
+
+export default function App() {
+  return <BrowserRouter><AppLayout /></BrowserRouter>
 }

@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --manifest && node scripts/prerender-blog.js",
     "lint": "oxlint",
     "test": "node --test tests/*.test.js",
     "preview": "vite preview",
-    "serve": "node server.js",
+    "serve": "node --env-file-if-exists=.env.local server.js",
     "og:generate": "node scripts/generate-og-images.js",
     "favicon:generate": "node scripts/generate-favicons.js"
   },

@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SERVICES } from '../../data/services'
+import { PoweredBy } from './PoweredBy'
 
 const commercial = SERVICES.filter((s) => s.badge.startsWith('Commercial'))
 const residential = SERVICES.filter((s) => !s.badge.startsWith('Commercial'))
@@ -14,7 +15,7 @@ export function Footer() {
       if (window.location.hash) {
         navigate('/', { replace: true })
       }
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, left: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
     } else {
       navigate('/')
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
@@ -28,7 +29,7 @@ export function Footer() {
       if (el) {
         e.preventDefault()
         navigate(path)
-        el.scrollIntoView({ behavior: 'smooth' })
+        el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
       }
     }
   }
@@ -67,7 +68,7 @@ export function Footer() {
           <h3><Link to="/commercial">Commercial</Link></h3>
           <nav aria-label="Commercial roofing services">
             {commercial.map((s) => (
-              <Link key={s.id} to={`/service?id=${s.id}`}>{s.title}</Link>
+              <Link key={s.id} to={`/service/${s.id}`}>{s.title}</Link>
             ))}
           </nav>
         </div>
@@ -76,7 +77,7 @@ export function Footer() {
           <h3><Link to="/residential">Residential</Link></h3>
           <nav aria-label="Residential roofing services">
             {residential.map((s) => (
-              <Link key={s.id} to={`/service?id=${s.id}`}>
+              <Link key={s.id} to={`/service/${s.id}`}>
                 {s.title}{s.badge.includes('Specialised') ? <em> (specialised)</em> : null}
               </Link>
             ))}
@@ -87,10 +88,18 @@ export function Footer() {
           <h3>Company</h3>
           <nav aria-label="Company navigation">
             <Link to="/#about" onClick={handleNavClick('/#about')}>About us</Link>
-            <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
             <Link to="/#process" onClick={handleNavClick('/#process')}>Process</Link>
-            <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
             <Link to="/contact">Contact</Link>
+          </nav>
+        </div>
+
+        <div className="footer-column">
+          <h3>Explore</h3>
+          <nav aria-label="Explore">
+            <Link to="/#projects" onClick={handleNavClick('/#projects')}>Projects</Link>
+            <Link to="/#faq" onClick={handleNavClick('/#faq')}>FAQ</Link>
+            <Link to="/blog">Blog</Link>
+            <Link to="/#testimonials" onClick={handleNavClick('/#testimonials')}>Testimonials</Link>
           </nav>
         </div>
 
@@ -100,19 +109,19 @@ export function Footer() {
             <span>Office</span>
             <p>
               <a
-                href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand
+                59/7 Porana Road, Wairau Valley,<br />Auckland 0627, New Zealand
               </a>
             </p>
             <span>Phone</span>
-            <a className="contact-strong contact-action" href="tel:+64800555766" aria-label="Call 0800 555 766">
+            <a className="contact-strong contact-action" href="tel:+64800766311" aria-label="Call 0800 766 311">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M7.1 3.5 9.4 8 7.7 9.7a15.2 15.2 0 0 0 6.6 6.6l1.7-1.7 4.5 2.3-1 3.1c-.3.8-1 1.3-1.8 1.3A15 15 0 0 1 2.7 6.3c0-.8.5-1.5 1.3-1.8l3.1-1Z" />
               </svg>
-              <span>0800 555 766</span>
+              <span>0800 766 311</span>
             </a>
             <span>Email</span>
             <a className="contact-strong contact-action" href="mailto:info@aucklandroofprofessionals.nz" aria-label="Email info@aucklandroofprofessionals.nz">
@@ -120,15 +129,24 @@ export function Footer() {
                 <path d="M3 5.5h18v13H3z" />
                 <path d="m4 7 8 6 8-6" />
               </svg>
-              <span>info@aucklandroofprofessionals.nz</span>
+              <span>info@<wbr />aucklandroofprofessionals.nz</span>
             </a>
           </address>
         </div>
 
 
+        <PoweredBy className="powered-by--footer" />
+
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Auckland Roof Professionals Ltd. All rights reserved.</span>
-          <button className="back-to-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <div className="footer-credits">
+            <span>© {new Date().getFullYear()} Auckland Roof Professionals Ltd. All rights reserved.</span>
+            <nav className="footer-legal" aria-label="Legal">
+              <Link to="/privacy-policy">Privacy Policy</Link>
+              <Link to="/terms-and-conditions">Terms &amp; Conditions</Link>
+            </nav>
+            <a href="https://quiktalkai.com/">Website by QuikTalkAI.com</a>
+          </div>
+          <button className="back-to-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })}>
             Back to top ↑
           </button>
         </div>

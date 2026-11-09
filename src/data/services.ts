@@ -10,8 +10,9 @@ export interface Service {
   chips: string[]
   desc: string
   specs: string[]
-  seoTitle?: string
-  seoDescription?: string
+  seoTitle: string
+  seoDescription: string
+  lastModified?: string
 }
 
 export const SERVICES: Service[] = [
@@ -19,8 +20,8 @@ export const SERVICES: Service[] = [
   {
     id: 'metal-roofs-cladding', num: '01', badge: 'Commercial',
     title: 'Metal Roofs & Cladding',
-    seoTitle: 'Commercial Metal Roofs & Wall Cladding Auckland | ARP',
-    seoDescription: 'Commercial metal roofing and architectural wall cladding in Auckland. Colorsteel® standing seam, long-run and Euro tray profiles engineered for NZ conditions.',
+    seoTitle: "Commercial Metal Roofs & Wall Cladding Auckland | ARP",
+    seoDescription: "Explore commercial metal roofing and wall cladding in Auckland. Compare standing seam, long-run and Euro tray profiles for your next build or roof upgrade.",
     img: '/assets/img/svc-metal-commercial.jpg',
     short: 'Standing seam, long-run and architectural cladding systems engineered for commercial buildings.',
     chips: ['Standing seam', 'Long run', 'Wall cladding', 'Colorsteel®'],
@@ -36,8 +37,8 @@ export const SERVICES: Service[] = [
   {
     id: 'membrane-commercial', num: '02', badge: 'Commercial',
     title: 'Membrane Roofing',
-    seoTitle: 'Commercial Membrane Roofing Auckland | TPO & Torch-On | ARP',
-    seoDescription: 'Certified TPO and torch-on membrane waterproofing for commercial flat and low-slope roofs in Auckland. Substrate rebuilds, plant detailing & leak testing.',
+    seoTitle: "Commercial Membrane Roofing in Auckland | TPO & Torch-On",
+    seoDescription: "Protect your Auckland commercial flat or low-slope roof with TPO or torch-on membrane waterproofing. Ask about substrate rebuilds, detailing and leak testing.",
     img: '/assets/img/svc-membrane-commercial.jpg',
     short: 'High-performance TPO and torch-on waterproofing for flat and low-slope commercial roofs.',
     chips: ['TPO', 'Torch-on', 'Butynol', 'Low-slope'],
@@ -53,8 +54,8 @@ export const SERVICES: Service[] = [
   {
     id: 'warmroof-commercial', num: '03', badge: 'Commercial',
     title: 'Warm Roof Systems',
-    seoTitle: 'Commercial Warm Roof Systems Auckland | PIR Insulated Roofs | ARP',
-    seoDescription: 'Insulated commercial warm roof assemblies in Auckland. Eliminate condensation, slash energy costs, and exceed NZ Building Code H1 energy efficiency.',
+    seoTitle: "Commercial Warm Roof Systems in Auckland | PIR Insulation",
+    seoDescription: "Plan an insulated commercial warm roof in Auckland. See how PIR insulation above the roof deck helps control condensation and improve thermal performance.",
     img: '/assets/img/svc-warmroof-commercial.jpg',
     short: 'Insulated roof assemblies that eliminate condensation and slash energy costs.',
     chips: ['PIR insulation', 'Condensation control', 'Energy efficiency'],
@@ -70,8 +71,8 @@ export const SERVICES: Service[] = [
   {
     id: 'roof-safety-systems', num: '04', badge: 'Commercial',
     title: 'Roof Safety Systems',
-    seoTitle: 'Roof Safety Systems Auckland | Fall Arrest & Guardrails | ARP',
-    seoDescription: 'Compliant roof safety systems in Auckland. Anchor points, static lines, walkways and perimeter guardrails certified to AS/NZS 1891 and WorkSafe NZ standards.',
+    seoTitle: "Roof Safety Systems in Auckland | Anchors & Guardrails",
+    seoDescription: "Improve safe roof access on your Auckland commercial property. Explore anchor points, static lines, walkways and guardrails, and discuss a roof safety plan.",
     img: '/assets/img/svc-safety.jpg',
     short: 'Anchor points, static lines, walkways and guardrails that keep your site compliant and safe.',
     chips: ['Anchor points', 'Static lines', 'Guardrails', 'Walkways'],
@@ -87,8 +88,8 @@ export const SERVICES: Service[] = [
   {
     id: 'asset-maintenance', num: '05', badge: 'Commercial',
     title: 'Asset Maintenance',
-    seoTitle: 'Commercial Roof Maintenance & Drone Inspections Auckland | ARP',
-    seoDescription: 'Proactive commercial roof maintenance, scheduled gutter clearing, drone condition surveys, and rapid leak detection across Auckland property portfolios.',
+    seoTitle: "Commercial Roof Maintenance & Inspections Auckland | ARP",
+    seoDescription: "Plan commercial roof maintenance in Auckland with scheduled inspections, drone surveys, gutter clearing and leak detection. Ask about a plan for your property.",
     img: '/assets/img/svc-maintenance.jpg',
     short: 'Proactive inspection and maintenance programmes that extend roof life and protect budgets.',
     chips: ['Scheduled inspections', 'Leak response', 'Condition reports'],
@@ -105,8 +106,8 @@ export const SERVICES: Service[] = [
   {
     id: 'asphalt-shingles', num: '01', badge: 'Residential · Specialised',
     title: 'Asphalt Shingles',
-    seoTitle: 'Architectural Asphalt Shingles Auckland | Auckland Roofers',
-    seoDescription: 'Specialist architectural asphalt shingle roofing in Auckland. Certified installers of wind, fire and UV resistant shingles with warranties up to 30 years.',
+    seoTitle: "Asphalt Shingle Roofing in Auckland | ARP Installers",
+    seoDescription: "Explore architectural asphalt shingles for your Auckland home. Compare styles, wind resistance and warranty options for a new roof or your next re-roof.",
     img: '/assets/img/svc-shingles.jpg',
     short: 'Specialised architectural shingle installation with premium fire, wind and UV resistance.',
     chips: ['Architectural shingles', 'Heritage profiles', 'Re-roofs'],
@@ -122,8 +123,8 @@ export const SERVICES: Service[] = [
   {
     id: 'metal-roofs-res', num: '02', badge: 'Residential',
     title: 'Metal Roofs',
-    seoTitle: 'Colorsteel® Residential Metal Roofing Auckland | Long-Run Re-Roofs',
-    seoDescription: 'Premium residential metal roofing in Auckland. Genuine Colorsteel® long run, corrugate, Euro tray & tile-to-metal conversions built for coastal conditions.',
+    seoTitle: "Colorsteel Metal Roofing for Auckland Homes | ARP Roofers",
+    seoDescription: "Get a quote for metal roofing in Auckland. Compare Colorsteel long-run, corrugate and Euro tray profiles for coastal homes and tile-to-metal re-roofs.",
     img: '/assets/img/svc-metal-res.jpg',
     short: 'Colorsteel® and long-run steel systems built for Auckland homes and coastal conditions.',
     chips: ['Colorsteel®', 'Long run', 'Coastal-grade'],
@@ -139,8 +140,8 @@ export const SERVICES: Service[] = [
   {
     id: 'membrane-res', num: '03', badge: 'Residential',
     title: 'Membrane Roofing',
-    seoTitle: 'Residential Membrane Roofing Auckland | Flat Roofs & Balcony Decks',
-    seoDescription: 'Seamless membrane waterproofing for flat roofs, extensions, and walk-out decks on Auckland homes. Certified TPO, torch-on and butynol applicators.',
+    seoTitle: "Residential Membrane Roofing in Auckland | Decks & Roofs",
+    seoDescription: "Waterproof flat roofs, balconies and rooftop decks on your Auckland home. Compare TPO, torch-on and butynol membranes, and ask about falls and substrate work.",
     img: '/assets/img/svc-membrane-res.jpg',
     short: 'Seamless waterproofing for flat roofs, decks and low-pitch modern homes.',
     chips: ['Flat roofs', 'Decks', 'Low-pitch'],
@@ -156,8 +157,8 @@ export const SERVICES: Service[] = [
   {
     id: 'warmroof-res', num: '04', badge: 'Residential',
     title: 'Warm Roof Systems',
-    seoTitle: 'Residential Warm Roof Systems Auckland | Condensation-Free Insulation',
-    seoDescription: 'Warm roof installations and retrofits for Auckland homes. Insulate above the deck to eliminate condensation and heat loss for a warmer, healthier home.',
+    seoTitle: "Residential Warm Roof Systems in Auckland | ARP Roofers",
+    seoDescription: "Explore warm roof installation and retrofits for Auckland homes. Learn how insulation above the roof deck helps reduce heat loss and condensation on low slopes.",
     img: '/assets/img/svc-warmroof-res.jpg',
     short: 'Thermal-efficient warm roof upgrades for a warmer, drier home year-round.',
     chips: ['Retrofits', 'New builds', 'Condensation-free'],

@@ -8,61 +8,21 @@ const projectRoot = path.resolve(__dirname, '..')
 const publicDir = path.resolve(projectRoot, 'public')
 const publicAssetsDir = path.resolve(publicDir, 'assets')
 const assetsDir = path.resolve(projectRoot, 'assets')
+const charcoal = '#2C3533'
+const cloudWhite = '#F8FAF7'
+const sage = '#A5B8AC'
+const revision = 'v=2'
 
-function buildSvg() {
-  const scale = 1.12
-  const targetCx = 256
-  const targetCy = 252
-  const origCx = 170
-  const origCy = 169.5
-
-  function pt(x, y) {
-    const nx = targetCx + (x - origCx) * scale
-    const ny = targetCy + (y - origCy) * scale
-    return `${nx.toFixed(2)},${ny.toFixed(2)}`
-  }
-
-  // Exact brand gable chevrons
-  const topChevron = `M ${pt(170, 45)} L ${pt(328, 188)} L ${pt(312, 203)} L ${pt(170, 77.5)} L ${pt(28, 203)} L ${pt(12, 188)} Z`
-  const innerChevron = `M ${pt(170, 124)} L ${pt(259, 204)} L ${pt(242, 219)} L ${pt(170, 156.5)} L ${pt(98, 219)} L ${pt(81, 204)} Z`
-
-  const bX = targetCx + (92 - origCx) * scale
-  const bY = targetCy + (271 - origCy) * scale
-  const bW = (248 - 92) * scale
-  const bH = (294 - 271) * scale
-  const bRadius = 5 * scale
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="arpBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#35403D" />
-      <stop offset="100%" stop-color="#1B2220" />
-    </linearGradient>
-    <linearGradient id="arpSage" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#C4D6C9" />
-      <stop offset="100%" stop-color="#9CB3A3" />
-    </linearGradient>
-    <filter id="arpShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.35" />
-    </filter>
-  </defs>
-
-  <!-- Coastal Charcoal Squircle Badge -->
-  <rect width="512" height="512" rx="116" fill="url(#arpBg)" />
-  <rect x="6" y="6" width="500" height="500" rx="110" fill="none" stroke="#4F605C" stroke-width="8" stroke-opacity="0.5" />
-
-  <g filter="url(#arpShadow)">
-    <!-- Top Roof Gable — Sage Accent -->
-    <path d="${topChevron}" fill="url(#arpSage)" />
-
-    <!-- Inner Roof Gable — Pure Cloud White -->
-    <path d="${innerChevron}" fill="#FFFFFF" />
-
-    <!-- Foundation Beam — Sage Accent -->
-    <rect x="${bX.toFixed(2)}" y="${bY.toFixed(2)}" width="${bW.toFixed(2)}" height="${bH.toFixed(2)}" rx="${bRadius.toFixed(2)}" fill="url(#arpSage)" />
+function buildSvg({ radius = 104, markScale = 1.28 } = {}) {
+  // The two gables and foundation are traced from public/assets/logo-mark.png.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="${radius}" fill="${charcoal}"/>
+  <g transform="translate(256 256) scale(${markScale}) translate(-170 -170)">
+    <path fill="${cloudWhite}" d="M170 45 328 187 312 205 170 78 28 205 12 187ZM170 124 258 202 242 220 170 157 99 220 83 202Z"/>
+    <path fill="${sage}" d="M92 270h157v25H92z"/>
   </g>
-</svg>`
+</svg>
+`
 }
 
 /**
@@ -109,71 +69,69 @@ async function generateAll() {
   const svgContent = buildSvg()
   const svgBuf = Buffer.from(svgContent)
 
-  // 1. Save SVG favicon to public/assets/favicon.svg and public/favicon.svg
   fs.writeFileSync(path.join(publicAssetsDir, 'favicon.svg'), svgContent, 'utf8')
   fs.writeFileSync(path.join(publicDir, 'favicon.svg'), svgContent, 'utf8')
   fs.writeFileSync(path.join(assetsDir, 'favicon.svg'), svgContent, 'utf8')
 
-  // 2. Generate PNGs at various resolutions
+  // Let iOS apply its own corners. Android's maskable icon also needs all
+  // foreground artwork to fit in the centered circle with radius 40%.
+  const touchSvg = Buffer.from(buildSvg({ radius: 0 }))
+  const maskableSvg = Buffer.from(buildSvg({ radius: 0, markScale: 1.15 }))
   const sizes = [
     { name: 'favicon-16x16.png', size: 16 },
     { name: 'favicon-32x32.png', size: 32 },
     { name: 'favicon-48x48.png', size: 48 },
     { name: 'favicon.png', size: 64 }, // Legacy 64x64
-    { name: 'apple-touch-icon.png', size: 180 },
+    { name: 'apple-touch-icon.png', size: 180, source: touchSvg },
     { name: 'android-chrome-192x192.png', size: 192 },
     { name: 'android-chrome-512x512.png', size: 512 },
+    { name: 'android-chrome-maskable-512x512.png', size: 512, source: maskableSvg },
   ]
 
   const pngMap = {}
 
-  for (const { name, size } of sizes) {
-    const pngBuf = await sharp(svgBuf).resize(size, size).png().toBuffer()
-    pngMap[size] = pngBuf
+  for (const { name, size, source = svgBuf } of sizes) {
+    const pngBuf = await sharp(source).resize(size, size)
+      .png({ compressionLevel: 9, palette: true, dither: 0 })
+      .toBuffer()
+    pngMap[name] = pngBuf
 
-    // Write to public/assets/
     fs.writeFileSync(path.join(publicAssetsDir, name), pngBuf)
-    // Mirror to assets/
     fs.writeFileSync(path.join(assetsDir, name), pngBuf)
 
-    // For apple-touch-icon and android-chrome, also put in root public/
     if (name === 'apple-touch-icon.png') {
       fs.writeFileSync(path.join(publicDir, 'apple-touch-icon.png'), pngBuf)
     }
   }
 
-  // 3. Generate multi-resolution ICO file (16, 32, 48)
-  const icoBuf = createIco(
-    [pngMap[16], pngMap[32], pngMap[48]],
-    [16, 32, 48]
-  )
+  const icoSizes = [16, 32, 48]
+  const icoBuf = createIco(icoSizes.map(size => pngMap[`favicon-${size}x${size}.png`]), icoSizes)
 
   fs.writeFileSync(path.join(publicDir, 'favicon.ico'), icoBuf)
   fs.writeFileSync(path.join(publicAssetsDir, 'favicon.ico'), icoBuf)
   fs.writeFileSync(path.join(assetsDir, 'favicon.ico'), icoBuf)
 
-  // 4. Create site.webmanifest
   const manifest = {
     name: 'Auckland Roof Professionals',
     short_name: 'ARP Roofing',
     description: 'Auckland commercial and residential roofing specialists with 10-year warranty.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#2C3533',
-    theme_color: '#2C3533',
+    background_color: charcoal,
+    theme_color: charcoal,
     icons: [
       {
-        src: '/assets/android-chrome-192x192.png',
+        src: `/assets/android-chrome-192x192.png?${revision}`,
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: '/assets/android-chrome-512x512.png',
+        src: `/assets/android-chrome-512x512.png?${revision}`,
         sizes: '512x512',
         type: 'image/png',
       },
       {
-        src: '/assets/android-chrome-512x512.png',
+        src: `/assets/android-chrome-maskable-512x512.png?${revision}`,
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',

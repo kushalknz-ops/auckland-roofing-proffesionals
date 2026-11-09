@@ -4,6 +4,7 @@ import { SERVICES, isCommercialService, type Service } from '../data/services'
 import { CtaBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { useSEO } from '../hooks/useSEO'
+import { pageSEO } from '../lib/page-seo'
 import { EmptyState } from '../components/ui/EmptyState'
 
 const COPY: Record<
@@ -63,7 +64,7 @@ function ServiceCard({ s }: { s: Service }) {
   return (
     <Link
       className="image-card"
-      to={`/service?id=${s.id}`}
+      to={`/service/${s.id}`}
       style={{ '--bg': `url('${s.img}')` } as React.CSSProperties}
     >
       <div className="card-top"><span>{s.num}</span><span className="card-badge">{s.badge}</span></div>
@@ -83,22 +84,7 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
   const commercial = kind === 'commercial'
   const list = SERVICES.filter((s) => (commercial ? isCommercialService(s) : !isCommercialService(s)))
 
-  useSEO({
-    title: commercial
-      ? 'Commercial Roofing Services Auckland | Auckland Roof Professionals'
-      : 'Residential Roofing Auckland | Shingles & Metal Roofs | Auckland Roof Professionals',
-    description: commercial
-      ? 'Commercial roofing & cladding solutions across Auckland. Standing seam, TPO membrane, warm roof systems, height safety & maintenance. 10-year warranty.'
-      : 'Specialist residential roofing in Auckland: architectural asphalt shingles, Colorsteel® long run metal roofs, membrane decks & warm roofs. Free quotes.',
-    canonical: commercial ? '/commercial' : '/residential',
-    ogImage: commercial ? '/assets/og-commercial.jpg' : '/assets/og-residential.jpg',
-    ogImageAlt: commercial
-      ? 'Auckland Commercial Roofing & Cladding Specialists - Auckland Roof Professionals'
-      : 'Auckland Residential Roofing & Re-Roofing Specialists - Auckland Roof Professionals',
-    keywords: commercial
-      ? 'commercial roofing Auckland, commercial re-roofing, metal cladding, membrane roofing Auckland, warm roofs NZ, roof safety systems, roof asset maintenance'
-      : 'residential roofing Auckland, asphalt shingles Auckland, Colorsteel roofing, residential re-roofing Auckland, roof leak repair, membrane flat roofs, warm roof retrofit',
-  })
+  useSEO(pageSEO[commercial ? '/commercial' : '/residential'])
 
   return (
     <main id="main-content" tabIndex={-1}>
@@ -134,7 +120,7 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
               }}
               secondaryAction={{
                 label: 'Request Free Assessment',
-                onClick: openQuote,
+                onClick: (event) => openQuote(event.currentTarget),
               }}
             />
           ) : (
@@ -147,8 +133,8 @@ export default function CategoryPage({ kind }: { kind: 'commercial' | 'residenti
             <button
               type="button"
               className="text-link"
-              onClick={() => openQuote()}
-              style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer', display: 'inline' }}
+              onClick={(event) => openQuote(event.currentTarget)}
+              style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', cursor: 'pointer' }}
             >
               {c.noteLink}
             </button>

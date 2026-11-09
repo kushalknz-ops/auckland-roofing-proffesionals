@@ -1,33 +1,19 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { SERVICES, isCommercialService } from '../data/services'
 import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { useSEO } from '../hooks/useSEO'
+import { findService, getServiceSEO } from '../lib/page-seo'
 import { EmptyState } from '../components/ui/EmptyState'
 
 export default function ServicePage() {
   const [params] = useSearchParams()
-  const rawId = params.get('id')
+  const rawId = useParams().id ?? params.get('id')
   const { openQuote } = useQuote()
 
-  const s = rawId
-    ? SERVICES.find((x) => x.id.toLowerCase() === rawId.toLowerCase())
-    : SERVICES[0]
+  const s = findService(rawId)
 
-  useSEO({
-    title: s
-      ? s.seoTitle || `${s.title} | Auckland Roof Professionals`
-      : 'Service Not Found | Auckland Roof Professionals',
-    description: s
-      ? s.seoDescription || `${s.short} — Auckland Roof Professionals, Auckland-wide.`
-      : 'The requested roofing service was not found in our catalog. Explore all residential and commercial services.',
-    canonical: s ? `/service?id=${s.id}` : '/service',
-    ogImage: s?.img || '/assets/og-image.jpg',
-    ogImageAlt: s ? `${s.title} - Auckland Roof Professionals` : 'Roofing Services Auckland - Auckland Roof Professionals',
-    keywords: s
-      ? `${s.title}, Auckland roofing, ${s.chips.join(', ')}`
-      : 'Auckland roofing services, commercial roofing, residential roofing',
-  })
+  useSEO(getServiceSEO(s))
 
   // Empty / Not-Found State: user passed an ID that doesn't exist
   if (rawId && !s) {
@@ -68,16 +54,18 @@ export default function ServicePage() {
                 <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#2C3533', marginBottom: '12px' }}>
                   Available Auckland Roofing Services:
                 </h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '10px' }}>
 
                   {SERVICES.map((item) => (
                     <Link
                       key={item.id}
-                      to={`/service?id=${item.id}`}
+                      to={`/service/${item.id}`}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
+                        gap: '12px',
+                        flexWrap: 'wrap',
                         padding: '12px 14px',
                         background: '#FFFFFF',
                         border: '1px solid #D1DDD6',
@@ -89,7 +77,7 @@ export default function ServicePage() {
                       }}
                     >
                       <span>{item.title}</span>
-                      <span style={{ fontSize: '11px', color: '#73827F' }}>{item.badge} →</span>
+                      <span style={{ fontSize: '11px', color: 'var(--muted-l)' }}>{item.badge} →</span>
                     </Link>
                   ))}
                 </div>
@@ -144,7 +132,7 @@ export default function ServicePage() {
             <p className="eyebrow reveal visible">Service {s.num} — {s.badge}</p>
             <h1 className="reveal visible">{s.title}<span className="dim">.</span></h1>
             <p className="reveal visible">{s.short}</p>
-            <button className="outline-btn reveal visible" type="button" onClick={() => openQuote(s.title)}>
+            <button className="outline-btn reveal visible" type="button" onClick={(event) => openQuote(event.currentTarget, s.title)}>
               Request a quote <span>→</span>
             </button>
             <nav className="crumbs reveal visible" aria-label="Breadcrumb">
@@ -173,7 +161,7 @@ export default function ServicePage() {
               {s.specs.map((sp) => <li key={sp}>{sp}</li>)}
             </ul>
             <div className="sd-cta-row">
-              <button className="inline-submit" type="button" onClick={() => openQuote(s.title)}>
+              <button className="inline-submit" type="button" onClick={(event) => openQuote(event.currentTarget, s.title)}>
                 Request a quote for this service <span>→</span>
               </button>
               <Link className="text-link-dark" to={categoryPath}>← All {category.toLowerCase()} services</Link>
@@ -188,7 +176,7 @@ export default function ServicePage() {
                 <div><dt>Assessment</dt><dd>Free &amp; obligation-free</dd></div>
                 <div><dt>Service area</dt><dd>Auckland-wide</dd></div>
               </dl>
-              <button className="submit-btn" type="button" onClick={() => openQuote(s.title)}>
+              <button className="submit-btn" type="button" onClick={(event) => openQuote(event.currentTarget, s.title)}>
                 Request quote →
               </button>
             </div>
@@ -197,7 +185,7 @@ export default function ServicePage() {
 
               <div>
                 {others.map((o) => (
-                  <Link key={o.id} to={`/service?id=${o.id}`}>{o.title}<span>→</span></Link>
+                  <Link key={o.id} to={`/service/${o.id}`}>{o.title}<span>→</span></Link>
                 ))}
               </div>
             </nav>

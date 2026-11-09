@@ -8,7 +8,11 @@ import { CtaBand, MapBand } from '../components/site/shared-bands'
 import { useQuote } from '../components/site/quote-context'
 import { RoofingEnquiryForm } from '../components/site/RoofingEnquiryForm'
 import { GoogleReviewsCarousel } from '../components/site/GoogleReviewsCarousel'
+import { PoweredBy } from '../components/site/PoweredBy'
 import { useSEO } from '../hooks/useSEO'
+import { pageSEO } from '../lib/page-seo'
+import { PROJECTS, projectPath } from '../data/projects'
+import { getResponsiveImageProps } from '../lib/responsive-images'
 
 /* ============================================================
    STATS BAND — count-up on first view (port of index.js)
@@ -27,6 +31,10 @@ function StatsBand() {
   useEffect(() => {
     const el = wrapRef.current
     if (!el) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      countRefs.current.forEach((node, i) => { if (node) node.textContent = String(STATS[i].count) })
+      return
+    }
     let rafId = 0
     const io = new IntersectionObserver(
       (entries) => {
@@ -95,6 +103,17 @@ function StatsBand() {
                 className="cert-logo cert-logo-lbp"
                 width={352}
                 height={127}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="cert-col cert-col-hazardco">
+              <img
+                src="/assets/img/cert-hazardco.jpg"
+                alt="HazardCo — Health & Safety Made Simple"
+                className="cert-logo cert-logo-hazardco"
+                width={934}
+                height={222}
                 loading="lazy"
                 decoding="async"
               />
@@ -170,6 +189,8 @@ function ProcessSection() {
       ref={sectionRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsHovered(false) }}
     >
       <div className="container">
         <div className="process-header">
@@ -188,7 +209,6 @@ function ProcessSection() {
               className="process-progress-fill"
               style={{
                 '--pf': `${progressPercent}%`,
-                width: `${progressPercent}%`,
               } as React.CSSProperties}
             />
           </div>
@@ -200,6 +220,7 @@ function ProcessSection() {
               onClick={() => setActiveStep(i)}
               onMouseEnter={() => setActiveStep(i)}
               tabIndex={0}
+              role="button"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
@@ -262,17 +283,6 @@ const FAQS = [
 
 function FaqSection() {
   const [open, setOpen] = useState(-1)
-  const [heights, setHeights] = useState<Record<number, number>>({})
-
-  const measureRef = (idx: number, el: HTMLDivElement | null) => {
-    if (el) {
-      const scrollHeight = el.scrollHeight
-      setHeights((prev) => {
-        if (prev[idx] === scrollHeight) return prev
-        return { ...prev, [idx]: scrollHeight }
-      })
-    }
-  }
 
   return (
     <section className="section faq" id="faq">
@@ -300,14 +310,9 @@ function FaqSection() {
                 role="region"
                 aria-labelledby={`faq-question-${i}`}
                 className="faq-a"
-                ref={(el) => measureRef(i, el)}
-                style={
-                  open === i
-                    ? { maxHeight: `${heights[i] ?? 500}px` }
-                    : undefined
-                }
+                aria-hidden={open !== i}
               >
-                <p>{f.a}</p>
+                <div><p>{f.a}</p></div>
               </div>
             </div>
           ))}
@@ -328,67 +333,11 @@ function InlineQuoteForm() {
    PROJECTS SECTION — continuous smooth auto-scrolling carousel
    with hover-pause, touch swiping, and manual nav controls
    ============================================================ */
-const PROJECTS = [
-  {
-    num: '01',
-    cat: 'Commercial',
-    loc: 'Albany • Retail',
-    title: 'Albany Commercial Centre',
-    desc: '2,400m² standing seam metal roof and wall cladding upgrade, staged for zero downtime to trading tenants.',
-    scope: 'Metal Roof + Cladding',
-    duration: '6 Weeks',
-    img: '/assets/img/project-albany.jpg',
-    alt: 'Albany commercial centre with new standing seam metal roof',
-  },
-  {
-    num: '02',
-    cat: 'Residential',
-    loc: 'Remuera • Re-roof',
-    title: 'Remuera Villa Re-Roof',
-    desc: 'Premium architectural asphalt shingle re-roof on a heritage-style family home, colour-matched to its original profile.',
-    scope: 'Asphalt Shingles',
-    duration: '2 Weeks',
-    img: '/assets/img/project-remuera.jpg',
-    alt: 'Remuera villa with new architectural asphalt shingle roof',
-  },
-  {
-    num: '03',
-    cat: 'Industrial',
-    loc: 'East Tāmaki • Logistics',
-    title: 'East Tāmaki Warehouse',
-    desc: 'Engineered warm roof system with high-performance PIR insulation for a temperature-sensitive distribution centre.',
-    scope: 'Warm Roof + PIR',
-    duration: '4 Weeks',
-    img: '/assets/img/project-warehouse.jpg',
-    alt: 'East Tāmaki distribution warehouse with warm roof system',
-  },
-  {
-    num: '04',
-    cat: 'Commercial',
-    loc: 'Takapuna • Healthcare',
-    title: 'Takapuna Medical Centre',
-    desc: 'Complete architectural standing seam roofing with enhanced acoustic insulation and custom perimeter flashings.',
-    scope: 'Standing Seam Metal',
-    duration: '5 Weeks',
-    img: '/assets/img/svc-metal-commercial.jpg',
-    alt: 'Takapuna medical facility with standing seam metal roofing',
-  },
-  {
-    num: '05',
-    cat: 'Residential',
-    loc: 'Devonport • Coastal',
-    title: 'Devonport Coastal Villa',
-    desc: 'Marine-grade Colorsteel replacement engineered for high wind zones and salt-spray resistance with traditional profile lines.',
-    scope: 'Colorsteel Maxx',
-    duration: '3 Weeks',
-    img: '/assets/img/svc-metal-res.jpg',
-    alt: 'Devonport heritage home with marine-grade Colorsteel roof',
-  },
-]
-
 function ProjectsSection() {
   const trackRef = useRef<HTMLDivElement>(null)
   const isPausedRef = useRef(false)
+  const autoPausedRef = useRef(false)
+  const [autoPaused, setAutoPaused] = useState(false)
   const isInViewRef = useRef(false)
   const resumeTimerRef = useRef<number | null>(null)
 
@@ -397,7 +346,7 @@ function ProjectsSection() {
     if (!track) return
 
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches) return
+    if (mediaQuery.matches || window.matchMedia('(pointer: coarse)').matches) return
 
     let rafId: number = 0
     let lastTime = performance.now()
@@ -409,8 +358,9 @@ function ProjectsSection() {
       const delta = (now - lastTime) / 1000
       lastTime = now
 
-      if (!isPausedRef.current && track) {
-        const singleSetWidth = track.scrollWidth / 3
+      if (!isPausedRef.current && !autoPausedRef.current && !mediaQuery.matches && track && !track.contains(document.activeElement)) {
+          const cards = track.querySelectorAll('article')
+          const singleSetWidth = cards[PROJECTS.length]?.offsetLeft - cards[0]?.offsetLeft
         if (singleSetWidth > 0) {
           track.scrollLeft += speed * delta
 
@@ -453,7 +403,8 @@ function ProjectsSection() {
 
     const setupInitialPosition = () => {
       if (!track) return
-      const singleSetWidth = track.scrollWidth / 3
+      const cards = track.querySelectorAll('article')
+      const singleSetWidth = cards[PROJECTS.length]?.offsetLeft - cards[0]?.offsetLeft
       if (singleSetWidth > 0 && track.scrollLeft === 0) {
         track.scrollLeft = singleSetWidth
       }
@@ -475,9 +426,9 @@ function ProjectsSection() {
 
     isPausedRef.current = true
     const firstCard = track.children[0] as HTMLElement | undefined
-    const step = firstCard ? firstCard.offsetWidth + 20 : 400
+    const step = firstCard ? firstCard.offsetWidth + parseFloat(getComputedStyle(track).columnGap || '0') : 400
 
-    track.scrollBy({ left: dir * step, behavior: 'smooth' })
+    track.scrollBy({ left: dir * step, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
 
     if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
     resumeTimerRef.current = window.setTimeout(() => {
@@ -499,6 +450,10 @@ function ProjectsSection() {
           <div className="projects-top-right reveal">
             <p>From industrial facilities to family homes across Tāmaki Makaurau, our work speaks for itself.</p>
             <div className="projects-nav-controls" aria-label="Project carousel controls">
+              <button className="projects-auto-toggle" type="button" aria-pressed={autoPaused}
+                onClick={() => { autoPausedRef.current = !autoPaused; setAutoPaused(!autoPaused) }}>
+                {autoPaused ? 'Resume autoplay' : 'Pause autoplay'}
+              </button>
               <button
                 type="button"
                 className="projects-nav-btn prev"
@@ -557,8 +512,10 @@ function ProjectsSection() {
 
           {allProjects.map((p, idx) => (
             <article key={`${p.num}-${idx}`}>
+              <Link className="project-card-link" to={projectPath(p)}>
               <img
                 src={p.img}
+                {...getResponsiveImageProps(p.img, '(max-width: 480px) 82vw, (max-width: 900px) 300px, 360px')}
                 alt={p.alt}
                 width={1536}
                 height={1024}
@@ -582,7 +539,9 @@ function ProjectsSection() {
                     <dd>{p.duration}</dd>
                   </div>
                 </dl>
+                <span className="project-card-cta" aria-hidden="true">View case study <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M7 17 17 7M7 7h10v10" /></svg></span>
               </div>
+              </Link>
             </article>
           ))}
         </div>
@@ -597,41 +556,57 @@ function ProjectsSection() {
 export default function HomePage() {
   const { openQuote } = useQuote()
   const heroVideoRef = useRef<HTMLVideoElement>(null)
+  const heroVideoPausedByUser = useRef(false)
+  const [heroVideoStarted, setHeroVideoStarted] = useState(false)
+  const [heroVideoPlaying, setHeroVideoPlaying] = useState(false)
 
-  useSEO({
-    title: 'Auckland Roof Professionals | Commercial & Residential Roofing Auckland',
-    description: "Auckland's leading roofing specialists. Commercial & residential metal roofing, membrane systems, warm roofs & asphalt shingles. 10-year warranty. Free quote.",
-    canonical: '/',
-    ogImage: '/assets/og-image.jpg',
-    ogImageAlt: 'Auckland Roof Professionals - Commercial & Residential Roofing Auckland',
-    keywords: 'roofing Auckland, roofers Auckland, commercial roofing, residential roofing, Colorsteel roofing, asphalt shingles Auckland, membrane roofing, warm roofs NZ',
-  })
+  useSEO(pageSEO['/'])
 
   useEffect(() => {
-    if (!heroVideoRef.current) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      heroVideoRef.current.pause()
-      return
+    const video = heroVideoRef.current
+    if (!video) return
+    const compactPoster = window.matchMedia('(max-width: 767px)')
+    const updatePoster = () => {
+      video.poster = compactPoster.matches
+        ? '/assets/landing-video-poster-mobile.webp'
+        : '/assets/landing-video-poster.webp'
     }
-    // On small screens, keep the optimized WebP poster to save battery and network bandwidth
-    if (window.innerWidth < 768) return
-
-    heroVideoRef.current.defaultMuted = true
-    heroVideoRef.current.muted = true
-
-    // Defer video play until browser idle to keep initial load and LCP lightning fast
-    const playVideo = () => {
-      heroVideoRef.current?.play().catch(() => {})
+    updatePoster()
+    compactPoster.addEventListener('change', updatePoster)
+    const playback = window.matchMedia('(min-width: 768px) and (prefers-reduced-motion: no-preference)')
+    let inView = true
+    let ready = false
+    const updatePlayback = () => {
+      if (ready && inView && !document.hidden && playback.matches && !heroVideoPausedByUser.current) {
+        video.muted = true
+        video.play().catch(() => {})
+      } else video.pause()
     }
-
-    if ('requestIdleCallback' in window) {
-      const id = (window as any).requestIdleCallback(playVideo, { timeout: 2500 })
-      return () => (window as any).cancelIdleCallback(id)
-    } else {
-      const timer = setTimeout(playVideo, 1500)
-      return () => clearTimeout(timer)
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting
+      updatePlayback()
+    })
+    observer.observe(video)
+    const timer = window.setTimeout(() => { ready = true; updatePlayback() }, 1500)
+    playback.addEventListener('change', updatePlayback)
+    document.addEventListener('visibilitychange', updatePlayback)
+    return () => {
+      window.clearTimeout(timer)
+      observer.disconnect()
+      compactPoster.removeEventListener('change', updatePoster)
+      playback.removeEventListener('change', updatePlayback)
+      document.removeEventListener('visibilitychange', updatePlayback)
+      video.pause()
     }
   }, [])
+
+  const toggleHeroVideo = () => {
+    const video = heroVideoRef.current
+    if (!video) return
+    heroVideoPausedByUser.current = !video.paused
+    if (video.paused) video.play().catch(() => {})
+    else video.pause()
+  }
 
   return (
     <main id="main-content" tabIndex={-1}>
@@ -643,11 +618,12 @@ export default function HomePage() {
           <video
             ref={heroVideoRef}
             className="hero-video"
-            poster="/assets/landing-video-poster.webp"
             loop
             muted
             playsInline
             preload="none"
+            onPlaying={() => { setHeroVideoStarted(true); setHeroVideoPlaying(true) }}
+            onPause={() => setHeroVideoPlaying(false)}
           >
             <source
               src="https://res.cloudinary.com/avvuses1/video/upload/v1790424232/landing-page-video.mp4"
@@ -670,13 +646,25 @@ export default function HomePage() {
               <span><i>◆</i>On time, on budget</span>
               <span><i>◆</i>10-year workmanship warranty</span>
             </div>
-            <button className="outline-btn" type="button" onClick={() => openQuote()}>
+            <button className="outline-btn" type="button" onClick={(event) => openQuote(event.currentTarget)}>
               Get a free quote <span>→</span>
             </button>
           </div>
           <p className="hero-tag">Roofing solutions<br />for Auckland's harshest weather</p>
         </div>
         <a className="scroll-hint" href="#services">Scroll <span>↓</span></a>
+        {heroVideoStarted && (
+          <button
+            type="button"
+            className="hero-video-toggle"
+            aria-label={heroVideoPlaying ? 'Pause background video' : 'Play background video'}
+            onClick={toggleHeroVideo}
+          >
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="currentColor" aria-hidden="true">
+              {heroVideoPlaying ? <path d="M5 4h3v12H5zm7 0h3v12h-3z" /> : <path d="M6 3v14l11-7z" />}
+            </svg>
+          </button>
+        )}
       </section>
 
       <StatsBand />
@@ -815,9 +803,9 @@ export default function HomePage() {
               <div className="about-contact-list">
                 <div className="about-contact-item">
                   <a
-                    href="tel:0800555766"
+                    href="tel:0800766311"
                     className="about-contact-icon"
-                    aria-label="Call 0800 555 766"
+                    aria-label="Call 0800 766 311"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -826,7 +814,7 @@ export default function HomePage() {
                   <div className="about-contact-content">
                     <span className="about-contact-label">Phone</span>
                     <span className="about-contact-value">
-                      <a href="tel:0800555766">0800 555 766</a>
+                      <a href="tel:0800766311">0800 766 311</a>
                     </span>
                   </div>
                 </div>
@@ -852,7 +840,7 @@ export default function HomePage() {
 
                 <div className="about-contact-item">
                   <a
-                    href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                    href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="about-contact-icon"
@@ -867,11 +855,11 @@ export default function HomePage() {
                     <span className="about-contact-label">Workshop Address</span>
                     <span className="about-contact-value">
                       <a
-                        href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                        href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        59 Porana Road, Glenfield, Auckland 0627
+                        59/7 Porana Road, Wairau Valley, Auckland 0627, New Zealand
                       </a>
                     </span>
                   </div>
@@ -898,7 +886,7 @@ export default function HomePage() {
             <div className="about-branch-card">
               <div className="branch-header">
                 <a
-                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="branch-pin-link"
@@ -913,16 +901,16 @@ export default function HomePage() {
               </div>
               <p className="branch-address">
                 <a
-                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  59 Porana Road, Glenfield, Auckland 0627, New Zealand
+                  59/7 Porana Road, Wairau Valley, Auckland 0627, New Zealand
                 </a>
               </p>
               <div className="branch-actions">
                 <a
-                  href="https://www.google.com/maps/dir/?api=1&destination=59+Porana+Road,+Glenfield,+Auckland+0627,+New+Zealand"
+                  href="https://www.google.com/maps/dir/?api=1&destination=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="branch-btn-primary"
@@ -938,9 +926,11 @@ export default function HomePage() {
             </div>
           </div>
 
+          <PoweredBy className="powered-by--about" />
+
           {/* ============ TALK TO OUR TEAM CTA ============ */}
           <div className="about-cta-wrap reveal">
-            <button className="outline-btn" type="button" onClick={() => openQuote()}>
+            <button className="outline-btn" type="button" onClick={(event) => openQuote(event.currentTarget)}>
               Talk to our team <span>→</span>
             </button>
           </div>
@@ -975,16 +965,16 @@ export default function HomePage() {
             <h2 className="reveal">Let's talk about<br />your roof.</h2>
             <p className="reveal">Planning a new build, re-roof or maintenance programme? Tell us what you need and our team will be in touch within one business day.</p>
             <ul className="contact-facts reveal">
-              <li><span>Phone</span><a href="tel:+64800555766">0800 555 766</a></li>
+              <li><span>Phone</span><a href="tel:+64800766311">0800 766 311</a></li>
               <li><span>Email</span><a href="mailto:info@aucklandroofprofessionals.nz">info@aucklandroofprofessionals.nz</a></li>
               <li>
                 <span>Office</span>
                 <a
-                  href="https://maps.app.goo.gl/CKoTxUWEz61N48q18"
+                  href="https://www.google.com/maps/search/?api=1&query=59%2F7+Porana+Road%2C+Wairau+Valley%2C+Auckland+0627%2C+New+Zealand"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  59 Porana Road, Glenfield,<br />Auckland 0627, New Zealand
+                  59/7 Porana Road, Wairau Valley,<br />Auckland 0627, New Zealand
                 </a>
               </li>
               <li><span>Hours</span>Mon–Fri · 7:30am–5:00pm</li>

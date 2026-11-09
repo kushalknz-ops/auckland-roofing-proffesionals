@@ -26,8 +26,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
-    // Log error in console for debugging
-    console.error('ErrorBoundary caught an unhandled error:', error, errorInfo)
   }
 
   public resetError = () => {
@@ -55,7 +53,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           aria-live="assertive"
           className="min-h-[50vh] flex items-center justify-center py-16 px-4 bg-[#F8FAF7]"
         >
-          <div className="max-w-xl w-full bg-[#FFFFFF] rounded-2xl border border-[#D1DDD6] p-8 md:p-10 text-center shadow-lg">
+          <div className="max-w-xl w-full bg-[#FFFFFF] rounded-2xl border border-[#D1DDD6] p-5 sm:p-8 md:p-10 text-center shadow-lg">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#E4EBE7] text-[#2C3533]">
               <svg
                 width="36"
@@ -91,27 +89,27 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               <button
                 type="button"
                 onClick={this.resetError}
-                className="px-6 py-2.5 rounded-lg bg-[#2C3533] text-[#F8FAF7] font-semibold text-sm hover:bg-[#3D4946] transition-colors focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]"
+                className="min-h-11 inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-[#2C3533] text-[#F8FAF7] font-semibold text-sm hover:bg-[#3D4946] transition-colors focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]"
               >
                 Try Again
               </button>
               <a
                 href="/"
-                className="px-6 py-2.5 rounded-lg border border-[#D1DDD6] bg-transparent text-[#2C3533] font-semibold text-sm hover:bg-[#E4EBE7] transition-colors focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]"
+                className="min-h-11 inline-flex items-center justify-center px-6 py-2.5 rounded-lg border border-[#D1DDD6] bg-transparent text-[#2C3533] font-semibold text-sm hover:bg-[#E4EBE7] transition-colors focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]"
               >
                 Return Home
               </a>
               <a
-                href="tel:0800555766"
-                className="px-6 py-2.5 rounded-lg bg-[#A5B8AC] text-[#1F2624] font-semibold text-sm hover:bg-[#8FA597] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2C3533]"
+                href="tel:0800766311"
+                className="min-h-11 inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-[#A5B8AC] text-[#1F2624] font-semibold text-sm hover:bg-[#8FA597] transition-colors focus:outline-none focus:ring-2 focus:ring-[#2C3533]"
               >
-                Call 0800 555 766
+                Call 0800 766 311
               </a>
             </div>
 
-            {this.state.error.message && (
-              <details className="mt-4 text-left border-t border-[#E4EBE7] pt-4 text-xs text-[#73827F]">
-                <summary className="cursor-pointer hover:text-[#2C3533] select-none font-medium">
+            {import.meta.env?.DEV && this.state.error.message && (
+              <details className="mt-4 text-left border-t border-[#E4EBE7] pt-4 text-xs text-[#576562]">
+                <summary className="min-h-11 py-3 cursor-pointer hover:text-[#2C3533] select-none font-medium">
                   Technical details
                 </summary>
                 <pre className="mt-2 p-3 bg-[#F8FAF7] rounded border border-[#E4EBE7] overflow-x-auto whitespace-pre-wrap font-mono text-[11px] text-[#2C3533]">

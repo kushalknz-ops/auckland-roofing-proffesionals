@@ -1,0 +1,21 @@
+/* Initial poster displayed before the application mounts. */
+.site-shell-poster {
+  position: fixed;
+  inset: 0;
+  background: url('/assets/landing-video-poster.webp') center / cover no-repeat;
+  pointer-events: none;
+}
+
+.site-shell-poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(44,53,51,.94) 0%, rgba(44,53,51,.74) 38%, rgba(44,53,51,.22) 70%, rgba(44,53,51,.12)),
+    linear-gradient(0deg, rgba(44,53,51,.55), transparent 40%);
+}
+
+@media (max-width: 767px) {
+  .site-shell-poster {
+    background-image: url('/assets/landing-video-poster-mobile.webp');
+  }
+}

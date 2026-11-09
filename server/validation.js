@@ -165,19 +165,18 @@ export function isValidDetails(details, min = 10, max = 2000) {
  * Validates an uploaded file object or file metadata
  */
 export function validateFileMetadata(file) {
-  if (!file) return 'File data is missing.'
-  const name = file.name || 'uploaded_file'
-  const ext = (name.slice(name.lastIndexOf('.')) || '').toLowerCase()
+  if (!file || typeof file !== 'object' || typeof file.name !== 'string') return 'File data is missing.'
+  const ext = /\.[^.]*$/.exec(file.name)?.[0].toLowerCase()
 
   if (file.type && !ALLOWED_FILE_TYPES.includes(file.type)) {
-    return `"${name}" has an unsupported format. Please upload JPG, PNG, or WebP images.`
+    return 'An attachment has an unsupported format. Please upload JPG, PNG, or WebP images.'
   }
   if (ext && !ALLOWED_FILE_EXTENSIONS.includes(ext)) {
-    return `"${name}" has an unsupported extension (${ext}). Please upload JPG, PNG, or WebP images.`
+    return 'An attachment has an unsupported extension. Please upload JPG, PNG, or WebP images.'
   }
   if (typeof file.size === 'number' && file.size > MAX_FILE_SIZE) {
     const sizeMb = (file.size / (1024 * 1024)).toFixed(1)
-    return `"${name}" is ${sizeMb} MB (exceeds the 4 MB limit per photo).`
+    return `An attachment is ${sizeMb} MB (exceeds the 4 MB limit per photo).`
   }
   return null
 }

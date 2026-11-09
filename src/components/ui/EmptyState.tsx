@@ -1,9 +1,9 @@
-import type { ReactNode } from 'react'
+import type { MouseEventHandler, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 export interface EmptyStateAction {
   label: string
-  onClick?: () => void
+  onClick?: MouseEventHandler<HTMLElement>
   href?: string
 }
 
@@ -46,9 +46,9 @@ export function EmptyState({
   children,
 }: EmptyStateProps) {
   const renderAction = (act: EmptyStateAction, isPrimary = true) => {
-    const baseClass = isPrimary
+    const baseClass = 'min-h-11 max-w-full ' + (isPrimary
       ? 'inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-[#2C3533] text-[#F8FAF7] font-semibold text-sm transition-colors hover:bg-[#3D4946] focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]'
-      : 'inline-flex items-center justify-center px-6 py-2.5 rounded-lg border border-[#D1DDD6] bg-transparent text-[#2C3533] font-semibold text-sm transition-colors hover:bg-[#E4EBE7] focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]'
+      : 'inline-flex items-center justify-center px-6 py-2.5 rounded-lg border border-[#D1DDD6] bg-transparent text-[#2C3533] font-semibold text-sm transition-colors hover:bg-[#E4EBE7] focus:outline-none focus:ring-2 focus:ring-[#A5B8AC]')
 
     if (act.href) {
       if (act.href.startsWith('http') || act.href.startsWith('tel:') || act.href.startsWith('mailto:')) {
@@ -90,7 +90,7 @@ export function EmptyState({
   return (
     <div
       role="status"
-      className={`rounded-2xl border border-[#D1DDD6] bg-[#FFFFFF] p-8 md:p-12 text-center my-6 shadow-sm max-w-2xl mx-auto ${className}`}
+      className={`rounded-2xl border border-[#D1DDD6] bg-[#FFFFFF] p-5 sm:p-8 md:p-12 text-center my-6 shadow-sm max-w-2xl mx-auto ${className}`}
     >
       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#E4EBE7]">
         {icon || <DefaultEmptyIcon />}

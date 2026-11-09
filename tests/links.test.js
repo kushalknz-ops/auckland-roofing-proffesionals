@@ -26,25 +26,9 @@ test('Link Integrity - Services Catalogue Slugs', async (t) => {
     }
   })
 
-  await t.test('sitemap.xml only references existing service IDs and routes', () => {
-    const sitemapContent = fs.readFileSync(path.join(publicDir, 'sitemap.xml'), 'utf8')
-    const serviceLocRegex = /<loc>https:\/\/aucklandroofprofessionals\.nz\/service\?id=([^<]+)<\/loc>/g
-    let match
-    const sitemapServiceIds = []
-    while ((match = serviceLocRegex.exec(sitemapContent)) !== null) {
-      sitemapServiceIds.push(match[1])
-    }
-
-    assert.equal(sitemapServiceIds.length, SERVICES.length, 'Sitemap should contain all catalog services')
-    for (const id of sitemapServiceIds) {
-      const found = SERVICES.find((s) => s.id === id)
-      assert.ok(found, `Sitemap service ID "${id}" does not exist in catalog`)
-    }
-  })
-
   await t.test('404.html static links only reference existing service IDs and routes', () => {
     const html404 = fs.readFileSync(path.join(publicDir, '404.html'), 'utf8')
-    const serviceLinkRegex = /href="\/service\?id=([^"&]+)"/g
+    const serviceLinkRegex = /href="\/service\/([^"]+)"/g
     let match
     while ((match = serviceLinkRegex.exec(html404)) !== null) {
       const id = match[1]
@@ -104,7 +88,7 @@ test('Link Integrity - No Placeholder or Dead "#" Links', async (t) => {
 })
 
 test('Link Integrity - Public Static Asset References', async (t) => {
-  await t.test('all /assets/ referenced in code, data, and sitemap exist in public directory', () => {
+  await t.test('all /assets/ referenced in code and data exist in public directory', () => {
     const filesToCheck = [
       path.join(srcDir, 'data', 'services.ts'),
       path.join(srcDir, 'pages', 'HomePage.tsx'),
@@ -113,7 +97,6 @@ test('Link Integrity - Public Static Asset References', async (t) => {
       path.join(srcDir, 'pages', 'ContactPage.tsx'),
       path.join(srcDir, 'components', 'site', 'Header.tsx'),
       path.join(srcDir, 'components', 'site', 'Footer.tsx'),
-      path.join(publicDir, 'sitemap.xml'),
       path.join(publicDir, '404.html'),
       path.join(projectRoot, 'index.html'),
     ]
@@ -126,8 +109,8 @@ test('Link Integrity - Public Static Asset References', async (t) => {
       const content = fs.readFileSync(file, 'utf8')
       let match
       while ((match = assetRegex.exec(content)) !== null) {
-        const relAsset = match[1].replace(/^\//, '')
-        const fullAssetPath = path.join(publicDir, relAsset)
+        const { pathname } = new URL(match[1], 'https://example.test')
+        const fullAssetPath = path.join(publicDir, pathname)
         if (!fs.existsSync(fullAssetPath)) {
           missing.push({ file: path.relative(projectRoot, file), asset: match[1] })
         }

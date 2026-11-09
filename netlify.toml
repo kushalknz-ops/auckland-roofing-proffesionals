@@ -24,31 +24,10 @@
   status = 301
   force = true
 
-# SPA client-side routing fallback
+# Existing static files and the generated service rewrites take precedence.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/404.html"
+  status = 404
 
-# Security & HSTS Headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    X-Content-Type-Options = "nosniff"
-    X-Frame-Options = "SAMEORIGIN"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-XSS-Protection = "0"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), interest-cohort=()"
-    Cross-Origin-Opener-Policy = "same-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://aucklandroofprofessionals.nz https://res.cloudinary.com; media-src 'self' https://res.cloudinary.com blob:; connect-src 'self' https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self' https://www.google.com https://maps.google.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
-
-# Immutable caching & CORS for built assets
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, HEAD, OPTIONS"
-    Access-Control-Allow-Headers = "Origin, Content-Type, Accept"
-    Cross-Origin-Resource-Policy = "cross-origin"
-    Cache-Control = "public, max-age=31536000, immutable"
+# Security and cache headers are set by public/_headers (copied to dist).

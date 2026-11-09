@@ -7,20 +7,37 @@
     email info@aucklandroofprofessionals.nz
 }
 
+(security_headers) {
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        Content-Security-Policy "default-src 'none'; script-src 'self'; script-src-attr 'none'; style-src 'self' https://fonts.googleapis.com; style-src-attr 'none'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src https://res.cloudinary.com/avvuses1/video/upload/; connect-src 'self'; frame-src https://www.google.com/maps; manifest-src 'self'; frame-ancestors 'none'; form-action 'self'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=(), xr-spatial-tracking=()"
+        Cross-Origin-Opener-Policy "same-origin"
+        X-XSS-Protection "0"
+    }
+    header {
+        -Server
+        -X-Powered-By
+    }
+}
+
 # Redirect www to canonical apex domain
 www.aucklandroofprofessionals.nz {
+    import security_headers
     redir https://aucklandroofprofessionals.nz{uri} permanent
 }
 
 aucklandroofprofessionals.nz {
+    import security_headers
+
     # Path to Vite production build
     root * /var/www/dist
 
     # Enable compression
     encode gzip zstd
-
-    # Serve static files
-    file_server
 
     # Strip trailing slashes on sub-paths for canonical URL consistency
     @subpathTrailingSlash {
@@ -28,28 +45,25 @@ aucklandroofprofessionals.nz {
     }
     redir @subpathTrailingSlash /{re.slash.1} permanent
 
-    # SPA client-side routing fallback
-    try_files {path} /index.html
-
-    # Security & HSTS Headers
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        X-Content-Type-Options "nosniff"
-        X-Frame-Options "SAMEORIGIN"
-        Referrer-Policy "strict-origin-when-cross-origin"
-        X-XSS-Protection "0"
-        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), interest-cohort=()"
-        Cross-Origin-Opener-Policy "same-origin"
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://aucklandroofprofessionals.nz https://res.cloudinary.com; media-src 'self' https://res.cloudinary.com blob:; connect-src 'self' https://res.cloudinary.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src 'self' https://www.google.com https://maps.google.com; frame-ancestors 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests;"
+    map {http.request.uri.query.id} {service_html} {
+        ~^$ /service-default.html
+        ~^([a-z0-9]+(?:-[a-z0-9]+)*)$ /service/${1}.html
+        default /invalid-service-id.html
+    }
+    handle /service {
+        try_files {service_html} =404
+        file_server
+    }
+    handle {
+        try_files {path}.html {path} =404
+        file_server
+    }
+    handle_errors 404 {
+        rewrite * /404.html
+        file_server
     }
 
-    # Cache & CORS for hashed assets in /assets/
+    # Cache static assets
     @staticAssets path /assets/*
-    header @staticAssets {
-        Cache-Control "public, max-age=31536000, immutable"
-        Access-Control-Allow-Origin "*"
-        Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
-        Access-Control-Allow-Headers "Origin, Content-Type, Accept"
-        Cross-Origin-Resource-Policy "cross-origin"
-    }
+    header @staticAssets Cache-Control "public, max-age=31536000, immutable"
 }

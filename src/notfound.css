@@ -8,6 +8,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- 404 Hero Banner ---------- */
@@ -25,7 +26,7 @@
 .not-found-hero-media {
   position: absolute;
   inset: 0;
-  background-image: url('/assets/img/svc-metal-commercial.jpg');
+  background-image: url('/assets/img/svc-metal-commercial.webp');
   background-position: center 30%;
   background-size: cover;
   transform: scale(1.03);
@@ -48,6 +49,7 @@
 
 .not-found-badge {
   display: inline-flex;
+  max-width: 100%;
   align-items: center;
   gap: 10px;
   background: rgba(165, 184, 172, 0.15);
@@ -69,11 +71,12 @@
   background: var(--sage);
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
   box-shadow: 0 0 8px var(--sage);
 }
 
 .not-found-hero h1 {
-  font-size: clamp(38px, 5vw, 56px);
+  font-size: clamp(32px, 5vw, 56px);
   line-height: 1.08;
   letter-spacing: -1.2px;
   font-weight: 900;
@@ -96,6 +99,7 @@
 
 .not-found-crumbs {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: center;
   text-transform: uppercase;
@@ -108,6 +112,10 @@
 }
 
 .not-found-crumbs a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
   color: #B8C6BE;
   text-decoration: none;
   transition: color 0.2s;
@@ -145,6 +153,8 @@
 
 .btn-solid-charcoal {
   display: inline-flex;
+  min-height: 44px;
+  max-width: 100%;
   align-items: center;
   gap: 12px;
   background: var(--charcoal);
@@ -170,6 +180,8 @@
 
 .btn-outline-charcoal {
   display: inline-flex;
+  min-height: 44px;
+  max-width: 100%;
   align-items: center;
   gap: 12px;
   background: transparent;
@@ -194,6 +206,8 @@
 
 .btn-sage-accent {
   display: inline-flex;
+  min-height: 44px;
+  max-width: 100%;
   align-items: center;
   gap: 12px;
   background: var(--sage);
@@ -213,7 +227,7 @@
 .btn-sage-accent:hover {
   background: var(--sage-dark);
   border-color: var(--sage-dark);
-  color: #FFFFFF;
+  color: var(--charcoal);
   transform: translateY(-1px);
 }
 
@@ -245,8 +259,10 @@
 
 .not-found-search-input {
   width: 100%;
+  min-width: 0;
+  min-height: 44px;
   padding: 14px 18px 14px 46px;
-  font-size: 15px;
+  font-size: 16px;
   border: 1px solid var(--mist-border);
   background: var(--cloud);
   color: var(--charcoal);
@@ -259,6 +275,13 @@
   border-color: var(--sage);
   background: #FFFFFF;
   box-shadow: 0 0 0 3px rgba(165, 184, 172, 0.25);
+  outline: 2px solid var(--charcoal);
+  outline-offset: 2px;
+}
+
+.not-found-search-input::placeholder {
+  color: var(--muted-l);
+  opacity: 1;
 }
 
 .not-found-search-icon {
@@ -290,7 +313,7 @@
 
 .not-found-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
   gap: 24px;
   margin-bottom: 48px;
 }
@@ -334,6 +357,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-bottom: 18px;
 }
 
@@ -352,6 +376,7 @@
 .not-found-card-icon {
   width: 36px;
   height: 36px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: rgba(165, 184, 172, 0.15);
   color: var(--charcoal);
@@ -388,8 +413,9 @@
   transition: color 0.2s, gap 0.2s;
 }
 
-.not-found-card:hover .not-found-card-link {
-  color: var(--sage-dark);
+.not-found-card:hover .not-found-card-link,
+.not-found-card:focus-visible .not-found-card-link {
+  color: var(--sage-ink, #4E6658);
   gap: 12px;
 }
 
@@ -405,7 +431,7 @@
   border-left: 4px solid var(--sage);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .not-found-assistance {
     flex-direction: row;
     align-items: center;
@@ -413,7 +439,7 @@
   }
 }
 
-.not-found-assistance-content h3 {
+.not-found-assistance-content h2 {
   font-size: 22px;
   margin: 0 0 8px;
   color: #F8FAF7;
@@ -433,11 +459,28 @@
   flex-wrap: wrap;
   gap: 14px;
   align-items: center;
+  min-width: 0;
+}
+
+.not-found-assistance-content {
+  min-width: 0;
+}
+
+.not-found-assistance-contact .btn-outline-charcoal {
+  justify-content: center;
+  text-align: center;
+}
+
+.not-found-assistance :focus-visible,
+.not-found-hero :focus-visible {
+  outline-color: var(--sage-light);
 }
 
 .not-found-phone-btn {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
+  max-width: 100%;
   gap: 10px;
   background: var(--sage);
   color: var(--charcoal);
@@ -448,6 +491,10 @@
   text-decoration: none;
   font-family: var(--font-display);
   transition: background 0.2s, color 0.2s;
+}
+
+.not-found-phone-btn svg {
+  flex-shrink: 0;
 }
 
 .not-found-phone-btn:hover {
@@ -464,6 +511,20 @@
   color: var(--muted-l);
   font-size: 15px;
   margin-bottom: 30px;
+}
+
+.not-found-no-results .text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--charcoal);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
@@ -499,7 +560,6 @@
     padding: 18px 14px;
   }
   .not-found-search-input {
-    font-size: 13.5px;
     padding: 12px 14px 12px 40px;
   }
   .not-found-search-icon {
@@ -510,5 +570,15 @@
   }
   .not-found-assistance {
     padding: 20px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-card,
+  .btn-solid-charcoal,
+  .btn-outline-charcoal,
+  .btn-sage-accent {
+    transform: none;
+    transition-property: color, background-color, border-color;
   }
 }

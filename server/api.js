@@ -7,6 +7,10 @@ import {
   validateContactSubmission,
   validateEnquirySubmission,
 } from './validation.js'
+import { getClientIp, isSecureRequest } from './config.js'
+
+const submissionPaths = new Set(['/api/contact', '/api/enquiry', '/api/quote'])
+const submissionMethods = 'POST, OPTIONS'
 
 // In-memory sliding window rate limiter
 // IP -> Array of timestamps
@@ -46,17 +50,6 @@ function isRateLimited(ip) {
 }
 
 /**
- * Extracts client IP from request
- */
-function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for']
-  if (forwarded) {
-    return forwarded.split(',')[0].trim()
-  }
-  return req.socket?.remoteAddress || '127.0.0.1'
-}
-
-/**
  * Sends a structured JSON response
  */
 function sendJson(res, statusCode, body, extraHeaders = {}) {
@@ -65,6 +58,7 @@ function sendJson(res, statusCode, body, extraHeaders = {}) {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(payload),
     'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': 'no-store',
     ...extraHeaders,
   })
   res.end(payload)
@@ -83,24 +77,21 @@ async function parseRequestBody(req) {
     ? 15 * 1024 * 1024
     : 1024 * 1024
 
-  if (contentLength > maxBytes) {
-    const err = new Error('PAYLOAD_TOO_LARGE')
-    err.code = 'PAYLOAD_TOO_LARGE'
-    throw err
-  }
+  const tooLarge = () => Object.assign(new Error('Payload too large'), { code: 'PAYLOAD_TOO_LARGE' })
+  if (contentLength > maxBytes) throw tooLarge()
 
-  // Create standard Web Request from Node req stream
-  const url = `http://${req.headers.host || 'localhost'}${req.url}`
-  const webRequest = new Request(url, {
-    method: req.method,
-    headers: req.headers,
-    body: req,
-    duplex: 'half',
-  })
+  const chunks = []
+  let bytes = 0
+  for await (const chunk of req.iterator({ destroyOnReturn: false })) {
+    bytes += chunk.length
+    if (bytes > maxBytes) throw tooLarge()
+    chunks.push(chunk)
+  }
+  const raw = Buffer.concat(chunks, bytes)
 
   if (contentType.includes('multipart/form-data')) {
-    const formData = await webRequest.formData()
-    const fields = {}
+    const formData = await new Response(raw, { headers: { 'Content-Type': req.headers['content-type'] } }).formData()
+    const fields = Object.create(null)
     const files = []
 
     for (const [key, value] of formData.entries()) {
@@ -116,11 +107,11 @@ async function parseRequestBody(req) {
   }
 
   if (contentType.includes('application/json') || contentType === '') {
-    const rawText = await webRequest.text()
+    const rawText = raw.toString('utf8')
     if (!rawText.trim()) return { body: {}, files: [] }
     try {
       const parsed = JSON.parse(rawText)
-      return { body: parsed, files: parsed.files || [] }
+      return { body: parsed, files: parsed?.files || [] }
     } catch {
       const err = new Error('INVALID_JSON')
       err.code = 'INVALID_JSON'
@@ -129,51 +120,49 @@ async function parseRequestBody(req) {
   }
 
   // Fallback / URL-encoded
-  const text = await webRequest.text()
-  const params = new URLSearchParams(text)
+  const params = new URLSearchParams(raw.toString('utf8'))
   const fields = Object.fromEntries(params.entries())
   return { body: fields, files: [] }
-}
-
-const CANONICAL_HOST = process.env.CANONICAL_HOST || 'aucklandroofprofessionals.nz'
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || `https://${CANONICAL_HOST},https://www.${CANONICAL_HOST}`)
-  .split(',')
-  .map((origin) => origin.trim().toLowerCase())
-  .filter(Boolean)
-
-function isAllowedOrigin(origin) {
-  if (!origin) return false
-  const originLower = origin.toLowerCase()
-  return (
-    ALLOWED_ORIGINS.includes(originLower) ||
-    originLower.startsWith('http://localhost:') ||
-    originLower.startsWith('http://127.0.0.1:') ||
-    originLower.startsWith('https://localhost:') ||
-    originLower.startsWith('https://127.0.0.1:')
-  )
 }
 
 /**
  * Main API request handler
  */
-export async function handleApiRequest(req, res) {
+export async function handleApiRequest(req, res, allowedOrigins) {
   const rawPath = (req.url || '').split('?')[0]
   const cleanPath = rawPath.replace(/\/+$/, '')
+  const origin = req.headers.origin
+  const host = req.headers.host
+  const sameOrigin = host && origin === `${isSecureRequest(req) ? 'https' : 'http'}://${host}`
+  const allowedCrossOrigin = !sameOrigin && allowedOrigins?.has(origin)
+  const originDenied = origin === undefined
+    ? ['same-site', 'cross-site'].includes(req.headers['sec-fetch-site'])
+    : !sameOrigin && !allowedCrossOrigin
+  res.setHeader('Vary', 'Origin')
+  res.setHeader('Cache-Control', 'no-store')
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin')
 
-  // 1. CORS Preflight
   if (req.method === 'OPTIONS') {
-    const origin = req.headers.origin
-    const corsHeaders = {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
+    res.setHeader('Vary', 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers')
+    const method = req.headers['access-control-request-method']
+    const headers = req.headers['access-control-request-headers']
+    const isPreflight = method !== undefined || headers !== undefined
+    if (originDenied || (isPreflight && (!origin || method !== 'POST' ||
+        (headers !== undefined && !/^content-type$/i.test(headers.trim()))))) {
+      sendJson(res, 403, { success: false, message: 'This preflight request is not allowed.' })
+      return true
     }
-    if (origin && isAllowedOrigin(origin)) {
-      corsHeaders['Access-Control-Allow-Origin'] = origin
-      corsHeaders['Vary'] = 'Origin'
+    if (!submissionPaths.has(cleanPath)) {
+      sendJson(res, 404, { success: false, message: 'API endpoint not found.' })
+      return true
     }
-    res.writeHead(204, corsHeaders)
-    res.end()
+    if (isPreflight && allowedCrossOrigin) {
+      res.setHeader('Access-Control-Allow-Origin', origin)
+      res.setHeader('Access-Control-Allow-Methods', 'POST')
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+      res.setHeader('Access-Control-Max-Age', '600')
+    }
+    res.writeHead(204, { Allow: submissionMethods }).end()
     return true
   }
 
@@ -183,17 +172,28 @@ export async function handleApiRequest(req, res) {
       success: false,
       message: `Method ${req.method} not allowed. Please use POST.`,
     }, {
-      Allow: 'POST, OPTIONS',
+      Allow: submissionMethods,
     })
     return true
   }
+
+  if (originDenied) {
+    sendJson(res, 403, { success: false, message: 'This request origin is not allowed.' })
+    return true
+  }
+
+  if (!submissionPaths.has(cleanPath)) {
+    sendJson(res, 404, { success: false, message: 'API endpoint not found.' })
+    return true
+  }
+  if (allowedCrossOrigin) res.setHeader('Access-Control-Allow-Origin', origin)
 
   // 3. Rate limiting check
   const clientIp = getClientIp(req)
   if (isRateLimited(clientIp)) {
     sendJson(res, 429, {
       success: false,
-      message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 555 766.',
+      message: 'Too many requests. Please wait a few moments before trying again or call us at 0800 766 311.',
     }, {
       'Retry-After': '60',
     })
@@ -209,7 +209,7 @@ export async function handleApiRequest(req, res) {
       sendJson(res, 413, {
         success: false,
         message: 'Payload too large. Attached files or data exceed the maximum limit.',
-      })
+      }, { Connection: 'close' })
       return true
     }
     if (err.code === 'INVALID_JSON') {
@@ -219,7 +219,7 @@ export async function handleApiRequest(req, res) {
       })
       return true
     }
-    sendJson(res, 500, {
+    sendJson(res, 400, {
       success: false,
       message: 'Failed to process request data.',
     })
@@ -264,43 +264,34 @@ export async function handleApiRequest(req, res) {
     return true
   }
 
-  if (cleanPath === '/api/enquiry' || cleanPath === '/api/quote') {
-    const result = validateEnquirySubmission(body, files)
+  const result = validateEnquirySubmission(body, files)
 
-    if (result.isBot) {
-      sendJson(res, 200, {
-        success: true,
-        message: 'Your enquiry has been received.',
-      })
-      return true
-    }
-
-    if (!result.isValid) {
-      sendJson(res, 400, {
-        success: false,
-        message: 'Please correct the validation errors in your enquiry.',
-        errors: result.errors,
-      })
-      return true
-    }
-
-    const submissionId = `enq_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
-
+  if (result.isBot) {
     sendJson(res, 200, {
       success: true,
-      message: 'Your enquiry has been received. Our roofing team will be in touch with you shortly.',
-      data: {
-        id: submissionId,
-        receivedAt: new Date().toISOString(),
-      },
+      message: 'Your enquiry has been received.',
     })
     return true
   }
 
-  // 404 for unknown /api/* endpoints
-  sendJson(res, 404, {
-    success: false,
-    message: `API endpoint '${cleanPath}' not found.`,
+  if (!result.isValid) {
+    sendJson(res, 400, {
+      success: false,
+      message: 'Please correct the validation errors in your enquiry.',
+      errors: result.errors,
+    })
+    return true
+  }
+
+  const submissionId = `enq_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
+
+  sendJson(res, 200, {
+    success: true,
+    message: 'Your enquiry has been received. Our roofing team will be in touch with you shortly.',
+    data: {
+      id: submissionId,
+      receivedAt: new Date().toISOString(),
+    },
   })
   return true
 }

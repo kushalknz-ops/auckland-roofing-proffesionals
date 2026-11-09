@@ -1,5 +1,6 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { OTHER_OPTION, SERVICE_OPTION_GROUPS, optionValueForService } from '../../data/service-options'
+import { fetchSubmission } from '../../lib/monitoring'
 import {
   validateName,
   validateEmail,
@@ -44,6 +45,8 @@ function PropertyIcon({ type }: { type: string }) {
 }
 
 export function RoofingEnquiryForm({ initialService, onSuccess }: { initialService?: string | null; onSuccess?: () => void }) {
+  const formId = useId()
+  const fieldId = (name: string) => `${formId}-${name}`
   const [step, setStep] = useState<Step>(1)
   const [sent, setSent] = useState(false)
   const [errors, setErrors] = useState<RoofingEnquiryErrors>({})
@@ -118,7 +121,15 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
   const goTo = (next: Step) => {
     setStep(next)
     setServerError(null)
-    requestAnimationFrame(() => panelRef.current?.scrollTo({ top: 0, behavior: 'smooth' }))
+    requestAnimationFrame(() => {
+      const panel = panelRef.current
+      const heading = panel?.querySelector<HTMLElement>('.enquiry-step h2')
+      const card = panel?.closest<HTMLElement>('.enquiry-modal-card')
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      heading?.focus({ preventScroll: true })
+      if (card) card.scrollTo({ top: 0, behavior })
+      else panel?.scrollIntoView({ block: 'start', behavior })
+    })
   }
 
   const validateProjectStep = (): boolean => {
@@ -250,13 +261,11 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
         formData.append('files', file)
       }
 
-      const res = await fetch('/api/enquiry', {
+      const { res, result } = await fetchSubmission('/api/enquiry', {
         method: 'POST',
         headers: { Accept: 'application/json' },
         body: formData,
       })
-
-      const result = await res.json().catch(() => null)
 
       if (res.ok && result?.success) {
         setSent(true)
@@ -270,12 +279,12 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
           goTo(2)
         }
       } else if (res.status === 429) {
-        setServerError('Too many submissions. Please wait a few moments or call 0800 555 766.')
+        setServerError('Too many submissions. Please wait a few moments or call 0800 766 311.')
       } else {
-        setServerError(result?.message || 'Unable to submit enquiry. Please try again or call us at 0800 555 766.')
+        setServerError(result?.message || 'Unable to submit enquiry. Please try again or call us at 0800 766 311.')
       }
     } catch {
-      setServerError('Network error. Please check your connection or call us directly on 0800 555 766.')
+      setServerError('Network error. Please check your connection or call us directly on 0800 766 311.')
     } finally {
       setIsSubmitting(false)
     }
@@ -325,7 +334,7 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
       <ol className="enquiry-steps" aria-label={`Step ${step} of 3`}>
         {['Property', 'Project', 'Contact'].map((label, index) => {
           const number = (index + 1) as Step
-          return <li key={label} className={number === step ? 'active' : number < step ? 'complete' : ''}>
+          return <li key={label} aria-current={number === step ? 'step' : undefined} className={number === step ? 'active' : number < step ? 'complete' : ''}>
             <span>{number < step ? '✓' : number}</span><small>{label}</small>
           </li>
         })}
@@ -380,23 +389,23 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               {isSubmitting ? 'Retrying...' : 'Retry submission'}
             </button>
             <a
-              href="tel:0800555766"
+              href="tel:0800766311"
               style={{ fontSize: '11px', fontWeight: 600, color: '#942C2C', textDecoration: 'underline' }}
             >
-              Or call 0800 555 766
+              Or call 0800 766 311
             </a>
           </div>
         </div>
       )}
 
-      {step === 1 && <section className="enquiry-step" aria-labelledby="property-title">
-        <header><h2 id="property-title">What kind of property is it?</h2><p>Choose the option that best describes your project.</p></header>
+      {step === 1 && <section className="enquiry-step" aria-labelledby={fieldId('property-title')}>
+        <header><h2 tabIndex={-1} id={fieldId('property-title')}>What kind of property is it?</h2><p>Choose the option that best describes your project.</p></header>
         <fieldset className="property-options" style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend className="sr-only">Select property type</legend>
           {PROPERTY_OPTIONS.map((option) => <label key={option.value} className={data.property === option.value ? 'selected' : ''}>
             <input
               type="radio"
-              name="property"
+              name={fieldId('property')}
               value={option.value}
               checked={data.property === option.value}
               onChange={() => update('property', option.value)}
@@ -420,8 +429,8 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
         </div>
       </section>}
 
-      {step === 2 && <section className="enquiry-step" aria-labelledby="project-title">
-        <header><h2 id="project-title">Tell us about the roofing work.</h2><p>A few details help establish the next step. Fields marked * are required.</p></header>
+      {step === 2 && <section className="enquiry-step" aria-labelledby={fieldId('project-title')}>
+        <header><h2 tabIndex={-1} id={fieldId('project-title')}>Tell us about the roofing work.</h2><p>A few details help establish the next step. Fields marked * are required.</p></header>
         <div className="enquiry-fields">
           <label className="full">What do you need help with? *
             <select
@@ -431,29 +440,30 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               onBlur={() => handleBlur('service')}
               aria-required="true"
               aria-invalid={!!errors.service}
-              aria-describedby={errors.service ? 'service-error' : undefined}
+              aria-describedby={errors.service ? fieldId('service-error') : undefined}
               disabled={isSubmitting}
             >
               <option value="">Select a roofing service</option>
               {SERVICE_OPTION_GROUPS.map((g) => <optgroup key={g.label} label={g.label}>{g.options.map((o) => <option key={o}>{o}</option>)}</optgroup>)}
               <option>{OTHER_OPTION}</option>
             </select>
-            {errors.service && <em id="service-error" role="alert">{errors.service}</em>}
+            {errors.service && <em id={fieldId('service-error')} role="alert">{errors.service}</em>}
           </label>
 
           <label>Property suburb / location *
             <input
               ref={locationRef}
+              autoComplete="address-level2"
               value={data.location}
               onChange={(e) => update('location', e.target.value)}
               onBlur={() => handleBlur('location')}
               placeholder="e.g. Mount Eden, Auckland"
               aria-required="true"
               aria-invalid={!!errors.location}
-              aria-describedby={errors.location ? 'location-error' : undefined}
+              aria-describedby={errors.location ? fieldId('location-error') : undefined}
               disabled={isSubmitting}
             />
-            {errors.location && <em id="location-error" role="alert">{errors.location}</em>}
+            {errors.location && <em id={fieldId('location-error')} role="alert">{errors.location}</em>}
           </label>
 
           <label>Your timeframe *
@@ -481,11 +491,11 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               placeholder="What have you noticed, or what are you planning?"
               aria-required="true"
               aria-invalid={!!errors.details}
-              aria-describedby={errors.details ? 'details-error' : 'details-note'}
+              aria-describedby={errors.details ? fieldId('details-error') : fieldId('details-note')}
               disabled={isSubmitting}
             />
-            {errors.details && <em id="details-error" role="alert">{errors.details}</em>}
-            <small id="details-note" className="field-note">{data.details.length.toLocaleString()}/2,000 characters (minimum 10). Include roof type or approximate size if known.</small>
+            {errors.details && <em id={fieldId('details-error')} role="alert">{errors.details}</em>}
+            <small id={fieldId('details-note')} className="field-note">{data.details.length.toLocaleString()}/2,000 characters (minimum 10). Include roof type or approximate size if known.</small>
           </label>
 
           <label className="full upload-label"><span className="upload-title">↥ &nbsp; Add photos (optional)</span>
@@ -546,8 +556,8 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
         </div>
       </section>}
 
-      {step === 3 && <section className="enquiry-step" aria-labelledby="contact-title">
-        <header><h2 id="contact-title">Tell us about yourself.</h2><p>Where should our roofing team send your quote and next steps?</p></header>
+      {step === 3 && <section className="enquiry-step" aria-labelledby={fieldId('contact-title')}>
+        <header><h2 tabIndex={-1} id={fieldId('contact-title')}>Tell us about yourself.</h2><p>Where should our roofing team send your quote and next steps?</p></header>
         <form className="enquiry-fields" onSubmit={submit} noValidate>
           {/* Honeypot */}
           <div style={{ display: 'none' }} aria-hidden="true">
@@ -571,10 +581,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               placeholder="Your name"
               aria-required="true"
               aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
+              aria-describedby={errors.name ? fieldId('name-error') : undefined}
               disabled={isSubmitting}
             />
-            {errors.name && <em id="name-error" role="alert">{errors.name}</em>}
+            {errors.name && <em id={fieldId('name-error')} role="alert">{errors.name}</em>}
           </label>
 
           <label>Email *
@@ -588,10 +598,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               placeholder="you@example.co.nz"
               aria-required="true"
               aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? 'email-error' : undefined}
+              aria-describedby={errors.email ? fieldId('email-error') : undefined}
               disabled={isSubmitting}
             />
-            {errors.email && <em id="email-error" role="alert">{errors.email}</em>}
+            {errors.email && <em id={fieldId('email-error')} role="alert">{errors.email}</em>}
           </label>
 
           <label>Phone *
@@ -605,10 +615,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               placeholder="021 000 000"
               aria-required="true"
               aria-invalid={!!errors.phone}
-              aria-describedby={errors.phone ? 'phone-error' : undefined}
+              aria-describedby={errors.phone ? fieldId('phone-error') : undefined}
               disabled={isSubmitting}
             />
-            {errors.phone && <em id="phone-error" role="alert">{errors.phone}</em>}
+            {errors.phone && <em id={fieldId('phone-error')} role="alert">{errors.phone}</em>}
           </label>
 
           <label>Preferred contact method
@@ -629,10 +639,10 @@ export function RoofingEnquiryForm({ initialService, onSuccess }: { initialServi
               value={data.additionalNotes}
               onChange={(e) => update('additionalNotes', e.target.value)}
               placeholder="Any access instructions, specific times to call, or questions?"
-              aria-describedby="notes-note"
+              aria-describedby={fieldId('notes-note')}
               disabled={isSubmitting}
             />
-            <small id="notes-note" className="field-note">{data.additionalNotes.length.toLocaleString()}/2,000 characters</small>
+            <small id={fieldId('notes-note')} className="field-note">{data.additionalNotes.length.toLocaleString()}/2,000 characters</small>
           </label>
 
           <div className="enquiry-actions full">

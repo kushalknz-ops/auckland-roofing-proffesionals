@@ -82,6 +82,8 @@ export function GoogleReviewsCarousel({
   // Touch swipe support
   const touchStartX = useRef<number | null>(null)
   const touchCurrentX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+  const touchCurrentY = useRef<number | null>(null)
 
   // Track viewport width for responsive card counts (Desktop: 4, Tablet: 2, Mobile: 1)
   useEffect(() => {
@@ -92,6 +94,8 @@ export function GoogleReviewsCarousel({
         count = 1
       } else if (w < 1024) {
         count = 2
+      } else if (w < 1280) {
+        count = 3
       }
       setVisibleCount(count)
       const max = Math.max(0, reviews.length - count)
@@ -115,12 +119,14 @@ export function GoogleReviewsCarousel({
 
   // Keyboard navigation
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault()
+        e.currentTarget.focus({ preventScroll: true })
         handlePrev()
       } else if (e.key === 'ArrowRight') {
         e.preventDefault()
+        e.currentTarget.focus({ preventScroll: true })
         handleNext()
       }
     },
@@ -131,10 +137,13 @@ export function GoogleReviewsCarousel({
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
     touchCurrentX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+    touchCurrentY.current = e.touches[0].clientY
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchCurrentX.current = e.touches[0].clientX
+    touchCurrentY.current = e.touches[0].clientY
   }
 
   const handleTouchEnd = () => {
@@ -142,14 +151,17 @@ export function GoogleReviewsCarousel({
     const diff = touchStartX.current - touchCurrentX.current
     const threshold = 40
 
-    if (diff > threshold) {
+    const verticalDistance = Math.abs((touchCurrentY.current ?? 0) - (touchStartY.current ?? 0))
+    if (diff > threshold && diff > verticalDistance) {
       handleNext()
-    } else if (diff < -threshold) {
+    } else if (diff < -threshold && -diff > verticalDistance) {
       handlePrev()
     }
 
     touchStartX.current = null
     touchCurrentX.current = null
+    touchStartY.current = null
+    touchCurrentY.current = null
   }
 
   const toggleExpand = (id: string) => {
@@ -291,6 +303,7 @@ export function GoogleReviewsCarousel({
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onTouchCancel={() => { touchStartX.current = null; touchCurrentX.current = null }}
           >
             <div className="gr-slider-viewport">
               <div
@@ -299,7 +312,7 @@ export function GoogleReviewsCarousel({
                   transform: `translateX(-${currentIndex * (100 / visibleCount)}%)`,
                 }}
               >
-                {reviews.map((rev) => {
+                {reviews.map((rev, index) => {
                   const isLong = rev.text.length > 150
                   const isExpanded = !!expandedReviews[rev.id]
                   const displayText = isLong && !isExpanded
@@ -310,6 +323,8 @@ export function GoogleReviewsCarousel({
                     <div
                       key={rev.id}
                       className="gr-card-col"
+                      inert={index < currentIndex || index >= currentIndex + visibleCount}
+                      aria-hidden={index < currentIndex || index >= currentIndex + visibleCount}
                       style={{
                         width: `${100 / visibleCount}%`,
                       }}
@@ -402,15 +417,14 @@ export function GoogleReviewsCarousel({
                 ←
               </button>
 
-              <div className="gr-dots-indicator" role="tablist" aria-label="Review page indicators">
+              <div className="gr-dots-indicator" role="group" aria-label="Review page indicators">
                 {Array.from({ length: maxIndex + 1 }).map((_, i) => (
                   <button
                     key={i}
                     type="button"
-                    role="tab"
                     className={`gr-dash-dot ${i === currentIndex ? 'active' : ''}`}
                     aria-label={`Go to review group ${i + 1}`}
-                    aria-selected={i === currentIndex}
+                    aria-pressed={i === currentIndex}
                     onClick={() => setCurrentIndex(i)}
                   />
                 ))}

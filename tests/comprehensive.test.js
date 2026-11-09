@@ -79,7 +79,7 @@ test('Link Integrity - Internal Page Links and Anchor Routes', async (t) => {
     for (const s of SERVICES) {
       assert.ok(s.id.length > 0)
       assert.ok(s.title.length > 0)
-      assert.ok(headerContent.includes('to={`/service?id=${s.id}`}') || headerContent.includes('/service?id='))
+      assert.ok(headerContent.includes('to={`/service/${s.id}`}') || headerContent.includes('/service/'))
     }
   })
 
@@ -144,14 +144,16 @@ test('Button & Interactive Controls Integrity', async (t) => {
   })
 
   await t.test('CTA buttons wire up openQuote modal trigger across all pages', () => {
-    assert.ok(headerContent.includes('openQuote()'), 'Header CTA must trigger openQuote()')
-    assert.ok(homeContent.includes('openQuote()'), 'HomePage Hero and CTA must trigger openQuote()')
+    assert.ok(headerContent.includes('openQuote(event.currentTarget)'), 'Header CTA must pass its focus target to openQuote')
+    assert.ok(homeContent.includes('openQuote(event.currentTarget)'), 'HomePage Hero and CTA must pass their focus targets to openQuote')
     assert.ok(modalContent.includes('closeQuote'), 'QuoteModal must have closeQuote handler')
   })
 
-  await t.test('Back-to-top button in footer triggers smooth scroll to top', () => {
+  await t.test('Back-to-top button supports motion preferences', () => {
     assert.ok(footerContent.includes('className="back-to-top"'))
-    assert.ok(footerContent.includes("scrollTo({ top: 0, behavior: 'smooth' })"))
+    assert.ok(footerContent.includes("window.scrollTo({ top: 0, behavior:"))
+    assert.ok(footerContent.includes("'(prefers-reduced-motion: reduce)'"))
+    assert.ok(footerContent.includes("? 'instant' : 'smooth'"))
   })
 
   await t.test('Carousel controls exist with accessible labels', () => {
@@ -159,7 +161,8 @@ test('Button & Interactive Controls Integrity', async (t) => {
     assert.ok(homeContent.includes('aria-label="Next projects"'))
     assert.ok(reviewsContent.includes('aria-label="Previous reviews"'))
     assert.ok(reviewsContent.includes('aria-label="Next reviews"'))
-    assert.ok(reviewsContent.includes('role="tablist"'))
+    assert.ok(reviewsContent.includes('role="group" aria-label="Review page indicators"'))
+    assert.ok(reviewsContent.includes('aria-pressed={i === currentIndex}'))
   })
 })
 

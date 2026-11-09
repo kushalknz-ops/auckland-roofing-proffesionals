@@ -1,35 +1,24 @@
 import { useEffect } from 'react'
+import { CANONICAL_ORIGIN, normalizePagePath } from '../lib/site-url.ts'
+import { getSocialTags } from '../lib/social-metadata.ts'
 
 export interface SEOProps {
   title: string
   description: string
   canonical?: string
+  lastModified?: string
   ogImage?: string
   ogImageAlt?: string
-  ogImageWidth?: number | string
-  ogImageHeight?: number | string
-  ogImageType?: string
   ogType?: 'website' | 'article'
-  siteName?: string
-  locale?: string
-  twitterCard?: 'summary' | 'summary_large_image'
   keywords?: string
   noIndex?: boolean
+  structuredData?: string
 }
 
-export const DEFAULT_ORIGIN = (
-  typeof import.meta !== 'undefined' && import.meta.env?.VITE_SITE_URL
-    ? import.meta.env.VITE_SITE_URL
-    : 'https://aucklandroofprofessionals.nz'
-).replace(/\/+$/, '')
-
-export const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/assets/og-image.jpg`
-export const DEFAULT_OG_ALT = 'Auckland Roof Professionals - Commercial & Residential Roofing Auckland'
-export const DEFAULT_SITE_NAME = 'Auckland Roof Professionals'
-export const DEFAULT_LOCALE = 'en_NZ'
-
 function setMetaTag(attrName: 'name' | 'property', attrValue: string, content: string) {
-  let el = document.querySelector(`meta[${attrName}="${attrValue}"]`) as HTMLMetaElement | null
+  const [existing, ...duplicates] = document.head.querySelectorAll<HTMLMetaElement>(`meta[${attrName}="${attrValue}"]`)
+  duplicates.forEach((tag) => tag.remove())
+  let el = existing
   if (!el) {
     el = document.createElement('meta')
     el.setAttribute(attrName, attrValue)
@@ -38,51 +27,9 @@ function setMetaTag(attrName: 'name' | 'property', attrValue: string, content: s
   el.setAttribute('content', content)
 }
 
-/**
- * Normalizes an input path or full URL into an authoritative canonical URL:
- * - Uses DEFAULT_ORIGIN as the base
- * - Retains trailing slash on root ('https://aucklandroofprofessionals.nz/')
- * - Strips trailing slash on subpaths ('/commercial/' -> '/commercial')
- * - Strips URL fragments/hashes
- * - Ensures single forward slashes
- */
-export function normalizeCanonicalUrl(url?: string): string {
-  if (!url) {
-    if (typeof window === 'undefined') return `${DEFAULT_ORIGIN}/`
-    const path = window.location.pathname.replace(/\/+$/, '') || '/'
-    return `${DEFAULT_ORIGIN}${path}`
-  }
-
-  // If already absolute URL
-  if (/^https?:\/\//i.test(url)) {
-    try {
-      const parsed = new URL(url)
-      const normalizedPath = parsed.pathname.length > 1
-        ? parsed.pathname.replace(/\/+$/, '')
-        : '/'
-      parsed.pathname = normalizedPath
-      parsed.hash = ''
-      return parsed.toString()
-    } catch {
-      return url
-    }
-  }
-
-  // Relative path or query string
-  const clean = url.trim()
-  const leadingSlash = clean.startsWith('/') ? clean : `/${clean}`
-  try {
-    const parsed = new URL(leadingSlash, DEFAULT_ORIGIN)
-    const normalizedPath = parsed.pathname.length > 1
-      ? parsed.pathname.replace(/\/+$/, '')
-      : '/'
-    parsed.pathname = normalizedPath
-    parsed.hash = ''
-    return parsed.toString()
-  } catch {
-    const withoutHash = leadingSlash.split('#')[0]
-    return `${DEFAULT_ORIGIN}${withoutHash}`
-  }
+export function normalizeCanonicalUrl(url: string): string {
+  const { pathname } = new URL(url, CANONICAL_ORIGIN)
+  return `${CANONICAL_ORIGIN}${normalizePagePath(pathname)}`
 }
 
 function setCanonicalLink(url: string) {
@@ -104,17 +51,12 @@ export function useSEO({
   title,
   description,
   canonical,
-  ogImage = DEFAULT_OG_IMAGE,
+  ogImage,
   ogImageAlt,
-  ogImageWidth = '1200',
-  ogImageHeight = '630',
-  ogImageType,
-  ogType = 'website',
-  siteName = DEFAULT_SITE_NAME,
-  locale = DEFAULT_LOCALE,
-  twitterCard = 'summary_large_image',
+  ogType,
   keywords,
   noIndex = false,
+  structuredData,
 }: SEOProps) {
   useEffect(() => {
     // 1. Page Title
@@ -124,6 +66,8 @@ export function useSEO({
     setMetaTag('name', 'description', description)
     if (keywords) {
       setMetaTag('name', 'keywords', keywords)
+    } else {
+      document.querySelector('meta[name="keywords"]')?.remove()
     }
     if (noIndex) {
       setMetaTag('name', 'robots', 'noindex, nofollow')
@@ -132,50 +76,37 @@ export function useSEO({
     }
 
     // 3. Canonical Tag
-    const resolvedCanonical = normalizeCanonicalUrl(canonical)
-    setCanonicalLink(resolvedCanonical)
+    const resolvedCanonical = normalizeCanonicalUrl(canonical ?? window.location.pathname)
+    if (noIndex) {
+      document.querySelectorAll('link[rel="canonical"]').forEach((link) => link.remove())
+    } else {
+      setCanonicalLink(resolvedCanonical)
+    }
 
-    // 4. Open Graph Meta Tags
-    const resolvedOgImage = ogImage.startsWith('http')
-      ? ogImage
-      : `${DEFAULT_ORIGIN}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`
+    const socialTags = getSocialTags({ title, description, ogImage, ogImageAlt, ogType }, resolvedCanonical)
+    for (const [name, content] of Object.entries(socialTags)) {
+      setMetaTag(name.startsWith('og:') ? 'property' : 'name', name, content)
+    }
 
-    const resolvedAlt = ogImageAlt || `${title} - ${siteName}`
-    const resolvedType = ogImageType || (resolvedOgImage.endsWith('.png') ? 'image/png' : 'image/jpeg')
-
-    setMetaTag('property', 'og:type', ogType)
-    setMetaTag('property', 'og:site_name', siteName)
-    setMetaTag('property', 'og:locale', locale)
-    setMetaTag('property', 'og:title', title)
-    setMetaTag('property', 'og:description', description)
-    setMetaTag('property', 'og:url', resolvedCanonical)
-    setMetaTag('property', 'og:image', resolvedOgImage)
-    setMetaTag('property', 'og:image:secure_url', resolvedOgImage)
-    setMetaTag('property', 'og:image:type', resolvedType)
-    setMetaTag('property', 'og:image:width', String(ogImageWidth))
-    setMetaTag('property', 'og:image:height', String(ogImageHeight))
-    setMetaTag('property', 'og:image:alt', resolvedAlt)
-
-    // 5. Twitter Card Meta Tags (for X)
-    setMetaTag('name', 'twitter:card', twitterCard)
-    setMetaTag('name', 'twitter:title', title)
-    setMetaTag('name', 'twitter:description', description)
-    setMetaTag('name', 'twitter:image', resolvedOgImage)
-    setMetaTag('name', 'twitter:image:alt', resolvedAlt)
+    const previousData = document.getElementById('page-structured-data')
+    if (structuredData) {
+      const script = previousData || document.createElement('script')
+      script.id = 'page-structured-data'
+      script.setAttribute('type', 'application/ld+json')
+      script.textContent = structuredData
+      if (!previousData) document.head.appendChild(script)
+    } else {
+      previousData?.remove()
+    }
   }, [
     title,
     description,
     canonical,
     ogImage,
     ogImageAlt,
-    ogImageWidth,
-    ogImageHeight,
-    ogImageType,
     ogType,
-    siteName,
-    locale,
-    twitterCard,
     keywords,
     noIndex,
+    structuredData,
   ])
 }
